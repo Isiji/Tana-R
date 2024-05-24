@@ -15,7 +15,12 @@ class users(BaseModel, Base):
     phone = Column(String(128), nullable=False)
     ID_No = Column(String(128), nullable=False)
     role = Column(String(128), nullable=False)
-    profile_pic = Column(String(128), nullable=False)
+    profile_pic = Column(String(255), nullable=False)
+
+    diaries = relationship("Diary", back_populates="user")
+    human_resources = relationship("HumanResources", uselist=False, back_populates="user")
+    attendance = relationship("Attendance", back_populates="user")
+    documents = relationship("Documents", back_populates="user")
 
     def __init__(self, *args, **kwargs):
         """Initialization of the users model"""

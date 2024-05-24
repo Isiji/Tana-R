@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Diary class module for the diary"""
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -11,6 +11,7 @@ class Diary(BaseModel, Base):
     title = Column(String(128), nullable=False)
     content = Column(String(128), nullable=False)
     entry_date = Column(String(128), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
     user = relationship("users", back_populates="diaries")
 
     def __init__(self, *args, **kwargs):

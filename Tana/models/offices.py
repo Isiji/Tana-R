@@ -9,7 +9,6 @@ class Offices(BaseModel, Base, UserMixin):
     """This class defines the users model"""
     __tablename__ = 'offices'
     office_name = Column(String(128), nullable=False)
-    office_type = Column(String(128), nullable=False)
     office_location = Column(String(128), nullable=False)
     office_description = Column(String(128), nullable=False)
     office_contact = Column(String(128), nullable=True)
