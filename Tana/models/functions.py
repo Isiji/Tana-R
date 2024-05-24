@@ -15,10 +15,12 @@ class Functions(BaseModel, Base):
     category = Column(Enum(FunctionCategory), nullable=False)
     impact_level = Column(Enum(ImpactLevel), nullable=False)
     function_owner = Column(String(128), nullable=False)
-    function_status = Column(String(128), nullable=False)
     function_location = Column(String(128), nullable=False)
     function_contact = Column(String(128), nullable=True)
     function_description = Column(Text, nullable=False)
+
+    commitments = relationship("Commitments", back_populates="functions")
+    contributions = relationship("Contributions", back_populates="functions")
     def __init__(self, *args, **kwargs):
         """Initialization of the functions model"""
         super().__init__(*args, **kwargs)
