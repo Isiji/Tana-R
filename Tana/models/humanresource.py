@@ -9,9 +9,9 @@ class HumanResource(BaseModel, Base):
     """This class defines the humanresource model"""
     __tablename__ = 'humanresource'
     employee_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("users", back_populates="human_resources")
-    ofiice_id = Column(Integer, ForeignKey('office.office_id'))
+    office_id = Column(Integer, ForeignKey('offices.id'))
     job_title = Column(String(128), nullable=False)
     employment_date = Column(String(128), nullable=False)
     salary = Column(String(128), nullable=False)

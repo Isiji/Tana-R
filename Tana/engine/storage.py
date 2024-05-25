@@ -7,6 +7,18 @@ from sqlalchemy.exc import SQLAlchemyError
 from Tana.models.base_model import Base
 from Tana.models.users import users
 from Tana.models.functions import FunctionCategory
+from Tana.models.roles import UserRole
+from Tana.models.offices import Offices
+from Tana.models.reminder import Reminder
+from Tana.models.tasks import Tasks
+from Tana.models.attendees import Attendees
+from Tana.models.diary import Diary
+from Tana.models.commitments import Commitments
+from Tana.models.calendarEvents import CalendarEvents
+from Tana.models.contributions import Contributions
+from Tana.models.functions import Functions
+from Tana.models.humanresource import HumanResource
+
 class DBStorage:
     """Database storage class"""
     __engine = None
@@ -33,7 +45,7 @@ class DBStorage:
                     key = "{}.{}".format(cls.__name__, obj.id)
                     objects[key] = obj
             else:
-                classes = [users, FunctionCategory]
+                classes = [users, FunctionCategory, UserRole, Offices, Reminder, Tasks, Attendees, Diary, Commitments, CalendarEvents, Contributions, Functions, HumanResource]
                 for cls in classes:
                     query_result = self.__session.query(cls).all()
                     for obj in query_result:

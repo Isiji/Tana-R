@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Commitments class module for the commitments"""
-from models.base_model import BaseModel, Base
+from Tana.models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -11,7 +11,7 @@ class Commitments(BaseModel, Base):
     commitment_title = Column(String(128), nullable=False)
     commitment_description = Column(String(128), nullable=False)
     commitment_date = Column(String(128), nullable=False)
-    function_id = Column(Integer, ForeignKey('functions.function_id'))
+    function_id = Column(Integer, ForeignKey('functions.id'))
 
     functions = relationship("Functions", back_populates="commitments")
     def __init__(self, *args, **kwargs):

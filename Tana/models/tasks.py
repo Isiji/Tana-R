@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Tasks class module for the tasks"""
-from models.base_model import BaseModel, Base
+from Tana.models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -11,8 +11,8 @@ class Tasks(BaseModel, Base):
     task_title = Column(String(128), nullable=False)
     task_description = Column(String(128), nullable=False)
     task_date = Column(String(128), nullable=False)
-    assigned_to = Column(Integer, ForeignKey('users.user_id'), nullable=False)
-    assigned_by = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    assigned_to = Column(Integer, ForeignKey('users.id'), nullable=False)
+    assigned_by = Column(Integer, ForeignKey('users.id'), nullable=False)
     due_date = Column(Date, nullable=False)
 
     assigned_to_user = relationship("users", foreign_keys=[assigned_to])

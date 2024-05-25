@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Users class for the users"""
-from models.base_model import BaseModel, Base
+from Tana.models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin

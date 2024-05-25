@@ -13,7 +13,7 @@ class CalendarEvents(BaseModel, Base):
     event_start_date = Column(String(128), nullable=False)
     event_end_date = Column(String(128), nullable=False)
     event_location = Column(String(128), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("users", back_populates="calendarEvents")
     def __init__(self, *args, **kwargs):
         """Initialization of the calendarEvents model"""
