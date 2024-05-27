@@ -13,6 +13,12 @@ from Tana import bcrypt
 
 users = Blueprint('users', __name__)
 
+#create a route for homepage
+users.route('/')
+def home():
+    """homepage route for the user"""
+    return render_template('home.html')
+
 #create a route for a user to register
 @users.route('/register', methods=['GET', 'POST'])
 def register():
