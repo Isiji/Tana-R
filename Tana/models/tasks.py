@@ -23,7 +23,4 @@ class Tasks(BaseModel, Base):
 
     def __str__(self):
           """string represenation of a task"""
-          return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id,                                      
-                                                 
-                                                 
-                                                 self.__dict__)
+          return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)

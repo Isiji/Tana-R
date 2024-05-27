@@ -6,4 +6,8 @@ from enum import Enum as PyEnum
 class UserRole(PyEnum):
     """This class defines the user roles"""
     ADMIN = "admin"
-    Employee = "employee"
+    DRIVER = "driver"
+    BODYGUARD = "bodyguard"
+    RESEACHER = "researcher"
+    COORDINATOR = "coordinator"
+    
