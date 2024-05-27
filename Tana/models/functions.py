@@ -12,7 +12,6 @@ class Functions(BaseModel, Base):
     """This class defines the functions model"""
     __tablename__ = 'functions'
     function_name = Column(String(128), nullable=False)
-    category = Column(Enum(FunctionCategory), nullable=False)
     impact_level = Column(Enum(ImpactLevel), nullable=False)
     function_owner = Column(String(128), nullable=False)
     function_location = Column(String(128), nullable=False)

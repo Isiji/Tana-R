@@ -39,11 +39,16 @@ def create_app(config_class=Config):
     from Tana.users.routes import users
     from Tana.functions.routes import functions
     from Tana.offices.routes import offices
-    from Tana.main.routes import main
+    from Tana.reminder.routes import reminders
+    from Tana.humanresource.routes import humanresource
+
+
 
     app.register_blueprint(users)
     app.register_blueprint(functions)
     app.register_blueprint(offices)
-    app.register_blueprint(main)
+    app.register_blueprint(reminders)
+    app.register_blueprint(humanresource)
+
     return app
 

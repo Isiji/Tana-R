@@ -3,6 +3,8 @@
 from Tana.models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Enum
 
 class users(BaseModel, Base):
     """This class defines the users model"""
@@ -13,14 +15,15 @@ class users(BaseModel, Base):
     password = Column(String(128), nullable=False)
     phone = Column(String(128), nullable=False)
     ID_No = Column(String(128), nullable=False)
-    role = Column(String(128), nullable=False)
+    role = Column(Enum('admin', 'employee'), nullable=False)
     profile_pic = Column(String(255), nullable=False)
 
     diaries = relationship("Diary", back_populates="user")
     human_resources = relationship("HumanResources", uselist=False, back_populates="user")
     attendance = relationship("Attendance", back_populates="user")
     documents = relationship("Documents", back_populates="user")
-
+    tasks_assigned = relationship("Tasks", back_populates="assigned_by")
+    tasks_assigned_to = relationship("Tasks", back_populates="assigned_to")
     def __init__(self, *args, **kwargs):
         """Initialization of the users model"""
         super().__init__(*args, **kwargs)
