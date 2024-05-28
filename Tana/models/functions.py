@@ -20,7 +20,7 @@ class Functions(BaseModel, Base):
 
     commitments = relationship("Commitments", back_populates="functions")
     contributions = relationship("Contributions", back_populates="functions")
-    
+    attendees = relationship("Attendees", back_populates="functions")
     def __init__(self, *args, **kwargs):
         """Initialization of the functions model"""
         super().__init__(*args, **kwargs)

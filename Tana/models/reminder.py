@@ -13,6 +13,7 @@ class Reminder(BaseModel, Base):
     reminder_date = Column(String(128), nullable=False)
     reminder_time = Column(String(128), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'))
+
     user = relationship("users", back_populates="reminder")
     def __init__(self, *args, **kwargs):
         """Initialization of the reminder model"""

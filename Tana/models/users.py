@@ -5,8 +5,9 @@ from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Enum
+from flask_login import UserMixin
 
-class users(BaseModel, Base):
+class users(BaseModel, Base, UserMixin):
     """This class defines the users model"""
     __tablename__ = 'users'
     user_id = Column(Integer, primary_key=True)

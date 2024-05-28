@@ -3,9 +3,8 @@
 from Tana.models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship
-from flask_login import UserMixin
 
-class Offices(BaseModel, Base, UserMixin):
+class Offices(BaseModel, Base):
     """This class defines the users model"""
     __tablename__ = 'offices'
     office_name = Column(String(128), nullable=False)

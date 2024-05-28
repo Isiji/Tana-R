@@ -14,7 +14,7 @@ from Tana import bcrypt
 users = Blueprint('users', __name__)
 
 #create a route for homepage
-users.route('/')
+@users.route('/')
 def home():
     """homepage route for the user"""
     return render_template('home.html')
@@ -32,6 +32,7 @@ def register():
         db_storage.commit()
         flash(f'Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('users.login'))
+    return render_template('register.html', title='Register', form=form)
     
 #create route for user to update user information
 @users.route('/account', methods=['GET', 'POST'])

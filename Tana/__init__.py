@@ -20,13 +20,16 @@ login_manager.login_message_category = 'info'
 cors = CORS()
 mail = Mail()
 jwt = JWTManager()
-
+@login_manager.user_loader
+def load_user(user_id):
+    """Loads the user"""
+    return db_storage.get('User', user_id)
 
 
 
 def create_app(config_class=Config):
     """Creates the app"""
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static')
     app.config.from_object(Config)
 
     db_storage
