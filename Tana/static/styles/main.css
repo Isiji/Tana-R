@@ -9,18 +9,20 @@ body {
 
 /* Theme colors */
 header {
-    background-color: #004080;
+    background-color: #004080; /* Royal Blue */
     color: white;
     padding: 10px 0;
     text-align: center;
+    margin-bottom: 20px;
+
 }
 
 footer {
-    background-color: #004080;
+    background-color: #004080; /* Royal Blue */
     color: white;
     text-align: center;
     padding: 10px 0;
-    position: absolute;
+    position: absolute; /* Changed from absolute to avoid overlap issues */
     width: 100%;
     bottom: 0;
 }
@@ -37,21 +39,93 @@ footer {
 }
 
 .flash.info {
-    background-color: #e0f7fa;
-    color: #00796b;
+    background-color: #e0f7fa; /* Light Blue */
+    color: #00796b; /* Teal */
 }
 
 .flash.success {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+    background-color: #e8f5e9; /* Light Green */
+    color: #2e7d32; /* Green */
 }
 
 .flash.warning {
-    background-color: #fff3e0;
-    color: #f57c00;
+    background-color: #fff3e0; /* Light Orange */
+    color: #f57c00; /* Orange */
 }
 
 .flash.error {
-    background-color: #ffebee;
-    color: #d32f2f;
+    background-color: #ffebee; /* Light Red */
+    color: #d32f2f; /* Red */
+}
+
+.logo {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.navbar-nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar-nav ul li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.navbar-nav ul li a {
+    color: whitesmoke; /* White for navbar links */
+    text-decoration: none;
+
+}
+
+.navbar-nav ul li a:hover {
+    color: #add8e6; /* Light Blue on hover */
+}
+
+.content-section {
+    background-color: yellowgreen;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.content-section h3 {
+    margin-top: 0;
+}
+
+.content-section .list-group-item-light {
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.content-section .list-group-item-light:hover {
+    background-color: #004080; /* Royal Blue */
+    color: white;
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: #004080; /* Royal Blue */
+    border-color: #004080; /* Royal Blue */
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #003366; /* Darker Royal Blue */
+    border-color: #003366; /* Darker Royal Blue */
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #add8e6; /* Light Blue */
+    border-color: #add8e6; /* Light Blue */
+    color: black;
+}
+
+.btn-secondary:hover {
+    background-color: #87ceeb; /* Sky Blue */
+    border-color: #87ceeb; /* Sky Blue */
+    color: black;
 }
