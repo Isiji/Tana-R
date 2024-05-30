@@ -5,7 +5,7 @@ body {
     font-family: 'Poppins', Arial, sans-serif;
     background: lemonchiffon;
     color: #333;
-    margin-top: 7rem;
+    margin-top: 7rem; /* Adjusted to account for the fixed header */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -19,6 +19,10 @@ h1, h2, h3, h4, h5, h6 {
     padding: 20px 0;
     text-align: center;
     margin-bottom: 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it stays on top */
 }
 
 .site-header .navbar {
@@ -81,7 +85,7 @@ h1, h2, h3, h4, h5, h6 {
     background: #fff;
     padding: 10px 20px;
     border: 1px solid #dddddd;
-    border-radius: 3px;
+    border-radius: 7px;
     margin-top: 40px; /* Lowering the sidebar */
     margin-bottom: 20px;
 }
@@ -136,16 +140,8 @@ footer {
     color: black;
 }
 
-/* Content Styles */
-.content {
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.content .textBox {
+/* Additional content styles */
+.textBox {
     position: relative;
     max-width: 620px;
 }
