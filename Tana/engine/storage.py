@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 import sys
 from sqlalchemy.exc import SQLAlchemyError
 from Tana.models.base_model import Base
-from Tana.models.users import users
+from Tana.models.user import users
 from Tana.models.functions import FunctionCategory
 from Tana.models.roles import UserRole
 from Tana.models.offices import Offices
@@ -70,9 +70,13 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
         
-    def get(self, model_class, object_id):
-            """Retrieve an object from the database by its ID"""
-            return self.__session.query(model_class).filter_by(id=object_id).first()
+    def get(self, cls, **kwargs):
+        """Returns the object based on the class and keyword arguments"""
+        try:
+            query_result = self.__session.query(cls).filter_by(**kwargs).first()
+            return query_result
+        except SQLAlchemyError as e:
+            print("An Error Occured:", e)
 
     def delete(self, obj=None):
         """Deletes the object from the current database session"""

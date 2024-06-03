@@ -39,7 +39,7 @@ def create_app(config_class=Config):
     mail.init_app(app)
     jwt.init_app(app)
 
-    from Tana.users.routes import users
+    from Tana.users.routes import Users
     from Tana.functions.routes import functions
     from Tana.offices.routes import offices
     from Tana.reminder.routes import reminders
@@ -47,7 +47,7 @@ def create_app(config_class=Config):
 
 
 
-    app.register_blueprint(users)
+    app.register_blueprint(Users)
     app.register_blueprint(functions)
     app.register_blueprint(offices)
     app.register_blueprint(reminders)

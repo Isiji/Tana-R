@@ -3,7 +3,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from Tana.models.users import users
+from Tana.models.user import users
 from flask_login import current_user, UserMixin, login_user, logout_user, login_required, LoginManager
 from flask_wtf.file import FileField, FileAllowed
 from Tana.engine.storage import DBStorage
