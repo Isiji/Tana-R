@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from Tana.models.offices import Offices
-from Tana.models.user import users
+from Tana.models.members import users
 from Tana.models.humanresource import HumanResource
 from Tana.models.functions import Functions
 from Tana.models.contributions import Contributions

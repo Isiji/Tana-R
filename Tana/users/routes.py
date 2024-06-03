@@ -3,7 +3,7 @@
 
 
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash
-from Tana.models.user import users
+from Tana.models.members import users
 from Tana.models.roles import UserRole
 from Tana.engine.storage import DBStorage
 from Tana.users.forms import RegistrationForm, UpdateAccountForm, loginForm, RequestResetForm, ResetPasswordForm

@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 import sys
 from sqlalchemy.exc import SQLAlchemyError
 from Tana.models.base_model import Base
-from Tana.models.user import users
+from Tana.models.members import users
 from Tana.models.functions import FunctionCategory
 from Tana.models.roles import UserRole
 from Tana.models.offices import Offices
