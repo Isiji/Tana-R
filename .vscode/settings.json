@@ -9,7 +9,7 @@
             "server": "localhost",
             "port": 3306,
             "driver": "MySQL",
-            "name": "Tanasenate",
+            "name": "Tana",
             "database": "Tana",
             "username": "Tana",
             "password": "Tana123."
