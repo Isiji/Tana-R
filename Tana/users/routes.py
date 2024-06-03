@@ -33,7 +33,7 @@ def register():
         db_storage.commit()
         flash(f'Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('users.login'))
-    return render_template('users.register.html', title='Register', form=form)
+    return render_template('register.html', title='Register', form=form)
     
 #create route for user to update user information
 @users.route('/account', methods=['GET', 'POST'])

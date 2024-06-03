@@ -54,7 +54,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Main container */
 .container {
     padding: 20;
-    background-color: #004080;
+    background-color: beige;
 }
 
 /* Flash messages */
