@@ -5,7 +5,7 @@ body {
     font-family: 'Poppins', Arial, sans-serif;
     background: lemonchiffon;
     color: #333;
-    margin-top: 7rem; /* Adjusted to account for the fixed header */
+    margin-top: 10rem; /* Adjusted to account for the fixed header */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -22,7 +22,7 @@ h1, h2, h3, h4, h5, h6 {
     position: fixed;
     top: 0;
     width: 100%;
-    height: 150px;
+    height: 115px;
     z-index: 1000; /* Ensure it stays on top */
 }
 
