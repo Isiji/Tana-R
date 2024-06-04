@@ -11,16 +11,17 @@ class Tasks(BaseModel, Base):
     task_title = Column(String(128), nullable=False)
     task_description = Column(String(128), nullable=False)
     task_date = Column(Date, nullable=False)
-    assigned_to = Column(Integer, ForeignKey('users.id'), nullable=False)
-    assigned_by = Column(Integer, ForeignKey('users.id'), nullable=False)
+    assigned_to = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    assigned_by = Column(Integer, ForeignKey('users.user_id'), nullable=False)
     due_date = Column(Date, nullable=False)
 
-    assigned_to_user = relationship("users", foreign_keys=[assigned_to])
-    assigned_by_user = relationship("users", foreign_keys=[assigned_by])
+    assigned_to_user = relationship("users", foreign_keys=[assigned_to], back_populates="tasks_assigned_to")
+    assigned_by_user = relationship("users", foreign_keys=[assigned_by], back_populates="tasks_assigned")
+
     def __init__(self, *args, **kwargs):
         """Initialization of the tasks model"""
         super().__init__(*args, **kwargs)
 
     def __str__(self):
-          """string represenation of a task"""
-          return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        """string represenation of a task"""
+        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
