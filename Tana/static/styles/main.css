@@ -3,7 +3,7 @@
 /* Base styles */
 body {
     font-family: 'Poppins', Arial, sans-serif;
-    background: lemonchiffon;
+    background: whitesmoke;
     color: #333;
     margin-top: 10rem; /* Adjusted to account for the fixed header */
 }
