@@ -4,7 +4,6 @@
 from Tana.models.base_model import Base, BaseModel
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text, Enum
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 from Tana.models.funcategory import FunctionCategory
 from Tana.models.impactlevel import ImpactLevel
 
@@ -21,11 +20,11 @@ class Functions(BaseModel, Base):
     commitments = relationship("Commitments", back_populates="functions")
     contributions = relationship("Contributions", back_populates="functions")
     attendees = relationship("Attendees", back_populates="functions")
+
     def __init__(self, *args, **kwargs):
         """Initialization of the functions model"""
         super().__init__(*args, **kwargs)
 
     def __str__(self):
-        """string represenation of a user"""
-        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id,
-                                         self.__dict__)
+        """string representation of a user"""
+        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
