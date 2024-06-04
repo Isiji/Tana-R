@@ -10,7 +10,7 @@ class Tasks(BaseModel, Base):
     __tablename__ = 'tasks'
     task_title = Column(String(128), nullable=False)
     task_description = Column(String(128), nullable=False)
-    task_date = Column(String(128), nullable=False)
+    task_date = Column(Date, nullable=False)
     assigned_to = Column(Integer, ForeignKey('users.id'), nullable=False)
     assigned_by = Column(Integer, ForeignKey('users.id'), nullable=False)
     due_date = Column(Date, nullable=False)

@@ -20,11 +20,9 @@ class users(BaseModel, Base, UserMixin):
     profile_pic = Column(String(255), nullable=False)
 
     diaries = relationship("Diary", back_populates="user")
-    human_resources = relationship("HumanResources", uselist=False, back_populates="user")
-    attendance = relationship("Attendance", back_populates="user")
-    documents = relationship("Documents", back_populates="user")
-    tasks_assigned = relationship("Tasks", back_populates="assigned_by")
-    tasks_assigned_to = relationship("Tasks", back_populates="assigned_to")
+    human_resources = relationship("HumanResource", uselist=False, back_populates="user")
+    tasks_assigned = relationship("Tasks", back_populates="assigned_by", foreign_keys="Tasks.assigned_by")
+    tasks_assigned_to = relationship("Tasks", back_populates="assigned_to", foreign_keys="Tasks.assigned_to")
     def __init__(self, *args, **kwargs):
         """Initialization of the users model"""
         super().__init__(*args, **kwargs)

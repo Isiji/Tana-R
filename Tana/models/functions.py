@@ -2,7 +2,7 @@
 """Functions class for the functions"""
 
 from Tana.models.base_model import Base, BaseModel
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from Tana.models.funcategory import FunctionCategory
