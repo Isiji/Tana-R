@@ -14,8 +14,8 @@ class users(BaseModel, Base, UserMixin):
     name = Column(String(128), nullable=False)
     email = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)
-    phone = Column(String(128), nullable=False)
-    ID_No = Column(String(128), nullable=False)
+    phone = Column(Integer, nullable=False)
+    ID_No = Column(Integer, nullable=False)
     role = Column(Enum('admin', 'employee'), nullable=False)
     profile_pic = Column(String(255), nullable=False)
 

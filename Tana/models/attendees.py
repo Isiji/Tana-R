@@ -10,7 +10,7 @@ class Attendees(BaseModel, Base):
     __tablename__ = 'attendees'
     attendee_name = Column(String(128), nullable=False)
     attendee_email = Column(String(128), nullable=True)
-    attendee_phone = Column(String(128), nullable=False)
+    attendee_phone = Column(Integer, nullable=False)
     def __init__(self, *args, **kwargs):
         """Initialization of the attendees model"""
         super().__init__(*args, **kwargs)

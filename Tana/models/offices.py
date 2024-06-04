@@ -10,7 +10,7 @@ class Offices(BaseModel, Base):
     office_name = Column(String(128), nullable=False)
     office_location = Column(String(128), nullable=False)
     office_description = Column(String(128), nullable=False)
-    office_contact = Column(String(128), nullable=True)
+    office_contact = Column(Integer, nullable=True)
     def __init__(self, *args, **kwargs):
         """Initialization of the users model"""
         super().__init__(*args, **kwargs)

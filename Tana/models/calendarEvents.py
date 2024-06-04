@@ -11,7 +11,7 @@ class CalendarEvents(BaseModel, Base):
     event_title = Column(String(128), nullable=False)
     event_description = Column(String(128), nullable=False)
     event_start_date = Column(Date, nullable=False)
-    event_end_date = Column(String(128), nullable=False)
+    event_end_date = Column(Date, nullable=False)
     event_location = Column(String(128), nullable=False)
     def __init__(self, *args, **kwargs):
         """Initialization of the calendarEvents model"""

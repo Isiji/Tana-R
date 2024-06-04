@@ -15,7 +15,7 @@ class Functions(BaseModel, Base):
     impact_level = Column(Enum(ImpactLevel), nullable=False)
     function_owner = Column(String(128), nullable=False)
     function_location = Column(String(128), nullable=False)
-    function_contact = Column(String(128), nullable=True)
+    function_contact = Column(Integer, nullable=True)
     function_description = Column(Text, nullable=False)
 
     commitments = relationship("Commitments", back_populates="functions")
