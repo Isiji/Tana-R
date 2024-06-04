@@ -11,6 +11,10 @@ class Offices(BaseModel, Base):
     office_location = Column(String(128), nullable=False)
     office_description = Column(String(128), nullable=False)
     office_contact = Column(Integer, nullable=True)
+
+    users = relationship("users", back_populates="offices")
+    human_resources = relationship("HumanResource", back_populates="office")
+
     def __init__(self, *args, **kwargs):
         """Initialization of the users model"""
         super().__init__(*args, **kwargs)

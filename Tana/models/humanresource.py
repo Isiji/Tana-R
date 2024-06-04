@@ -14,7 +14,7 @@ class HumanResource(BaseModel, Base):
     job_title = Column(String(128), nullable=False)
     employment_date = Column(Date , nullable=False)
     salary = Column(Integer, nullable=False)
-    office = relationship("Office", back_populates="human_resources")
+    office = relationship("Offices", back_populates="human_resources")
     role = Column(Enum('admin', 'employee'))
                   
     def __init__(self, *args, **kwargs):

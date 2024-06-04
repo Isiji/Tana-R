@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """users class module for the users"""
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, Index
+from sqlalchemy import Column, String, Integer, Index, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Enum
@@ -17,12 +17,15 @@ class users(BaseModel, Base, UserMixin):
     phone = Column(Integer, nullable=False)
     ID_No = Column(Integer, nullable=False)
     role = Column(Enum('admin', 'employee'), nullable=False)
+    office_id = Column(Integer, ForeignKey('offices.id'), nullable=False)
     profile_pic = Column(String(255), nullable=False)
 
     diaries = relationship("Diary", back_populates="user")
     human_resources = relationship("HumanResource", uselist=False, back_populates="user")
     tasks_assigned = relationship("Tasks", back_populates="assigned_by_user", foreign_keys="Tasks.assigned_by")
     tasks_assigned_to = relationship("Tasks", back_populates="assigned_to_user", foreign_keys="Tasks.assigned_to")
+    reminders = relationship("Reminder", back_populates="user")
+    offices = relationship("Offices", back_populates="users")
 
     def __init__(self, *args, **kwargs):
         """Initialization of the users model"""

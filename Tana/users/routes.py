@@ -29,10 +29,10 @@ def register():
         db_storage = DBStorage()
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = users(username=form.username.data, email=form.email.data, password=hashed_password)
-        db_storage.add(user)
-        db_storage.commit()
+        db_storage.new(user)
+        db_storage.save()
         flash(f'Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('users.login'))
+        return redirect(url_for('Users.login'))
     return render_template('register.html', title='Register', form=form)
     
 #create route for user to update user information
