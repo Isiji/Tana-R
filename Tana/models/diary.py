@@ -1,22 +1,25 @@
 #!/usr/bin/python3
-"""CalendarEvents class module for the calendarEvents"""
+"""Diary class module for the diary"""
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey,Date
+from sqlalchemy import Column, String, Integer, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-class CalendarEvents(BaseModel, Base):
-    """This class defines the calendarEvents model"""
-    __tablename__ = 'calendarEvents'
-    event_title = Column(String(128), nullable=False)
-    event_description = Column(String(128), nullable=False)
-    event_start_date = Column(Date, nullable=False)
-    event_location = Column(String(128), nullable=False)
+class Diary(BaseModel, Base):
+    """This class defines the diary model"""
+    __tablename__ = 'diary'
+    title = Column(String(128), nullable=False)
+    content = Column(String(128), nullable=False)
+    entry_date = Column(Date, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship("users", back_populates="diaries")
+
     def __init__(self, *args, **kwargs):
-        """Initialization of the calendarEvents model"""
+        """Initialization of the diary model"""
         super().__init__(*args, **kwargs)
 
     def __str__(self):
-        """string represenation of a calendarEvents"""
+        """string represenation of a diary"""
         return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id,
                                          self.__dict__)
+
