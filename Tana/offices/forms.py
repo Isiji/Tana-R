@@ -37,7 +37,7 @@ class OfficeForm(FlaskForm):
 
 
 class LoginOfficeForm(FlaskForm):
-    office_name = StringField('Office Name', validators=[DataRequired()])
+    office_email = StringField('Office email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')

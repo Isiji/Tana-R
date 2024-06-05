@@ -32,8 +32,8 @@ def login():
         user_data = db_storage.all(users)
 
         for office in office_data.values():
-            if office.office_email == form.email.data and bcrypt.check_password_hash(office.password, form.password.data):
-                session['email'] = office.email.data
+            if office.office_email == form.office_email.data and bcrypt.check_password_hash(office.password, form.password.data):
+                session['email'] = office.office_email.data
                 session['password'] = office.password.data
                 login_user(office, remember=form.remember.data)
                 return redirect(url_for('offices.office_dashboard'))
