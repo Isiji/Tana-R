@@ -8,7 +8,7 @@
         <form method="POST" action="{{ url_for('offices.login_office') }}">
             {{ form.hidden_tag() }}
             <div class="form-group">
-                {{ form.office_name.label }} {{ form.office_name(class="form-control") }}
+                {{ form.office_email.label }} {{ form.office_email(class="form-control") }}
             </div>
             <div class="form-group">
                 {{ form.password.label }} {{ form.password(class="form-control") }}

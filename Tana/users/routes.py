@@ -6,10 +6,10 @@ from flask import Blueprint, jsonify, request, render_template, redirect, url_fo
 from Tana.models.members import users
 from Tana.models.roles import UserRole
 from Tana.engine.storage import DBStorage
-from Tana.users.forms import UpdateAccountForm, loginForm, RequestResetForm, ResetPasswordForm, RegistrationForm
+from Tana.users.forms import UpdateAccountForm, RequestResetForm, ResetPasswordForm, RegistrationForm
 from flask_login import login_user, current_user, logout_user, login_required
-from Tana import bcrypt
-
+from Tana import bcrypt, db_storage
+from Tana.models.offices import Offices
 
 Users = Blueprint('Users', __name__)
 
@@ -21,19 +21,6 @@ def home():
     return render_template('home.html')
 
 #create a route for a user to register
-@Users.route('/register', methods=['GET', 'POST'])
-def register():
-    """register route for the user"""
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        db_storage = DBStorage()
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = users(name=form.name.data, email=form.email.data, password=hashed_password, phone=form.phone.data, ID_No=form.ID_No.data, role=form.role.data, office_id=form.office_id.data)
-        db_storage.new(user)
-        db_storage.save()
-        flash(f'Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('Users.login'))
-    return render_template('register.html', title='Register', form=form)
     
 #create route for user to update user information
 @Users.route('/account', methods=['GET', 'POST'])
@@ -53,27 +40,18 @@ def account():
         form.email.data = current_user.email
     return render_template('account.html', title='Account', form=form)    
 
-#create a route for a user to login
-@Users.route('/login', methods=['GET', 'POST'])
-def login():
-    """login route for the user"""
-    if current_user.is_authenticated:
-        return redirect(url_for('Users.home'))
-    form = loginForm()
-    if form.validate_on_submit():
-        db_storage = DBStorage()
-        user = db_storage.get(users, email=form.email.data)
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('Users.home'))
-        else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
-#create a route for a user to logout
-@Users.route('/logout')
-def logout():
-    """logout route for the user"""
-    logout_user()
-    return redirect(url_for('main.home'))
 
+
+
+@Users.route('/register', methods=['GET', 'POST'])
+def register():
+    """register route for the user"""
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = users(name=form.name.data, email=form.email.data, password=hashed_password, phone=form.phone.data, ID_No=form.ID_No.data, role=form.role.data, office_id=form.office_id.data)
+        db_storage.new(user)
+        db_storage.save()
+        flash(f'Your account has been created! You are now able to log in', 'success')
+        return redirect(url_for('main.login'))
+    return render_template('register.html', title='Register', form=form)

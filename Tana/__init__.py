@@ -15,8 +15,8 @@ from Tana.models.base_model import Base
 db_storage = DBStorage()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
-login_manager.login_view = 'Users.login'
-login_manager.login_view = 'offices.login_office'
+login_manager.login_view = 'main.login'
+#login_manager.login_view = 'offices.login_office'
 login_manager.login_message_category = 'info'
 cors = CORS()
 mail = Mail()
@@ -52,6 +52,17 @@ def create_app(config_class=Config):
     from Tana.offices.routes import offices
     from Tana.reminder.routes import reminders
     from Tana.humanresource.routes import humanresource
+    from Tana.main.routes import main
+    from Tana.reminder.routes import reminders
+    from Tana.bodyguards.routes import bodyguards
+    from Tana.secretaries.routes import secretaries
+    from Tana.coordinators.routes import coordinators
+    from Tana.drivers.routes import drivers
+    from Tana.chief_field_officers.routes import chieffieldofficers
+    from Tana.field_officers.routes import fieldofficers
+    from Tana.researchers.routes import researchers
+    from Tana.others.routes import others
+    
 
 
 
@@ -60,6 +71,16 @@ def create_app(config_class=Config):
     app.register_blueprint(offices)
     app.register_blueprint(reminders)
     app.register_blueprint(humanresource)
+    app.register_blueprint(main)
+    app.register_blueprint(bodyguards)
+    app.register_blueprint(secretaries)
+    app.register_blueprint(coordinators)
+    app.register_blueprint(drivers)
+    app.register_blueprint(chieffieldofficers)
+    app.register_blueprint(fieldofficers)
+    app.register_blueprint(researchers)
+    app.register_blueprint(others)
 
+    
     return app
 

@@ -24,7 +24,7 @@ class OfficeForm(FlaskForm):
     office_name = StringField('Office Name', validators=[DataRequired()])
     office_location = StringField('Office Location', validators=[DataRequired()])
     office_description = StringField('Office Description', validators=[DataRequired()])
-    office_contact = StringField('Office Contact', validators=[DataRequired()])
+    office_email = StringField('Office Contact', validators=[DataRequired()])
     office_manager = StringField('Office Manager', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
@@ -35,26 +35,6 @@ class OfficeForm(FlaskForm):
         if office:
             raise ValidationError('That office name is taken. Please choose a different one.')
 
-class RegistrationForm(FlaskForm):
-    name = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    role = StringField('Role', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    phone = StringField('Phone', validators=[DataRequired()])
-    ID_No = StringField('ID_No', validators=[DataRequired()])
-    role = StringField('Role', validators=[DataRequired()])
-    office_id = StringField('Office_id')
-    profile_pic = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
-    submit = SubmitField('Register')
-    def validate_email(self, email):
-        user = db_storage.get(users, email=email.data)
-        if user:
-            raise ValidationError('That email is taken. Please choose a different one.')
-        
-    def validate_office_id(self, office_id):
-        if self.role.data == 'admin' and office_id.data:
-            raise ValidationError('Admins should not have an office id')
 
 class LoginOfficeForm(FlaskForm):
     office_name = StringField('Office Name', validators=[DataRequired()])

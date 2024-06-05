@@ -1,0 +1,59 @@
+{%extends 'layout.html'%}
+{%block title%} Reminders {%endblock%}
+{%block content%}
+
+<div class="container">
+    <p> set reminders</p>
+    <form method="POST" action="{{ url_for('reminders.reminders') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.reminder_name.label }} {{ form.reminder_name(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.reminder_date.label }} {{ form.reminder_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.reminder_time.label }} {{ form.reminder_time(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.reminder_description.label }} {{ form.reminder_description(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.reminder_location.label }} {{ form.reminder_location(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.reminder_contact.label }} {{ form.reminder_contact(class="form-control") }}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Set Reminder</button>
+    </form>
+    <p>View reminders</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Reminder Name</th>
+                <th>Reminder Date</th>
+                <th>Reminder Time</th>
+                <th>Reminder Description</th>
+                <th>Reminder Location</th>
+                <th>Reminder Contact</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reminder in reminders %}
+            <tr>
+                <td>{{ reminder.reminder_name }}</td>
+                <td>{{ reminder.reminder_date }}</td>
+                <td>{{ reminder.reminder_time }}</td>
+                <td>{{ reminder.reminder_description }}</td>
+                <td>{{ reminder.reminder_location }}</td>
+                <td>{{ reminder.reminder_contact }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</div>
+
+{%endblock%}
