@@ -35,6 +35,17 @@ def register():
         return redirect(url_for('Users.login'))
     return render_template('register.html', title='Register', form=form)
     
+#create a route for registering an office
+@Users.route('/register_office', methods=['GET', 'POST'])
+def register_office():
+    """register office route for the user"""
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        db_storage = DBStorage()
+        db_storage.save()
+        flash(f'Your account has been created! You are now able to log in', 'success')
+        return redirect(url_for('Users.login'))
+    return render_template('register_office.html', title='Register Office', form=form)
 #create route for user to update user information
 @Users.route('/account', methods=['GET', 'POST'])
 @login_required

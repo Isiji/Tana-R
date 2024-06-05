@@ -51,3 +51,9 @@ class RegistrationForm(FlaskForm):
     def validate_office_id(self, office_id):
         if self.role.data == 'admin' and office_id.data:
             raise ValidationError('Admins should not have an office id')
+
+class LoginOfficeForm(FlaskForm):
+    office_name = StringField('Office Name', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember = BooleanField('Remember Me')
+    submit = SubmitField('Login')
