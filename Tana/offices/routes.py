@@ -50,8 +50,15 @@ def login_office():
     if form.validate_on_submit():
         office = db_storage.get(Offices, office_name=form.office_name.data)
         if office and bcrypt.check_password_hash(office.password, form.password.data):
-            login_user(office)
-            return redirect(url_for('offices.office'))
+            login_user(office, remember=form.remember.data)
+            return redirect(url_for('offices.office_dashboard'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login_office.html', title='Login Office', form=form)
+
+#create a route for the office dashboard
+@offices.route('/office_dashboard')
+@login_required
+def office_dashboard():
+    """route for the office dashboard"""
+    return render_template('office.html', title='Office Dashboard')

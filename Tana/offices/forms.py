@@ -30,6 +30,10 @@ class OfficeForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register Office')
 
+    def validate_office_name(self, office_name):
+        office = db_storage.get(Offices, office_name=office_name.data)
+        if office:
+            raise ValidationError('That office name is taken. Please choose a different one.')
 
 class RegistrationForm(FlaskForm):
     name = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
@@ -57,3 +61,21 @@ class LoginOfficeForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
+    submit = SubmitField('Update')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = db_storage.get(users, username=username.data)
+            if user:
+                raise ValidationError('That username is taken. Please choose a different one')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = db_storage.get(users, email=email.data)
+            if user:
+                raise ValidationError('That email is taken. Please choose a different one')
