@@ -35,17 +35,6 @@ def register():
         return redirect(url_for('Users.login'))
     return render_template('register.html', title='Register', form=form)
     
-#create a route for registering an office
-@Users.route('/register_office', methods=['GET', 'POST'])
-def register_office():
-    """register office route for the user"""
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        db_storage = DBStorage()
-        db_storage.save()
-        flash(f'Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('Users.login'))
-    return render_template('register_office.html', title='Register Office', form=form)
 #create route for user to update user information
 @Users.route('/account', methods=['GET', 'POST'])
 @login_required
@@ -69,7 +58,7 @@ def account():
 def login():
     """login route for the user"""
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+        return redirect(url_for('Users.home'))
     form = loginForm()
     if form.validate_on_submit():
         db_storage = DBStorage()
@@ -77,11 +66,10 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('main.home'))
+            return redirect(next_page) if next_page else redirect(url_for('Users.home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
-
 #create a route for a user to logout
 @Users.route('/logout')
 def logout():

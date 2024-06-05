@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """users class module for the users"""
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, Index, ForeignKey
+from sqlalchemy import Column, Boolean, String, Integer, Index, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Enum
@@ -19,6 +19,7 @@ class users(BaseModel, Base, UserMixin):
     role = Column(Enum(UserRole), nullable=False)
     office_id = Column(Integer, ForeignKey('offices.id'), nullable=False)
     profile_pic = Column(String(255), nullable=False)
+    is_active = Column(Boolean, default=True)
 
     diaries = relationship("Diary", back_populates="user")
     human_resources = relationship("HumanResource", uselist=False, back_populates="user")
@@ -34,3 +35,15 @@ class users(BaseModel, Base, UserMixin):
     def __str__(self):
         """string representation of a user"""
         return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+
+    def is_authenticated(self):
+        return True
+    
+    def is_active(self):
+        return True
+    
+    def is_anonymous(self):
+        return False
+    
+    def get_id(self):
+        return str(self.id)

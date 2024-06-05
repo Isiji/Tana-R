@@ -15,7 +15,8 @@ from Tana.models.base_model import Base
 db_storage = DBStorage()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
-login_manager.login_view = 'users.login'
+login_manager.login_view = 'Users.login'
+login_manager.login_view = 'offices.login_office'
 login_manager.login_message_category = 'info'
 cors = CORS()
 mail = Mail()
@@ -23,7 +24,14 @@ jwt = JWTManager()
 @login_manager.user_loader
 def load_user(users):
     """Load user function"""
-    return db_storage.get(users, users.id)
+    user = db_storage.get_user(users)
+    if user:
+        return user
+    else:
+        office = db_storage.get_office(users)
+        if office:
+            return office
+    return None
 
 
 

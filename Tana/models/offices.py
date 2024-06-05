@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Users class for the users"""
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, Boolean, String, Integer
 from sqlalchemy.orm import relationship
 
 class Offices(BaseModel, Base):
@@ -12,6 +12,8 @@ class Offices(BaseModel, Base):
     office_description = Column(String(128), nullable=False)
     office_manager = Column(String(128), nullable=False)
     office_phone = Column(Integer, nullable=True)
+    password = Column(String(128), nullable=False)
+    is_active = Column(Boolean, default=True)
 
     users = relationship("users", back_populates="offices")
     human_resources = relationship("HumanResource", back_populates="office")
@@ -24,3 +26,15 @@ class Offices(BaseModel, Base):
         """string represenation of a user"""
         return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id,
                                          self.__dict__)
+    
+    def is_authenticated(self):
+        return True
+    
+    def is_active(self):
+        return True
+    
+    def is_anonymous(self):
+        return False
+    
+    def get_id(self):
+        return str(self.id)

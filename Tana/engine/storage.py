@@ -69,7 +69,22 @@ class DBStorage:
             self.__session.commit()
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
-        
+    
+    def get_user(self, user):
+        """Returns the user object"""
+        try:
+            query_result = self.__session.query(users).filter_by(email=user).first()
+            return query_result
+        except SQLAlchemyError as e:
+            print("An Error Occured:", e)
+
+    def get_office(self, office):
+        """Returns the office object"""
+        try:
+            query_result = self.__session.query(Offices).filter_by(office_name=office).first()
+            return query_result
+        except SQLAlchemyError as e:
+            print("An Error Occured:", e)
     def get(self, cls, **kwargs):
         """Returns the object based on the class and keyword arguments"""
         try:
