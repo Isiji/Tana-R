@@ -6,17 +6,17 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Enum
 from flask_login import UserMixin
+from Tana.models.roles import UserRole
 
 class users(BaseModel, Base, UserMixin):
     """This class defines the users model"""
     __tablename__ = 'users'
-    user_id = Column(Integer, primary_key=True, index=True)
     name = Column(String(128), nullable=False)
     email = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)
     phone = Column(Integer, nullable=False)
     ID_No = Column(Integer, nullable=False)
-    role = Column(Enum('admin', 'employee'), nullable=False)
+    role = Column(Enum(UserRole), nullable=False)
     office_id = Column(Integer, ForeignKey('offices.id'), nullable=False)
     profile_pic = Column(String(255), nullable=False)
 

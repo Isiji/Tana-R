@@ -10,4 +10,7 @@ class UserRole(PyEnum):
     BODYGUARD = "bodyguard"
     RESEACHER = "researcher"
     COORDINATOR = "coordinator"
+    CHIEF_FIELD_OFFICER = "chief field officer"
+    FIELD_OFFICER = "field officer"
+    OTHER = "other"
     

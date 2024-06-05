@@ -10,6 +10,7 @@ class Offices(BaseModel, Base):
     office_name = Column(String(128), nullable=False)
     office_location = Column(String(128), nullable=False)
     office_description = Column(String(128), nullable=False)
+    office_manager = Column(String(128), nullable=False)
     office_contact = Column(Integer, nullable=True)
 
     users = relationship("users", back_populates="offices")

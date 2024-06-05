@@ -21,9 +21,9 @@ cors = CORS()
 mail = Mail()
 jwt = JWTManager()
 @login_manager.user_loader
-def load_user(user_id):
-    """Loads the user"""
-    return db_storage.get('User', user_id)
+def load_user(users):
+    """Load user function"""
+    return db_storage.get(users, users.id)
 
 
 
