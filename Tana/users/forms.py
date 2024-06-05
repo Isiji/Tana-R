@@ -14,10 +14,15 @@ from Tana.models.roles import UserRole
 class RegistrationForm(FlaskForm):
     name = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    role = StringField('Role', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    phone = StringField('Phone', validators=[DataRequired()])
+    ID_No = StringField('ID_No', validators=[DataRequired()])
+    role = StringField('Role', validators=[DataRequired()])
+    office_id = StringField('Office_id', validators=[DataRequired()])
+    profile_pic = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
     submit = SubmitField('Register')
-
     def validate_email(self, email):
         db_storage = DBStorage()
         user = db_storage.get(users, email=email.data)

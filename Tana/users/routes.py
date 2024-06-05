@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request, render_template, redirect, url_fo
 from Tana.models.members import users
 from Tana.models.roles import UserRole
 from Tana.engine.storage import DBStorage
-from Tana.users.forms import RegistrationForm, UpdateAccountForm, loginForm, RequestResetForm, ResetPasswordForm
+from Tana.users.forms import UpdateAccountForm, loginForm, RequestResetForm, ResetPasswordForm, RegistrationForm
 from flask_login import login_user, current_user, logout_user, login_required
 from Tana import bcrypt
 
