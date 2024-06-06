@@ -32,16 +32,16 @@ def login():
         user_data = db_storage.all(users)
 
         for office in office_data.values():
-            if office.office_email == form.office_email.data and bcrypt.check_password_hash(office.password, form.password.data):
-                session['email'] = office.office_email.data
-                session['password'] = office.password.data
+            if office.email == form.email.data and bcrypt.check_password_hash(office.password, form.password.data):
+                session['email'] = office.email
+                session['password'] = office.password
                 login_user(office, remember=form.remember.data)
                 return redirect(url_for('offices.office_dashboard'))
 
         for user in user_data.values():
             if user.email == form.email.data and bcrypt.check_password_hash(user.password, form.password.data):
-                session['email'] = user.email.data
-                session['password'] = user.password.data
+                session['email'] = user.email
+                session['password'] = user.password
                 login_user(user, remember=form.remember.data)
 
                 if user.role == 'admin':

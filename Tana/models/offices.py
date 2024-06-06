@@ -11,7 +11,7 @@ class Offices(BaseModel, Base):
     office_location = Column(String(128), nullable=False)
     office_description = Column(String(128), nullable=False)
     office_manager = Column(String(128), nullable=False)
-    office_email = Column(String(128), nullable=False)
+    email = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)
     is_active = Column(Boolean, default=True)
 

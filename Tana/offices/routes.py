@@ -17,7 +17,7 @@ def create_office():
     form = OfficeForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        office = Offices(office_name=form.office_name.data, office_location=form.office_location.data, office_description=form.office_description.data, office_email=form.office_email.data, office_manager=form.office_manager.data, password=hashed_password)
+        office = Offices(office_name=form.office_name.data, office_location=form.office_location.data, office_description=form.office_description.data, email=form.email.data, office_manager=form.office_manager.data, password=hashed_password)
         db_storage.new(office)
         db_storage.save()
         flash(f'Your office has been created! You are now able to log in', 'success')

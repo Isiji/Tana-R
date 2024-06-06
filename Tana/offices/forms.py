@@ -24,7 +24,7 @@ class OfficeForm(FlaskForm):
     office_name = StringField('Office Name', validators=[DataRequired()])
     office_location = StringField('Office Location', validators=[DataRequired()])
     office_description = StringField('Office Description', validators=[DataRequired()])
-    office_email = StringField('Office Contact', validators=[DataRequired()])
+    email = StringField('Office email', validators=[DataRequired()])
     office_manager = StringField('Office Manager', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
