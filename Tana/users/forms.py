@@ -1,7 +1,7 @@
 #!/bin/usr/python3
 """Forms module for the users"""
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from Tana.models.members import users
 from flask_login import current_user, UserMixin, login_user, logout_user, login_required, LoginManager
@@ -19,7 +19,7 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     phone = StringField('Phone', validators=[DataRequired()])
     ID_No = StringField('ID_No', validators=[DataRequired()])
-    role = StringField('Role', validators=[DataRequired()])
+    role = SelectField('Role', choices=[('super admin', 'Super Admin'), ('admin', 'Admin'), ('driver', 'Driver'), ('bodyguard', 'Bodyguard'), ('researcher', 'Researcher'), ('coordinator', 'Coordinator'), ('chief field officer', 'Chief Field Officer'), ('field officer', 'Field Officer'), ('other', 'Other')])
     office_id = StringField('Office_id')
     submit = SubmitField('Register')
     def validate_email(self, email):

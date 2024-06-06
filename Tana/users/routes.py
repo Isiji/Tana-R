@@ -43,15 +43,23 @@ def account():
 
 
 
+#create a route for registering a user and assigning a role
 @Users.route('/register', methods=['GET', 'POST'])
+@login_required
 def register():
     """register route for the user"""
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = users(name=form.name.data, email=form.email.data, password=hashed_password, phone=form.phone.data, ID_No=form.ID_No.data, role=form.role.data, office_id=form.office_id.data)
-        db_storage.new(user)
-        db_storage.save()
-        flash(f'Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('main.login'))
-    return render_template('register.html', title='Register', form=form)
+    if isinstance(current_user,  Offices):
+        form = RegistrationForm()
+        if form.validate_on_submit():
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            office = current_user
+            user = users(name=form.name.data, email=form.email.data, password=hashed_password, phone=form.phone.data, ID_No=form.ID_No.data, role=form.role.data, office_id=office.id)
+            db_storage.new(user)
+            db_storage.save()
+            flash(f'Account created for {form.name.data}!', 'success')
+            return redirect(url_for('users.home'))
+        return render_template('register.html', title='Register', form=form)
+    else:
+        flash(f'You are not allowed to register a user', 'danger')
+        return redirect(url_for('main,login'))
+            
