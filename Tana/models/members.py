@@ -18,7 +18,6 @@ class users(BaseModel, Base, UserMixin):
     ID_No = Column(Integer, nullable=False)
     role = Column(Enum(UserRole), nullable=False)
     office_id = Column(Integer, ForeignKey('offices.id'), nullable=False)
-    profile_pic = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True)
 
     diaries = relationship("Diary", back_populates="user")

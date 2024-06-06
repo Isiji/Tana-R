@@ -21,7 +21,6 @@ class RegistrationForm(FlaskForm):
     ID_No = StringField('ID_No', validators=[DataRequired()])
     role = StringField('Role', validators=[DataRequired()])
     office_id = StringField('Office_id')
-    profile_pic = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
     submit = SubmitField('Register')
     def validate_email(self, email):
         db_storage = DBStorage()

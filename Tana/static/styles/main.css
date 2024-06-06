@@ -6,6 +6,7 @@ body {
     background: whitesmoke;
     color: #333;
     margin-top: 10rem; /* Adjusted to account for the fixed header */
+    margin-bottom: 10rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -90,7 +91,7 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid #dddddd;
     border-radius: 7px;
     margin-top: 40px; /* Lowering the sidebar */
-    margin-bottom: 20px;
+    margin-bottom: 40px;
 }
 
 .content-section h3 {
@@ -113,7 +114,7 @@ footer {
     color: white;
     text-align: center;
     padding: 10px 0;
-    position: absolute;
+    position: fixed;
     width: 100%;
     bottom: 0;
 }
