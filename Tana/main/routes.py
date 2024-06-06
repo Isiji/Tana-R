@@ -27,44 +27,42 @@ def login():
     form = loginForm()
 
     if form.validate_on_submit():
-        office_data = db_storage.all(Offices)
-
-        user_data = db_storage.all(users)
-
-        for office in office_data.values():
-            if office.email == form.email.data and bcrypt.check_password_hash(office.password, form.password.data):
-                session['email'] = office.email
-                session['password'] = office.password
-                login_user(office, remember=form.remember.data)
-                return redirect(url_for('offices.office_dashboard'))
-
-        for user in user_data.values():
-            if user.email == form.email.data and bcrypt.check_password_hash(user.password, form.password.data):
-                session['email'] = user.email
-                session['password'] = user.password
-                login_user(user, remember=form.remember.data)
-
-                if user.role == 'admin':
+        
+        user_data = {}
+        for model_class in [users, Offices]:
+            user_data.update(db_storage.all(model_class))
+        for appuser in user_data.values():
+            if appuser.email == form.email.data and bcrypt.check_password_hash(appuser.password, form.password.data):
+                session['email'] = form.email.data
+                session['password'] = form.password.data
+                session['user_id'] = appuser.id
+                
+                login_user(appuser, remember=form.remember.data)
+                
+                if isinstance(appuser, Offices):
+                    return redirect(url_for('offices.office_dashboard'))
+                
+                elif appuser.role == 'admin':
                     return redirect(url_for('offices.admin_dashboard'))
-                elif user.role == 'driver':
+                elif appuser.role == 'driver':
                     return redirect(url_for('drivers.driver_dashboard'))
-                elif user.role == 'manager':
+                elif appuser.role == 'manager':
                     return redirect(url_for('managers.manager_dashboard'))
-                elif user.role == 'bodyguard':
+                elif appuser.role == 'bodyguard':
                     return redirect(url_for('bodyguards.bodyguard_dashboard'))
-                elif user.role == 'reseacher':
+                elif appuser.role == 'reseacher':
                     return redirect(url_for('reseachers.reseacher_dashboard'))
-                elif user.role == 'secretary':
+                elif appuser.role == 'secretary':
                     return redirect(url_for('secretaries.secretary_dashboard'))
-                elif user.role == 'chief_field_officer':
+                elif appuser.role == 'chief_field_officer':
                     return redirect(url_for('chieffieldofficers.chieffieldofficer_dashboard'))
-                elif user.role == 'chief_security_officer':
+                elif appuser.role == 'chief_security_officer':
                     return redirect(url_for('chiefsecurityofficers.chiefsecurityofficer_dashboard'))
-                elif user.role == 'cordinator':
+                elif appuser.role == 'cordinator':
                     return redirect(url_for('cordinators.cordinator_dashboard'))
-                elif user.role == 'field_officer':
+                elif appuser.role == 'field_officer':
                     return redirect(url_for('fieldofficers.fieldofficer_dashboard'))
-                elif user.role == 'other':
+                elif appuser.role == 'other':
                     return redirect(url_for('others.other_dashboard'))
                 else:
                     return redirect(url_for('main.home'))
