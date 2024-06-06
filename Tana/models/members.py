@@ -7,7 +7,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Enum
 from flask_login import UserMixin
 from Tana.models.roles import UserRole
-from Tana import db_storage
 
 class users(BaseModel, Base, UserMixin):
     """This class defines the users model"""
@@ -48,9 +47,44 @@ class users(BaseModel, Base, UserMixin):
     def get_id(self):
         return str(self.id)
     
+    def get_user_by_email(self, email):
+        """get a user by email"""
+        return self.query.filter_by(email=email).first()
+    
+    def get_user_by_id(self, id):
+        """get a user by id"""
+        return self.query.filter_by(id=id).first()
+    
+    def has_role(self, role):
+        """check if a user has a role"""
+        return self.role == role
+    
+    @staticmethod
+    def create_user(name, email, password, phone, ID_No, role, office_id):
+        """creates a user"""
+        from Tana import db_storage
+
+        if role not in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.MANAGER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value]:
+            raise ValueError("Invalid role")
+        
+        user = users(
+            name=name,
+            email=email,
+            password=password,
+            phone=phone,
+            ID_No=ID_No,
+            role=role,
+            office_id=office_id,
+            is_active=True
+            )
+        
+        db_storage.new(user)
+        db_storage.save()
+        return user
     @staticmethod
     def create_super_admin():
         """creates a superadmin user"""
+        from Tana import db_storage
         super_admin = users(
             name="Ziggy",
             email="ziggy@gmail.com",
@@ -66,4 +100,10 @@ class users(BaseModel, Base, UserMixin):
         db_storage.save()
         return super_admin
     
-    
+    def can_register_user(self, role):
+        """checks if the current user can register a user"""
+        if self.has_role(UserRole.SUPER_ADMIN.value):
+            return role in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.MANAGER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value]
+        elif self.has_role(UserRole.ADMIN.value):
+            return role == UserRole.USER.value
+        return False

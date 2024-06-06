@@ -48,18 +48,30 @@ def account():
 @login_required
 def register():
     """register route for the user"""
-    if isinstance(current_user,  Offices):
-        form = RegistrationForm()
-        if form.validate_on_submit():
-            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            office = current_user
-            user = users(name=form.name.data, email=form.email.data, password=hashed_password, phone=form.phone.data, ID_No=form.ID_No.data, role=form.role.data, office_id=office.id)
-            db_storage.new(user)
-            db_storage.save()
-            flash(f'Account created for {form.name.data}!', 'success')
-            return redirect(url_for('users.home'))
-        return render_template('register.html', title='Register', form=form)
-    else:
-        flash(f'You are not allowed to register a user', 'danger')
-        return redirect(url_for('main,login'))
+    if request.method == 'POST':
+        if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value):
+            name = request.form['name']
+            email = request.form['email']
+            password = request.form['password']
+            phone = request.form['phone']
+            ID_No = request.form['ID_No']
+            role = request.form['role']
+
+            if current_user.has_role(UserRole.ADMIN.value) and role == UserRole.USER.value:
+                flash('You do not have permission to register a user', 'danger')
+                return redirect(url_for('users.register'))
             
+            office_id = current_user.office_id if current_user.has_role(UserRole.ADMIN.value) else request.form['office_id']
+
+            try:
+                users.create_user(name, email, password, phone, ID_No, role, office_id)
+                flash('User created successfully', 'success')
+                return redirect(url_for('offices.office_dashboard'))
+            except ValueError as e:
+                flash(str(e), 'danger')
+                return redirect(url_for('users.register'))
+        else:
+            flash('You do not have permission to register a user', 'danger')
+            return redirect(url_for('users.register'))
+    return render_template('register.html', title='Register')
+
