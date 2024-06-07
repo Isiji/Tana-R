@@ -26,8 +26,6 @@ class OfficeForm(FlaskForm):
     office_description = StringField('Office Description', validators=[DataRequired()])
     email = StringField('Office email', validators=[DataRequired()])
     office_manager = StringField('Office Manager', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register Office')
 
     def validate_office_name(self, office_name):
@@ -38,7 +36,6 @@ class OfficeForm(FlaskForm):
 
 class LoginOfficeForm(FlaskForm):
     office_email = StringField('Office email', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 

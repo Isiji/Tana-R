@@ -42,6 +42,8 @@ def login():
                 if isinstance(appuser, Offices):
                     return redirect(url_for('offices.office_dashboard'))
                 
+                elif appuser.role == 'super_admin':
+                    return redirect(url_for('Users.admin_dashboard'))
                 elif appuser.role == 'admin':
                     return redirect(url_for('offices.admin_dashboard'))
                 elif appuser.role == 'driver':

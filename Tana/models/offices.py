@@ -12,9 +12,6 @@ class Offices(BaseModel, Base):
     office_description = Column(String(128), nullable=False)
     office_manager = Column(String(128), nullable=False)
     email = Column(String(128), nullable=False)
-    password = Column(String(128), nullable=False)
-    is_active = Column(Boolean, default=True)
-
     users = relationship("users", back_populates="offices")
     human_resources = relationship("HumanResource", back_populates="office")
 
