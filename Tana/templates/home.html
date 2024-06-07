@@ -17,5 +17,14 @@
 <div>
     <p>Create your office here</p>
     <a href="{{ url_for('offices.create_office') }}" class="btn btn-primary">Create Office</a>
+
 </div>
+<div>
+    <p>Register here</p>
+    <a href="{{ url_for('Users.register') }}" class="btn btn-primary">Register</a>
+</div>
+<div>
+    <p>acces your offices here</p>
+    <a href="{{ url_for('offices.office', office_name='OfficeName') }}" class="btn btn-primary">OfficeName</a>
+
 {% endblock %}

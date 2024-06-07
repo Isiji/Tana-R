@@ -5,7 +5,7 @@ body {
     font-family: 'Poppins', Arial, sans-serif;
     background: whitesmoke;
     color: #333;
-    margin-top: 10rem; /* Adjusted to account for the fixed header */
+    margin-top: 12rem; /* Adjusted to account for the fixed header */
     margin-bottom: 10rem;
 }
 
@@ -23,7 +23,7 @@ h1, h2, h3, h4, h5, h6 {
     position: fixed;
     top: 0;
     width: 100%;
-    height: 115px;
+    height: 130px;
     z-index: 1000; /* Ensure it stays on top */
 }
 
@@ -165,7 +165,7 @@ footer {
 
 .content .textBox a {
     display: inline-block;
-    margin-top: 15px;
+    margin-top: 7px;
     padding: 8px 20px;
     background: burlywood;
     color: royalblue;
