@@ -45,23 +45,23 @@ def account():
 
 #create a route for registering a user and assigning a role
 @Users.route('/register', methods=['GET', 'POST'])
-@login_required
 def register():
     """register route for the user"""
-    if request.method == 'POST':
+    form = RegistrationForm()
+    if form.validate_on_submit():
         if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value):
-            name = request.form['name']
-            email = request.form['email']
-            password = request.form['password']
-            phone = request.form['phone']
-            ID_No = request.form['ID_No']
-            role = request.form['role']
-
+            name = form.name.data
+            email = form.email.data
+            password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            phone = form.phone.data
+            ID_No = form.ID_No.data
+            role = form.role.data
+            
             if current_user.has_role(UserRole.ADMIN.value) and role == UserRole.USER.value:
                 flash('You do not have permission to register a user', 'danger')
                 return redirect(url_for('users.register'))
             
-            office_id = current_user.office_id if current_user.has_role(UserRole.ADMIN.value) else request.form['office_id']
+            office_id = current_user.office_id if current_user.has_role(UserRole.ADMIN.value) else form.office_id.data
 
             try:
                 users.create_user(name, email, password, phone, ID_No, role, office_id)
@@ -73,5 +73,4 @@ def register():
         else:
             flash('You do not have permission to register a user', 'danger')
             return redirect(url_for('users.register'))
-    return render_template('register.html', title='Register')
-
+    return render_template('register.html', title='Register', form=form)
