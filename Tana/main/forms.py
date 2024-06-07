@@ -11,9 +11,3 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired, FileStorage, Fi
 from Tana.models.offices import Offices
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, IntegerField
 
-#create a class to login a user
-class loginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember = BooleanField('Remember Me')
-    submit = SubmitField('Login')

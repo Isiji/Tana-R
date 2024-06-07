@@ -5,8 +5,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from Tana.models.members import users
 from Tana.models.roles import UserRole
 from Tana.engine.storage import DBStorage
-from Tana.users.forms import UpdateAccountForm, RequestResetForm, ResetPasswordForm, RegistrationForm
-from flask_login import current_user, login_required
+from Tana.users.forms import UpdateAccountForm, RequestResetForm, LoginForm,ResetPasswordForm, RegistrationForm
+from flask_login import current_user, login_required, login_user, logout_user
 from Tana import bcrypt
 
 Users = Blueprint('Users', __name__)
@@ -48,13 +48,13 @@ def admin_dashboard():
             return redirect(url_for('main.home'))
     else:
         flash('You need to be logged in to access this page', 'danger')
-        return redirect(url_for('main.login'))
+        return redirect(url_for('Users.login'))
     
 
 @Users.route('/register', methods=['GET', 'POST'],strict_slashes=False)
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -68,5 +68,21 @@ def register():
             office_id=form.office_id.data if form.office_id.data else None
         )
         flash(f'Account created for {form.name.data}!', 'success')
-        return redirect(url_for('main.login'))
+        return redirect(url_for('Users.login'))
     return render_template('register.html', title='Register', form=form)
+
+@Users.route('/login', methods=['GET', 'POST'])
+def login():
+    from Tana import db_storage
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = db_storage.get(users, email=form.email.data)
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('main.home'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('login.html', title='Login', form=form)

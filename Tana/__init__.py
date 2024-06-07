@@ -16,7 +16,7 @@ from Tana.models.members import users
 db_storage = DBStorage()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
-login_manager.login_view = 'main.login'
+login_manager.login_view = 'Users.login'
 #login_manager.login_view = 'offices.login_office'
 login_manager.login_message_category = 'info'
 cors = CORS()

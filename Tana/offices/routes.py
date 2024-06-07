@@ -48,7 +48,7 @@ def office_dashboard():
             
     else:
         logging.error('Office not found. error number 2')
-        return redirect(url_for('main.login'))
+        return redirect(url_for('Users.login'))
     
 #create a route for accesing a specific office by name of the office
 @offices.route('/office/<string:office_name>', methods=['POST', 'GET'], strict_slashes=False)

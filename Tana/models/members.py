@@ -49,7 +49,7 @@ class users(BaseModel, Base, UserMixin):
     
     def get_user_by_email(self, email):
         """get a user by email"""
-        return self.query.filter_by(email=email).first()
+        return users.query.filter_by(email=email).first()
     
     def get_user_by_id(self, id):
         """get a user by id"""
