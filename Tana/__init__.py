@@ -11,6 +11,7 @@ from flask_migrate import Migrate
 from Tana.config import Config
 from Tana.engine.storage import DBStorage
 from Tana.models.base_model import Base
+from Tana.models.members import users
 
 db_storage = DBStorage()
 bcrypt = Bcrypt()
@@ -35,6 +36,8 @@ def load_user(users):
 
 
 
+
+
 def create_app(config_class=Config):
     """Creates the app"""
     app = Flask(__name__, static_folder='static')
@@ -46,6 +49,13 @@ def create_app(config_class=Config):
     cors.init_app(app)
     mail.init_app(app)
     jwt.init_app(app)
+    
+    with app.app_context():
+       db_storage.reload()
+       
+       if not db_storage.get_user('ziggy@gmail.com'):
+           users.create_super_admin()
+
 
     from Tana.users.routes import Users
     from Tana.functions.routes import functions
@@ -80,7 +90,8 @@ def create_app(config_class=Config):
     app.register_blueprint(fieldofficers)
     app.register_blueprint(researchers)
     app.register_blueprint(others)
-
+    
+   
     
     return app
 

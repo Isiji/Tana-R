@@ -7,17 +7,18 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Enum
 from flask_login import UserMixin
 from Tana.models.roles import UserRole
+import hashlib
 
 class users(BaseModel, Base, UserMixin):
     """This class defines the users model"""
     __tablename__ = 'users'
     name = Column(String(128), nullable=False)
-    email = Column(String(128), nullable=False)
+    email = Column(String(128), nullable=False, unique=True)
     password = Column(String(128), nullable=False)
     phone = Column(Integer, nullable=False)
     ID_No = Column(Integer, nullable=False)
     role = Column(String(128), nullable=False)
-    office_id = Column(Integer, ForeignKey('offices.id'), nullable=False)
+    office_id = Column(Integer, ForeignKey('offices.id'), nullable=True)
     is_active = Column(Boolean, default=True)
 
     diaries = relationship("Diary", back_populates="user")
@@ -85,10 +86,11 @@ class users(BaseModel, Base, UserMixin):
     def create_super_admin():
         """creates a superadmin user"""
         from Tana import db_storage
+        password_hash = hashlib.sha256("password".encode()).hexdigest()
         super_admin = users(
             name="Ziggy",
             email="ziggy@gmail.com",
-            password="password",
+            password=password_hash,
             phone=1234,
             ID_No=1234,
             role=UserRole.SUPER_ADMIN.value,
