@@ -7,7 +7,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Enum
 from flask_login import UserMixin
 from Tana.models.roles import UserRole
-import hashlib
 
 class users(BaseModel, Base, UserMixin):
     """This class defines the users model"""
@@ -85,8 +84,8 @@ class users(BaseModel, Base, UserMixin):
     @staticmethod
     def create_super_admin():
         """creates a superadmin user"""
-        from Tana import db_storage
-        password_hash = hashlib.sha256("password".encode()).hexdigest()
+        from Tana import db_storage, bcrypt
+        password_hash = bcrypt.generate_password_hash("password").decode('utf-8')
         super_admin = users(
             name="Ziggy",
             email="ziggy@gmail.com",
