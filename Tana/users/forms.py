@@ -28,7 +28,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('That email is taken. Please choose a different one.')
     
     def validate_office_id(self, office_id):
-        if self.role.data == UserRole.ADMIN.value and office_id.data:
+        if self.role.data == UserRole.SUPER_ADMIN.value and office_id.data:
             raise ValidationError('Admins should not have an office ID.')            
 class UpdateAccountForm(FlaskForm):
     name = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
