@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from Tana.models.members import users
 from flask_login import current_user, UserMixin, login_user, logout_user, login_required, LoginManager
 from flask_wtf.file import FileField, FileAllowed
-from Tana.engine.storage import DBStorage
+from Tana import bcrypt, db_storage
 from Tana.models.roles import UserRole
 
 
@@ -14,24 +14,22 @@ from Tana.models.roles import UserRole
 class RegistrationForm(FlaskForm):
     name = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    role = StringField('Role', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     phone = StringField('Phone', validators=[DataRequired()])
-    ID_No = StringField('ID_No', validators=[DataRequired()])
-    role = SelectField('Role', choices=[('super admin', 'Super Admin'), ('admin', 'Admin'), ('driver', 'Driver'), ('bodyguard', 'Bodyguard'), ('researcher', 'Researcher'), ('coordinator', 'Coordinator'), ('chief field officer', 'Chief Field Officer'), ('field officer', 'Field Officer'), ('other', 'Other')])
-    office_id = StringField('Office_id')
+    ID_No = StringField('ID No', validators=[DataRequired()])
+    role = SelectField('Role', choices=[(role.value, role.name.replace('_', ' ').title()) for role in UserRole], validators=[DataRequired()])
+    office_id = StringField('Office ID', validators=[])
     submit = SubmitField('Register')
+
     def validate_email(self, email):
-        db_storage = DBStorage()
         user = db_storage.get(users, email=email.data)
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
-        
+    
     def validate_office_id(self, office_id):
-        if self.role.data == 'admin' and office_id.data:
-            raise ValidationError('Admins should not have an office id')
-            
+        if self.role.data == UserRole.ADMIN.value and office_id.data:
+            raise ValidationError('Admins should not have an office ID.')            
 class UpdateAccountForm(FlaskForm):
     name = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -40,7 +38,6 @@ class UpdateAccountForm(FlaskForm):
 
     def validate_email(self, email):
         if email.data != current_user.email:
-            db_storage = DBStorage()
             user = db_storage.get(users, email=email.data)
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
@@ -51,7 +48,6 @@ class RequestResetForm(FlaskForm):
     submit = SubmitField('Request Password Reset')
 
     def validate_email(self, email):
-        db_storage = DBStorage()
         user = db_storage.get(users, email=email.data)
         if user is None:
             raise ValidationError('There is no account with that email. You must register first.')

@@ -36,67 +36,6 @@ def account():
         form.email.data = current_user.email
     return render_template('account.html', title='Account', form=form)
 
-# create a route for registering a user and assigning a role
-@Users.route('/register', methods=['GET', 'POST'])
-def register():
-    """register route for the user"""
-    form = RegistrationForm()
-
-    if current_user.is_authenticated:
-        if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value):
-            if form.validate_on_submit():
-                name = form.name.data
-                email = form.email.data
-                password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-                phone = form.phone.data
-                ID_No = form.ID_No.data
-                role = form.role.data
-
-                if current_user.has_role(UserRole.ADMIN.value) and role == UserRole.USER.value:
-                    flash('You do not have permission to register a user', 'danger')
-                    return redirect(url_for('Users.register'))
-
-                office_id = current_user.office_id if current_user.has_role(UserRole.ADMIN.value) else form.office_id.data
-
-                try:
-                    users.create_user(name, email, password, phone, ID_No, role, office_id)
-                    flash('User created successfully', 'success')
-                    return redirect(url_for('offices.office_dashboard'))
-                except ValueError as e:
-                    flash(str(e), 'danger')
-                    return redirect(url_for('Users.register'))
-            return render_template('register.html', title='Register', form=form)
-    else:
-        flash('You need to be logged in to register a user', 'danger')
-        return redirect(url_for('main.login'))
-
-    if form.validate_on_submit():
-        if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value):
-            name = form.name.data
-            email = form.email.data
-            password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            phone = form.phone.data
-            ID_No = form.ID_No.data
-            role = form.role.data
-
-            if current_user.has_role(UserRole.ADMIN.value) and role == UserRole.USER.value:
-                flash('You do not have permission to register a user', 'danger')
-                return redirect(url_for('Users.register'))
-
-            office_id = current_user.office_id if current_user.has_role(UserRole.ADMIN.value) else form.office_id.data
-
-            try:
-                users.create_user(name, email, password, phone, ID_No, role, office_id)
-                flash('User created successfully', 'success')
-                return redirect(url_for('offices.office_dashboard'))
-            except ValueError as e:
-                flash(str(e), 'danger')
-                return redirect(url_for('Users.register'))
-        else:
-            flash('You do not have permission to register a user', 'danger')
-            return redirect(url_for('Users.register'))
-    return render_template('register.html', title='Register', form=form)
-
 #create route for admin dashboard
 @Users.route('/admin_dashboard', methods=['POST', 'GET'], strict_slashes=False)
 def admin_dashboard():
@@ -110,3 +49,24 @@ def admin_dashboard():
     else:
         flash('You need to be logged in to access this page', 'danger')
         return redirect(url_for('main.login'))
+    
+
+@Users.route('/register', methods=['GET', 'POST'],strict_slashes=False)
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = users.create_user(
+            name=form.name.data,
+            email=form.email.data,
+            password=hashed_password,
+            phone=form.phone.data,
+            ID_No=form.ID_No.data,
+            role=form.role.data,
+            office_id=form.office_id.data if form.office_id.data else None
+        )
+        flash(f'Account created for {form.name.data}!', 'success')
+        return redirect(url_for('main.login'))
+    return render_template('register.html', title='Register', form=form)

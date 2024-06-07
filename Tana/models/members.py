@@ -64,7 +64,7 @@ class users(BaseModel, Base, UserMixin):
         """creates a user"""
         from Tana import db_storage
 
-        if role not in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.MANAGER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value]:
+        if role not in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value]:
             raise ValueError("Invalid role")
         
         user = users(
