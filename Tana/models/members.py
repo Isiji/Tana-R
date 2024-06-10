@@ -2,7 +2,7 @@
 """users class module for the users"""
 from Tana.models.base_model import BaseModel, Base
 from sqlalchemy import Column, Boolean, String, Integer, Index, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Enum
 from flask_login import UserMixin
