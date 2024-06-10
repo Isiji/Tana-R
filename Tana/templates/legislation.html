@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% block title %}Legislation{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Legislation</h2>
+    <ul>
+        <li><a href="{{ url_for('functions.legislation.bills') }}">Bills</a></li>
+        <li><a href="{{ url_for('functions.legislation.motions') }}">Motions</a></li>
+        <li><a href="{{ url_for('functions.legislation.statements') }}">Statements</a></li>
+        <li><a href="{{ url_for('functions.legislation.questions') }}">Questions</a></li>
+    </ul>
+</div>
+{% endblock %}

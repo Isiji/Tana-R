@@ -1,5 +1,5 @@
-{% extends 'layout.html'%}
-{% block title %} Home {% endblock %}
+{% extends 'layout.html' %}
+{% block title %}Home{% endblock %}
 {% block content %}
 <div class="container">
     <h1>Welcome to Tana River Senate Office</h1>
@@ -17,14 +17,17 @@
 <div>
     <p>Create your office here</p>
     <a href="{{ url_for('offices.create_office') }}" class="btn btn-primary">Create Office</a>
-
 </div>
 <div>
     <p>Register here</p>
-    <a href="{{ url_for('Users.register') }}" class="btn btn-primary">Register</a>
+    <a href="{{ url_for('users.register') }}" class="btn btn-primary">Register</a>
 </div>
 <div>
-    <p>acces your offices here</p>
+    <p>Access your offices here</p>
     <a href="{{ url_for('offices.office', office_name='OfficeName') }}" class="btn btn-primary">OfficeName</a>
-
+</div>
+<div>
+    <p>Functions</p>
+    <a href="{{ url_for('functions') }}" class="btn btn-primary">Functions</a>
+</div>
 {% endblock %}

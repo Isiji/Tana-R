@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% block title %}Functions{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Functions</h2>
+    <ul>
+        <li><a href="{{ url_for('functions.oversight') }}">Oversight</a></li>
+        <li><a href="{{ url_for('functions.legislation') }}">Legislation</a></li>
+        <li><a href="{{ url_for('functions.representation') }}">Representation</a></li>
+        <li><a href="{{ url_for('functions.lobbying') }}">Lobbying</a></li>
+    </ul>
+</div>
+{% endblock %}
