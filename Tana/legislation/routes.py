@@ -10,7 +10,6 @@ from flask_login import login_user, current_user, logout_user, login_required, L
 legislation_bp = Blueprint('legislation', __name__)
 
 @legislation_bp.route('/legislation')
-@login_required
 def legislation():
     """route for the legislation"""
     return render_template('legislation.html', title='Legislation')
