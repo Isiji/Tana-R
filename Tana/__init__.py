@@ -75,8 +75,8 @@ def create_app(config_class=Config):
     from Tana.bills.routes import bills_bp
     from Tana.legislation.routes import legislation_bp
     from Tana.oversight.routes import oversight
-    
-
+    from Tana.representation.routes import representation
+    from Tana.lobbying.routes import lobbying
 
 
     app.register_blueprint(Users)
@@ -96,6 +96,8 @@ def create_app(config_class=Config):
     app.register_blueprint(bills_bp)
     app.register_blueprint(legislation_bp)
     app.register_blueprint(oversight)
+    app.register_blueprint(representation)
+    app.register_blueprint(lobbying)
     
    
     

@@ -9,7 +9,7 @@ from flask_login import login_user, current_user, logout_user, login_required, L
 
 oversight = Blueprint('oversight', __name__)
 
-@oversight.route('/functions/oversight_dashboard')
+@oversight.route('/oversight_dashboard')
 @login_required
 def oversight_dashboard():
     """route for the oversight dashboard"""

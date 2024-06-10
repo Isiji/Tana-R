@@ -2,7 +2,6 @@
 """Routes for the bills"""
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from Tana.models.members import users
-from Tana.models.roles import UserRole
 from Tana import db_storage, bcrypt
 from Tana.models.bills import Bills
 from flask_login import login_user, current_user, logout_user, login_required, LoginManager
@@ -10,7 +9,7 @@ from Tana.models.legislationstages import LegislationStages
 
 bills_bp = Blueprint('bills', __name__)
 
-@bills_bp.route('/functions/legislation/bills', methods=['GET', 'POST'], strict_slashes=False)
+@bills_bp.route('/bills', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def bills():
     """route for the bills"""
