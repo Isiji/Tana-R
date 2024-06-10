@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
 class Bills(BaseModel, Base):
+    __tablename__ = 'bills'
     name = Column(String(128), nullable=False)
     submitted_date = Column(Date, nullable=False)
     first_reading = Column(Boolean, default=False)

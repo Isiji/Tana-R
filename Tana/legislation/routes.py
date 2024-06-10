@@ -7,9 +7,9 @@ from Tana import db_storage, bcrypt
 from Tana.models.offices import Offices
 from flask_login import login_user, current_user, logout_user, login_required, LoginManager
 
-legislation = Blueprint('legislation', __name__)
+legislation_bp = Blueprint('legislation', __name__)
 
-@legislation.route('/functions/legislation')
+@legislation_bp.route('/functions/legislation')
 @login_required
 def legislation():
     """route for the legislation"""

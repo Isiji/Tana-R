@@ -4,10 +4,8 @@ from flask import Blueprint, jsonify, request, render_template, redirect, url_fo
 from Tana.models.funcategory import FunctionCategory
 from Tana.models.functions import Functions
 
-
-functions = Blueprint('functions', __name__)
-
-@functions.route('/functions', methods=['GET'])
+functions_bp = Blueprint('functions', __name__)
+@functions_bp.route('/functions', methods=['GET'])
 def functions():
     """Get all functions"""
     return render_template('functions.html')
