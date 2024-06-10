@@ -72,6 +72,9 @@ def create_app(config_class=Config):
     from Tana.field_officers.routes import fieldofficers
     from Tana.researchers.routes import researchers
     from Tana.others.routes import others
+    from Tana.bills.routes import bills
+    from Tana.legislation.routes import legislation
+    from Tana.oversight.routes import oversight
     
 
 
@@ -90,6 +93,9 @@ def create_app(config_class=Config):
     app.register_blueprint(fieldofficers)
     app.register_blueprint(researchers)
     app.register_blueprint(others)
+    app.register_blueprint(bills)
+    app.register_blueprint(legislation)
+    app.register_blueprint(oversight)
     
    
     
