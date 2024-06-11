@@ -1,5 +1,33 @@
-{% extends 'layout.html'%}
-{% block title%} Oversight {% endblock %}
+{% extends 'layout.html' %}
+{% block title %}Oversight Form{% endblock %}
 {% block content %}
-<p>this page is for the oversight in functions</p>
+<div class="container">
+    <h1>Oversight Form</h1>
+    <form method="POST">
+        <!-- Document Field -->
+        <div class="form-group">
+            <label for="document">Document</label>
+            <input type="text" id="document" name="document" class="form-control" required>
+        </div>
+
+        <!-- Date Field -->
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input type="text" id="date" name="date" class="form-control" required>
+        </div>
+
+        <!-- Status Field -->
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status" class="form-control" required>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
 {% endblock %}
