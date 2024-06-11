@@ -13,3 +13,18 @@ legislation_bp = Blueprint('legislation', __name__)
 def legislation():
     """route for the legislation"""
     return render_template('legislation.html', title='Legislation')
+
+@legislation_bp.route('/motions', methods=['GET', 'POST'])
+def motions():
+    """route for the motions"""
+    return render_template('motions.html', title='Motions')
+
+@legislation_bp.route('/statements', methods=['GET', 'POST'])
+def statements():
+    """route for the statements"""
+    return render_template('statements.html', title='Statements')
+
+@legislation_bp.route('/questions', methods=['GET', 'POST'])
+def questions():
+    """route for the questions"""
+    return render_template('questions.html', title='Questions')

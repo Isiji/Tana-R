@@ -1,13 +1,20 @@
+<!-- templates/functions/home.html -->
 {% extends 'layout.html' %}
-{% block title %}Functions{% endblock %}
+{% block title %} Functions {% endblock %}
 {% block content %}
 <div class="container">
-    <h2>Functions</h2>
-    <ul>
-        <li><a href="{{ url_for('oversight.oversight_dashboard') }}">Oversight</a></li>
-        <li><a href="{{ url_for('legislation.legislation') }}">Legislation</a></li>
-        <li><a href="{{ url_for('representation.representation_dashboard') }}">Representation</a></li>
-        <li><a href="{{ url_for('lobbying.lobbying_dashboard') }}">Lobbying</a></li>
-    </ul>
+    <h1>Functions</h1>
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="legislationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Legislation
+        </button>
+        <div class="dropdown-menu" aria-labelledby="legislationDropdown">
+            <a class="dropdown-item" href="{{ url_for('bills.bills') }}">Bills</a>
+            <a class="dropdown-item" href="{{ url_for('legislation.motions') }}">Motions</a>
+            <a class="dropdown-item" href="{{ url_for('legislation.statements') }}">Statements</a>
+            <a class="dropdown-item" href="{{ url_for('legislation.questions') }}">Questions</a>
+        </div>
+    </div>
+    <p>Other functions content...</p>
 </div>
 {% endblock %}
