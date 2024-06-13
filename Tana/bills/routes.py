@@ -9,9 +9,8 @@ from Tana.models.legislationstages import LegislationStages
 
 bills_bp = Blueprint('bills', __name__)
 
-@bills_bp.route('/bills', methods=['GET', 'POST'], strict_slashes=False)
-@login_required
-def bills():
+@bills_bp.route('/add_bill', methods=['GET', 'POST'], strict_slashes=False)
+def add_bill():
     """route for the bills"""
     if request.method == 'POST':
         bill_name = request.form['bill_name']
@@ -42,3 +41,5 @@ def bills():
         return redirect(url_for('bills.bills'))
     
     return render_template('bills.html', title='Bills')
+
+
