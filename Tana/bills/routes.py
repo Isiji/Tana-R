@@ -6,39 +6,26 @@ from Tana import db_storage, bcrypt
 from Tana.models.bills import Bills
 from flask_login import login_user, current_user, logout_user, login_required, LoginManager
 from Tana.models.legislationstages import LegislationStages
+from Tana.bills.forms import BillForm
 
 bills_bp = Blueprint('bills', __name__)
 
-@bills_bp.route('/bills', methods=['GET', 'POST'], strict_slashes=False)
-@login_required
+#create a route to add a bill using the form
+@bills_bp.route('/add_bill', methods=['GET', 'POST'], strict_slashes=False)
 def bills():
-    """route for the bills"""
-    if request.method == 'POST':
-        bill_name = request.form['bill_name']
-        submitted_date = request.form['submitted_date']
-        first_reading = 'first_reading' in request.form
-        second_reading = 'second_reading' in request.form
-        third_reading = 'third_reading' in request.form
-        presidential_assent = 'presidential_assent' in request.form
-        commencement = 'commencement' in request.form
-        document = request.files['document']
-        
-        document_path = f"documents/{bill_name}.pdf"
-        document.save(document_path)
-        
-        bill = Bills(name=bill_name, submitted_date=submitted_date, first_reading=first_reading,
-                     second_reading=second_reading, third_reading=third_reading, presidential_assent=presidential_assent,
-                     commencement=commencement)
-        
+    form = BillForm()
+    if form.validate_on_submit():
+        bill = Bills(name=form.name.data, submitted_date=form.submitted_date.data, first_reading=form.first_reading.data, second_reading=form.second_reading.data, third_reading=form.third_reading.data, presidential_assent=form.presidential_assent.data, commencement=form.commencement.data, documents=form.documents.data)
         db_storage.new(bill)
         db_storage.save()
-        
-        flash('Bill created successfully', 'success')
-        
-        legislationstage = LegislationStages(stage="First Reading", bill_id=bill.id, document_path=document_path)
-        db_storage.new(legislationstage)
-        db_storage.save()
-        
-        return redirect(url_for('bills.bills'))
-    
-    return render_template('bills.html', title='Bills')
+        flash('Bill has been added!', 'success')
+        return redirect(url_for('bills.view_bills'))
+    return render_template('bills.html', form=form)
+
+
+
+#create a route to view the bills
+@bills_bp.route('/view_bills', methods=['GET', 'POST'], strict_slashes=False)
+def view_bills():
+    bills = db_storage.all(Bills)
+    return render_template('view_bills.html', bills=bills)

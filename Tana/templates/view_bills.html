@@ -1,0 +1,8 @@
+{%extends 'layout.html'%}
+{%block title%} Bills {%endblock%}
+{%block content%}
+<!--this is where we view our bills that were submitted-->
+<div class="container">
+    <p>to view your bills, click the button below</p>
+    <a href="{{url_for('bills.view_bills')}}" class="btn btn-primary">View Bills</a>
+</div>
