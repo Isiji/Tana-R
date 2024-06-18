@@ -6,6 +6,10 @@ from Tana.models.roles import UserRole
 from Tana import db_storage, bcrypt
 from Tana.models.offices import Offices
 from flask_login import login_user, current_user, logout_user, login_required, LoginManager
+from Tana.models.motions import Motions
+from Tana.models.questions import Questions
+from Tana.models.statements import Statements
+from Tana.legislation.forms import MotionsForm, StatementsForm, LegislationForm, AddMotionForm, QuestionsForm
 
 legislation_bp = Blueprint('legislation', __name__)
 
@@ -14,10 +18,23 @@ def legislation():
     """route for the legislation"""
     return render_template('legislation.html', title='Legislation')
 
+#route for adding a motion using addmotion form
+@legislation_bp.route('/add_motion', methods=['GET', 'POST'])
+def add_motion():
+    """route for the motions"""
+    form = AddMotionForm()
+    if form.validate_on_submit():
+        motion = Motions(name=form.name.data, document=form.document.data, date=form.date.data, status=form.status.data)
+        db_storage.save(motion)
+        flash('Motion has been created!', 'success')
+        return redirect(url_for('legislation.add_motion'))
+    return render_template('add_motion.html', title='Add Motion', form=form)
+
 @legislation_bp.route('/motions', methods=['GET', 'POST'])
 def motions():
     """route for the motions"""
     return render_template('motions.html', title='Motions')
+
 
 @legislation_bp.route('/statements', methods=['GET', 'POST'])
 def statements():

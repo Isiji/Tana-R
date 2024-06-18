@@ -1,0 +1,30 @@
+{%extends 'layout.html'%}
+{%block title%}Add Motion{%endblock%}
+{%block content%}
+<!--use the motions table-->
+<h2>Add Motion</h2>
+<div class="container">
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Motion Title</label>
+            <input type="text" class="form-control" id="name" name="name">
+        </div>
+        <div class="form-group">
+            <label for="document">Motion Document</label>
+            <textarea class="form-control" id="document" name="document" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="date">Motion Date</label>
+            <input type="date" class="form-control" id="date" name="date">
+        </div>
+        <div class="form-group">
+            <label for="category">Motion Status</label>
+            <select class="form-control" id="category" name="category">
+                <option>Passed</option>
+                <option>Failed</option>
+                <option>Withdrawn</option>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{%endblock%}
