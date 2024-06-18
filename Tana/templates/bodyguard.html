@@ -2,18 +2,36 @@
 {% block title %} Bodyguards Dashboard {% endblock %}
 {% block content %}
 <div class="container">
+    
     <h1>Welcome to Tana River Senate Office</h1>
     <p>Our mission is to serve the people of Tana River County by providing the best services possible.</p>
     <p>Our vision is to be the best Senate Office in Kenya.</p>
     <p> the following are what you can access and do</p>
-    <ul>
-        <li>Functions</li>
-        <li>Offices</li>
-        <li>Reminders</li>
-        <li>Human Resource</li>
-    </ul>
-    <p>Our contact information is:</p>
-    <ul>
-        <li>Email:
+
+    <p> a bodyguard can easily check into work here to show the time logged in</p>
+    <p> a bodyguard can easily check out of work here to show the time logged out</p>
+    <p> a bodyguard can easily view the number of hours worked</p>
+
+    <p>click below to register the time in and time out</p>
+    <!--use link for employee register-->
+    <a href="{{url_for('Users.employee_register')}}" class="btn btn-primary">Register your status</a>
+
+    <h2>Bodyguard Dashboard</h2>
+    <p>Bodyguard: {{current_user.name}}</p>
+    <p>Logged in: {{current_user.time_in}}</p>
+    <p>Logged out: {{current_user.time_out}}</p>
+    <p>Hours worked: {{current_user.hours_worked}}</p>
+    <p>Status: {{current_user.status}}</p>
+    <p>Date: {{current_user.date}}</p>
+    <p>Office: {{current_user.office}}</p>
+
+    <h3>Bodyguard Profile</h3>
+    <p>Bodyguard ID: {{current_user.id}}</p>
+    <p>Bodyguard Name: {{current_user.name}}</p>
+    <p>Bodyguard Email: {{current_user.email}}</p>
+    <p>Bodyguard Phone: {{current_user.phone}}</p>
+    <p>Bodyguard Address: {{current_user.address}}</p>
+    <p>Bodyguard National ID: {{current_user.ID_No}}</p>
 </div>
+
 {% endblock %}

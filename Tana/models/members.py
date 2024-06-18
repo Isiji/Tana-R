@@ -64,7 +64,7 @@ class users(BaseModel, Base, UserMixin):
         """creates a user"""
         from Tana import db_storage
 
-        if role not in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value]:
+        if role not in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value, UserRole.P_A.value]:
             raise ValueError("Invalid role")
         
         user = users(
@@ -104,7 +104,7 @@ class users(BaseModel, Base, UserMixin):
     def can_register_user(self, role):
         """checks if the current user can register a user"""
         if self.has_role(UserRole.SUPER_ADMIN.value):
-            return role in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.MANAGER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value]
+            return role in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.MANAGER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value, UserRole.P_A.value]
         elif self.has_role(UserRole.ADMIN.value):
             return role == UserRole.USER.value
         return False

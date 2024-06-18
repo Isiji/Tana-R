@@ -68,4 +68,15 @@ class LoginForm(FlaskForm):
         if user is None:
             raise ValidationError('There is no account with that email. You must register first.')
         
+
+#class for employee register
+class EmployeeRegisterForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    time_in = StringField('Time In', validators=[DataRequired()])
+    time_out = StringField('Time Out', validators=[DataRequired()])
+    date = StringField('Date', validators=[DataRequired()])
+    status = SelectField('Status', choices=[('Present', 'Present'), ('Absent', 'Absent'), ('Sick', 'Sick'), ('Vacation', 'Vacation')], validators=[DataRequired()])
+    submit = SubmitField('Submit')
+        
+    
         

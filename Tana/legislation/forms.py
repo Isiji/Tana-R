@@ -6,7 +6,8 @@ from wtforms.validators import DataRequired
 
 class MotionsForm(FlaskForm):
     """Motions form"""
-    document = StringField('Document', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    document = FileField('Document', validators=[DataRequired()])
     date = StringField('Date', validators=[DataRequired()])
     status = SelectField('Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], validators=[DataRequired()])
     submit = SubmitField('Submit')
@@ -41,7 +42,7 @@ class QuestionsForm(FlaskForm):
     status = SelectField('Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-    
+
 
 
 

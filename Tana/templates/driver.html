@@ -7,17 +7,37 @@
     <h1>Welcome to Tana River Senate Office</h1>
     <p>Our mission is to serve the people of Tana River County by providing the best services possible.</p>
     <p>Our vision is to be the best Senate Office in Kenya.</p>
-    <p> the following are what you can access and do</p>
-    <ul>
-        <li>Functions</li>
-        <li>Offices</li>
-        <li>Reminders</li>
-        <li>Human Resource</li>
-    </ul>
-    <p>Our contact information is:</p>
+
+    <p> a driver can easily check into work here to show the time logged in</p>
+    <p> a driver can easily check out of work here to show the time logged out</p>
+    <p> a driver can easily view the number of hours worked</p>
+
+    <p>click below to register the time in and time out</p>
+    <!--use link for employee register-->
+    <a href="{{url_for('Users.employee_register')}}" class="btn btn-primary">Register your status</a>
+
+    <h2>Driver Dashboard</h2>
+    <p>Driver: {{current_user.name}}</p>
+    <p>Logged in: {{current_user.time_in}}</p>
+    <p>Logged out: {{current_user.time_out}}</p>
+    <p>Hours worked: {{current_user.hours_worked}}</p>
+    <p>Status: {{current_user.status}}</p>
+    <p>Date: {{current_user.date}}</p>
+    <p>Office: {{current_user.office}}</p>
+
+    <h3>Driver Profile</h3>
+    <p>Driver ID: {{current_user.id}}</p>
+    <p>Driver Name: {{current_user.name}}</p>
+    <p>Driver Email: {{current_user.email}}</p>
+    <p>Driver Phone: {{current_user.phone}}</p>
+    <p>Driver Address: {{current_user.address}}</p>
+    <p>Driver National ID: {{current_user.ID_No}}</p>
+
+    
+
     <ul>
         <li>Email: {{current_user.email}}</li>
     </ul>
 </div>
     
-    {%endblock%}
+{%endblock%}
