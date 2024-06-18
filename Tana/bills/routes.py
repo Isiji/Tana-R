@@ -6,14 +6,15 @@ from Tana import db_storage, bcrypt
 from Tana.models.bills import Bills
 from flask_login import login_user, current_user, logout_user, login_required, LoginManager
 from Tana.models.legislationstages import LegislationStages
-from Tana.bills.forms import BillForm
+from Tana.bills.forms import BillsForm
 
 bills_bp = Blueprint('bills', __name__)
 
+
 #create a route to add a bill using the form
 @bills_bp.route('/add_bill', methods=['GET', 'POST'], strict_slashes=False)
-def bills():
-    form = BillForm()
+def add_bill():
+    form = BillsForm()
     if form.validate_on_submit():
         bill = Bills(name=form.name.data, submitted_date=form.submitted_date.data, first_reading=form.first_reading.data, second_reading=form.second_reading.data, third_reading=form.third_reading.data, presidential_assent=form.presidential_assent.data, commencement=form.commencement.data, documents=form.documents.data)
         db_storage.new(bill)
