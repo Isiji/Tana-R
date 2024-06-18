@@ -1,10 +1,8 @@
 #!/usr/bin/python3
-"""users class module for the users"""
+"""Users class module for the users"""
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, Boolean, String, Integer, Index, ForeignKey
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Enum
+from sqlalchemy import Column, Boolean, String, Integer, ForeignKey
+from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from Tana.models.roles import UserRole
 
@@ -33,7 +31,7 @@ class users(BaseModel, Base, UserMixin):
 
     def __str__(self):
         """string representation of a user"""
-        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def is_authenticated(self):
         return True
@@ -47,13 +45,15 @@ class users(BaseModel, Base, UserMixin):
     def get_id(self):
         return str(self.id)
     
-    def get_user_by_email(self, email):
+    @staticmethod
+    def get_user_by_email(email):
         """get a user by email"""
         return users.query.filter_by(email=email).first()
     
-    def get_user_by_id(self, id):
+    @staticmethod
+    def get_user_by_id(id):
         """get a user by id"""
-        return self.query.filter_by(id=id).first()
+        return users.query.filter_by(id=id).first()
     
     def has_role(self, role):
         """check if a user has a role"""
@@ -64,7 +64,7 @@ class users(BaseModel, Base, UserMixin):
         """creates a user"""
         from Tana import db_storage
 
-        if role not in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value, UserRole.P_A.value]:
+        if role not in UserRole._value2member_map_:
             raise ValueError("Invalid role")
         
         user = users(
@@ -76,11 +76,12 @@ class users(BaseModel, Base, UserMixin):
             role=role,
             office_id=office_id,
             is_active=True
-            )
+        )
         
         db_storage.new(user)
         db_storage.save()
         return user
+    
     @staticmethod
     def create_super_admin():
         """creates a superadmin user"""
@@ -95,7 +96,7 @@ class users(BaseModel, Base, UserMixin):
             role=UserRole.SUPER_ADMIN.value,
             office_id=None,
             is_active=True
-            )
+        )
         
         db_storage.new(super_admin)
         db_storage.save()
@@ -103,8 +104,14 @@ class users(BaseModel, Base, UserMixin):
     
     def can_register_user(self, role):
         """checks if the current user can register a user"""
-        if self.has_role(UserRole.SUPER_ADMIN.value):
-            return role in [UserRole.ADMIN.value, UserRole.DRIVER.value, UserRole.MANAGER.value, UserRole.BODYGUARD.value, UserRole.RESEARCHER.value, UserRole.SECRETARY.value, UserRole.CHIEF_FIELD_OFFICER.value, UserRole.CHIEF_SECURITY_OFFICER.value, UserRole.COORDINATOR.value, UserRole.FIELD_OFFICER.value, UserRole.P_A.value]
-        elif self.has_role(UserRole.ADMIN.value):
-            return role == UserRole.USER.value
-        return False
+        allowed_roles = {
+            UserRole.SUPER_ADMIN: [
+                UserRole.ADMIN, UserRole.DRIVER, UserRole.MANAGER, UserRole.BODYGUARD, 
+                UserRole.RESEARCHER, UserRole.SECRETARY, UserRole.CHIEF_FIELD_OFFICER, 
+                UserRole.CHIEF_SECURITY_OFFICER, UserRole.COORDINATOR, UserRole.FIELD_OFFICER, 
+                UserRole.P_A
+            ],
+            UserRole.ADMIN: [UserRole.P_A, UserRole.DRIVER, UserRole.BODYGUARD, UserRole.RESEARCHER, UserRole.COORDINATOR, UserRole.SECRETARY, UserRole.CHIEF_SECURITY_OFFICER, UserRole.CHIEF_FIELD_OFFICER, UserRole.FIELD_OFFICER],
+            UserRole.P_A: [UserRole.DRIVER, UserRole.BODYGUARD, UserRole.RESEARCHER, UserRole.COORDINATOR, UserRole.SECRETARY, UserRole.CHIEF_SECURITY_OFFICER, UserRole.CHIEF_FIELD_OFFICER, UserRole.FIELD_OFFICER]
+        }
+        return role in allowed_roles.get(self.role, [])

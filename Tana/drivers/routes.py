@@ -10,7 +10,6 @@ from flask_login import login_user, current_user, logout_user, login_required, L
 drivers = Blueprint('drivers', __name__)
 
 @drivers.route('/driver_dashboard')
-@login_required
 def driver_dashboard():
     """route for the driver dashboard"""
     return render_template('driver.html', title='Driver Dashboard')

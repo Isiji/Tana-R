@@ -11,7 +11,13 @@
             <div class="form-group">
                 {{ form.password.label }} {{ form.password(class="form-control") }}
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
+            <div class="form-group form-check">
+                {{ form.remember_me(class="form-check-input") }}
+                {{ form.remember_me.label(class="form-check-input") }}
+            </div>
+            <div class=" form-group mt-5">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+            </form>
     </div>
 {% endblock %}
