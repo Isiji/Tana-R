@@ -1,10 +1,20 @@
-document.getElementById('polling_station').addEventListener('change', function() {
-    var pollingStationId = this.value;
-    
-    fetch(`/get_wards_and_constituency?polling_station_id=${pollingStationId}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('ward').value = data.ward_id;
-            document.getElementById('constituency').value = data.constituency_id;
-        });
+document.getElementById('polling_station').addEventListener('input', function() {
+    var pollingStationName = this.value;
+    if (pollingStationName.length > 0) {
+        fetch('/search?polling_station=' + encodeURIComponent(pollingStationName))
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('ward').value = '';
+                    document.getElementById('constituency').value = '';
+                } else {
+                    document.getElementById('ward').value = data.ward;
+                    document.getElementById('constituency').value = data.constituency;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    } else {
+        document.getElementById('ward').value = '';
+        document.getElementById('constituency').value = '';
+    }
 });

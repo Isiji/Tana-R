@@ -78,5 +78,10 @@ class EmployeeRegisterForm(FlaskForm):
     status = SelectField('Status', choices=[('Present', 'Present'), ('Absent', 'Absent'), ('Sick', 'Sick'), ('Vacation', 'Vacation')], validators=[DataRequired()])
     submit = SubmitField('Submit')
         
-    
-        
+class FileUploadForm(FlaskForm):
+    polling_station = StringField('Polling Station', validators=[DataRequired()])
+    ward = StringField('Ward', render_kw={'readonly': True})
+    constituency = StringField('Constituency', render_kw={'readonly': True})
+    file = FileField('Upload File', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+

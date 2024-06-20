@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+    <form method="POST" action="{{ url_for('Users.upload') }}" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.polling_station.label }} {{ form.polling_station(class="form-control", id="polling_station") }}
+        </div>
+        <div class="form-group">
+            {{ form.ward.label }} {{ form.ward(class="form-control", id="ward") }}
+        </div>
+        <div class="form-group">
+            {{ form.constituency.label }} {{ form.constituency(class="form-control", id="constituency") }}
+        </div>
+        <div class="form-group">
+            {{ form.file.label }} {{ form.file(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/autopopulate.js') }}"></script>
+{% endblock %}

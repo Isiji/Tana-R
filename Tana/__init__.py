@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """Module for the Tana package"""
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -12,12 +13,12 @@ from Tana.config import Config
 from Tana.engine.storage import DBStorage
 from Tana.models.base_model import Base
 from Tana.models.members import users
+from werkzeug.utils import secure_filename
 
 db_storage = DBStorage()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 login_manager.login_view = 'Users.login'
-#login_manager.login_view = 'offices.login_office'
 login_manager.login_message_category = 'info'
 cors = CORS()
 mail = Mail()
@@ -33,6 +34,12 @@ def load_user(users):
         if office:
             return office
     return None
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'xls', 'xlsx'}
+
+def allowed_file(filename):
+    """Check if the file is allowed"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 

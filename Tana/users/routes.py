@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 """Users route for the users"""
-
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+import os
+from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, request, current_app, send_from_directory
 from Tana.models.members import users
 from Tana.models.roles import UserRole
 from Tana.engine.storage import DBStorage
 from Tana.users.forms import UpdateAccountForm, RequestResetForm, LoginForm,ResetPasswordForm, RegistrationForm, EmployeeRegisterForm
 from flask_login import current_user, login_required, login_user, logout_user
-from Tana import bcrypt, db_storage
+from Tana import bcrypt, db_storage, allowed_file
 from Tana.models.employee_register import EmployeeRegister
-
+from Tana.users.forms import FileUploadForm
+from Tana.models.pollingstation import PollingStation
+from Tana.models.ward import Ward
+from Tana.models.constituency import Constituency
+from werkzeug.utils import secure_filename
 
 Users = Blueprint('Users', __name__)
 
@@ -130,3 +134,32 @@ def redirect_based_on_role():
         return redirect(url_for('personal_assistants.personal_assistant_dashboard'))
     else:
         return redirect(url_for('main.home'))
+    
+
+Users = Blueprint('Users', __name__)
+
+@Users.route('/upload', methods=['GET', 'POST'])
+def upload():
+    form = FileUploadForm()
+    if form.validate_on_submit():
+        file = form.file.data
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            # Process the file and populate database
+            flash('File uploaded successfully', 'success')
+            return redirect(url_for('Users.upload'))
+        else:
+            flash('Invalid file type', 'danger')
+    return render_template('upload.html', form=form)
+
+@Users.route('/search', methods=['GET'])
+def search():
+    polling_station_name = request.args.get('polling_station')
+    polling_station = PollingStation.query.filter_by(name=polling_station_name).first()
+    if polling_station:
+        ward = polling_station.ward
+        constituency = ward.constituency
+        return jsonify({'ward': ward.name, 'constituency': constituency.name})
+    return jsonify({'error': 'Polling station not found'}), 404
