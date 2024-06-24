@@ -72,6 +72,9 @@ def register():
             role=form.role.data,
             office_id=form.office_id.data if form.office_id.data else None
         )
+        db_storage.new(user)
+        db_storage.save()
+
         flash(f'Account created for {form.name.data}!', 'success')
         return redirect(url_for('Users.login'))
     return render_template('register.html', title='Register', form=form)
@@ -119,25 +122,32 @@ def search():
         constituency = ward.constituency
         return jsonify({'ward': ward.name, 'constituency': constituency.name})
     return jsonify({'error': 'Polling station not found'}), 404
-
 @Users.route('/login', methods=['GET', 'POST'])
 def login():
     from Tana import db_storage
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
+    
     form = LoginForm()
     if form.validate_on_submit():
-        user = db_storage.get(users, email=form.email.data)
-        current_app.logger.info(f"Attempting login for user: {form.email.data}")
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            remember = 'remember' in request.form
-            login_user(user, remember=remember)
-            flash('Login successful!', 'success')
-            current_app.logger.info(f"User {user.email} logged in successfully. Redirecting based on role.")
-            return redirect(url_for('Users.redirect_based_on_role'))
-        else:
-            flash('Login unsuccessful. Please check email and password', 'danger')
-            current_app.logger.warning(f"Login failed for user {form.email.data}.")
+        try:
+            user = db_storage.get(users, email=form.email.data)
+            current_app.logger.info(f"Attempting login for user: {form.email.data}")
+            
+            if user and bcrypt.check_password_hash(user.password, form.password.data):
+                remember = form.remember.data
+                login_user(user, remember=remember)
+                flash('Login successful!', 'success')
+                current_app.logger.info(f"User {user.email} logged in successfully. Redirecting based on role.")
+                return redirect(url_for('Users.redirect_based_on_role'))
+            else:
+                flash('Login unsuccessful. Please check email and password', 'danger')
+                current_app.logger.warning(f"Login failed for user {form.email.data}. Invalid credentials.")
+        
+        except Exception as e:
+            flash('An error occurred during login. Please try again later.', 'danger')
+            current_app.logger.error(f"Error during login attempt: {str(e)}")
+    
     return render_template('login.html', title='Login', form=form)
 
 @Users.route('/redirect_based_on_role', methods=['GET', 'POST'])

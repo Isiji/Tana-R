@@ -14,14 +14,13 @@ from Tana.models.roles import UserRole
 class RegistrationForm(FlaskForm):
     name = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     phone = StringField('Phone', validators=[DataRequired()])
     ID_No = StringField('ID No', validators=[DataRequired()])
     role = SelectField('Role', choices=[(role.value, role.name.replace('_', ' ').title()) for role in UserRole], validators=[DataRequired()])
     office_id = StringField('Office ID', validators=[])
     submit = SubmitField('Register')
-
     def validate_email(self, email):
         user = db_storage.get(users, email=email.data)
         if user:
@@ -59,16 +58,14 @@ class ResetPasswordForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
-    
+
     def validate_email(self, email):
         user = db_storage.get(users, email=email.data)
         if user is None:
             raise ValidationError('There is no account with that email. You must register first.')
-        
-
 #class for employee register
 class EmployeeRegisterForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
