@@ -70,10 +70,10 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
     
-    def get_user(self, user):
+    def get_user(self, email):
         """Returns the user object"""
         try:
-            query_result = self.__session.query(users).filter_by(email=user).first()
+            query_result = self.__session.query(users).filter_by(email=email).first()
             return query_result
         except SQLAlchemyError as e:
             print("An Error Occured:", e)

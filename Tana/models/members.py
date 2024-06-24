@@ -16,7 +16,6 @@ class users(BaseModel, Base, UserMixin):
     ID_No = Column(Integer, nullable=False)
     role = Column(String(128), nullable=False)
     office_id = Column(Integer, ForeignKey('offices.id'), nullable=True)
-    is_active = Column(Boolean, default=True)
 
     diaries = relationship("Diary", back_populates="user")
     human_resources = relationship("HumanResource", uselist=False, back_populates="user")
@@ -33,17 +32,6 @@ class users(BaseModel, Base, UserMixin):
         """string representation of a user"""
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
-    def is_authenticated(self):
-        return True
-    
-    def is_active(self):
-        return True
-    
-    def is_anonymous(self):
-        return False
-    
-    def get_id(self):
-        return str(self.id)
     
     @staticmethod
     def get_user_by_email(email):
@@ -75,7 +63,6 @@ class users(BaseModel, Base, UserMixin):
             ID_No=ID_No,
             role=role,
             office_id=office_id,
-            is_active=True
         )
         
         db_storage.new(user)
@@ -95,7 +82,6 @@ class users(BaseModel, Base, UserMixin):
             ID_No=1234,
             role=UserRole.SUPER_ADMIN.value,
             office_id=None,
-            is_active=True
         )
         
         db_storage.new(super_admin)

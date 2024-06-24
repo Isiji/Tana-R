@@ -15,6 +15,7 @@ from Tana.models.base_model import Base
 from Tana.models.members import users
 from werkzeug.utils import secure_filename
 
+
 db_storage = DBStorage()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
@@ -26,7 +27,7 @@ jwt = JWTManager()
 @login_manager.user_loader
 def load_user(users):
     """Load user function"""
-    user = db_storage.get_user(users)
+    user = users.get_user_by_id(users)
     if user:
         return user
     else:
@@ -41,14 +42,11 @@ def allowed_file(filename):
     """Check if the file is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-
-
-
 def create_app(config_class=Config):
     """Creates the app"""
     app = Flask(__name__, static_folder='static')
     app.config.from_object(Config)
+
 
     db_storage
     bcrypt.init_app(app)
@@ -56,6 +54,9 @@ def create_app(config_class=Config):
     cors.init_app(app)
     mail.init_app(app)
     jwt.init_app(app)
+
+
+    
     
     with app.app_context():
        db_storage.reload()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Users route for the users"""
 import os
-from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, request, current_app, send_from_directory
+from flask import Blueprint, session, jsonify, render_template, redirect, url_for, flash, request, current_app, send_from_directory
 from Tana.models.members import users
 from Tana.models.roles import UserRole
 from Tana.engine.storage import DBStorage
@@ -124,30 +124,31 @@ def search():
     return jsonify({'error': 'Polling station not found'}), 404
 @Users.route('/login', methods=['GET', 'POST'])
 def login():
+    """Route for the login page"""
+    
     from Tana import db_storage
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
     
     form = LoginForm()
     if form.validate_on_submit():
-        try:
-            user = db_storage.get(users, email=form.email.data)
-            current_app.logger.info(f"Attempting login for user: {form.email.data}")
-            
-            if user and bcrypt.check_password_hash(user.password, form.password.data):
-                remember = form.remember.data
-                login_user(user, remember=remember)
-                flash('Login successful!', 'success')
-                current_app.logger.info(f"User {user.email} logged in successfully. Redirecting based on role.")
-                return redirect(url_for('Users.redirect_based_on_role'))
-            else:
-                flash('Login unsuccessful. Please check email and password', 'danger')
-                current_app.logger.warning(f"Login failed for user {form.email.data}. Invalid credentials.")
-        
-        except Exception as e:
-            flash('An error occurred during login. Please try again later.', 'danger')
-            current_app.logger.error(f"Error during login attempt: {str(e)}")
-    
+        email = form.email.data
+        password = form.password.data
+        print("step one passed")
+
+        user = users.get_user_by_email(email)
+        print("user fetchd:", user)
+
+        if user and bcrypt.check_password_hash(user.password, password):
+            session['user_id'] = user.id
+            session['role'] = user.role
+            session['email'] = user.email
+            session['password'] = user.password
+            login_user(user, remember=form.remember.data)
+
+            return redirect(url_for('Users.redirect_based_on_role'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+            current_app.logger.error(f"Login Unsuccessful for user {email}.")
+
     return render_template('login.html', title='Login', form=form)
 
 @Users.route('/redirect_based_on_role', methods=['GET', 'POST'])
@@ -155,6 +156,7 @@ def login():
 def redirect_based_on_role():
     """Route to redirect based on the user role"""
     current_app.logger.info(f"Redirecting user {current_user.email} with role {current_user.role}.")
+    print(f"Redirecting user {current_user.email} with role {current_user.role}.")
     if current_user.has_role(UserRole.ADMIN.value):
         return redirect(url_for('Users.admin_dashboard'))
     elif current_user.has_role(UserRole.DRIVER.value):
