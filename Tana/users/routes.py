@@ -128,8 +128,10 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = db_storage.get(users, email=form.email.data)
+        current_app.logger.info(f"Attempting login for user: {form.email.data}")
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
+            remember = 'remember' in request.form
+            login_user(user, remember=remember)
             flash('Login successful!', 'success')
             current_app.logger.info(f"User {user.email} logged in successfully. Redirecting based on role.")
             return redirect(url_for('Users.redirect_based_on_role'))
@@ -141,7 +143,7 @@ def login():
 @Users.route('/redirect_based_on_role', methods=['GET', 'POST'])
 @login_required
 def redirect_based_on_role():
-    """route to redirect based on the user role"""
+    """Route to redirect based on the user role"""
     current_app.logger.info(f"Redirecting user {current_user.email} with role {current_user.role}.")
     if current_user.has_role(UserRole.ADMIN.value):
         return redirect(url_for('Users.admin_dashboard'))
