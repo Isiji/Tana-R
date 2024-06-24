@@ -126,44 +126,38 @@ def search():
 @Users.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('Users.redirect_based_on_role'))  # Redirect to home if user is already logged in
-
-    print("current user is not authenticated")
+        return redirect(url_for('Users.redirect_based_on_role'))  # Redirect to role-based redirect after login
 
     form = LoginForm()
-
-    # Print all users for debugging
-    all_users = db_storage.all(users)
-    print("All users:", all_users)
-    print("Form is valid:", form.validate_on_submit())
-    print("Form errors:", form.errors)
-    print("Form data:", form.data)
 
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
 
-        print(f"The email entered for the user is: {email}")
-
         user = db_storage.get_user_by_email(email)
 
-        if user is None:
-            print("No user found")
+        if user is None or not bcrypt.check_password_hash(user.password, password):
             flash('Login Unsuccessful. Please check email and password', 'danger')
-            return redirect(url_for('Users.login'))
+            return redirect(url_for('login'))  # Redirect to login page if credentials are invalid
 
-        if user and bcrypt.check_password_hash(user.password, password):
-            login_user(user, remember=form.remember.data)
+        login_user(user, remember=form.remember.data)
 
-            session['user_id'] = user.id
-            session['role'] = user.role
-            session['email'] = user.email
+        session['user_id'] = user.id
+        session['role'] = user.role
+        session['email'] = user.email
 
-            flash(f'Welcome {user.name}!', 'success')
-            return redirect(url_for('Users.redirect_based_on_role'))
-        else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+        return redirect(url_for('Users.redirect_based_on_role'))  # Redirect to role-based redirection
+
+    # If form is not submitted or validation fails, render login template
+    print("current user is not authenticated")
+    all_users = db_storage.all(users)
+    print("All users:", all_users)
+    print("Form is valid:", form.validate_on_submit())
+    print("Form errors:", form.errors)
+    print("Form data:", form.data)
+    
     return render_template('login.html', title='Login', form=form)
+
 
 @Users.route('/redirect_based_on_role', methods=['GET', 'POST'])
 @login_required

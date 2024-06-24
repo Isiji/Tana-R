@@ -63,9 +63,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
     def validate_email(self, email):
-        user = db_storage.get(users, email=email.data)
+        user = db_storage.get_user_by_email(email.data)
         if user is None:
-            raise ValidationError('There is no account with that email. You must register first.')
+            raise ValidationError('That email is not registered. Please register first.')
 #class for employee register
 class EmployeeRegisterForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
