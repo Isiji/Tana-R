@@ -41,7 +41,29 @@ def statements():
     """route for the statements"""
     return render_template('statements.html', title='Statements')
 
+@legislation_bp.route('/add_statement', methods=['GET', 'POST'])
+def add_statement():
+    """route for the statements"""
+    form = StatementsForm()
+    if form.validate_on_submit():
+        statement = Statements(name=form.name.data, document=form.document.data, date=form.date.data, status=form.status.data)
+        db_storage.save(statement)
+        flash('Statement has been created!', 'success')
+        return redirect(url_for('legislation.add_statement'))
+    return render_template('add_statement.html', title='Add Statement', form=form)
+
 @legislation_bp.route('/questions', methods=['GET', 'POST'])
 def questions():
     """route for the questions"""
     return render_template('questions.html', title='Questions')
+
+@legislation_bp.route('/add_question', methods=['GET', 'POST'])
+def add_question():
+    """route for the questions"""
+    form = QuestionsForm()
+    if form.validate_on_submit():
+        question = Questions(name=form.name.data, document=form.document.data, date=form.date.data, status=form.status.data)
+        db_storage.save(question)
+        flash('Question has been created!', 'success')
+        return redirect(url_for('legislation.add_question'))
+    return render_template('add_question.html', title='Add Question', form=form)

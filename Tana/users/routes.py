@@ -26,7 +26,6 @@ def home():
 
 # create route for user to update user information
 @Users.route('/account', methods=['GET', 'POST'])
-@login_required
 def account():
     """account route for the user"""
     form = UpdateAccountForm()
@@ -135,8 +134,6 @@ def redirect_based_on_role():
     else:
         return redirect(url_for('main.home'))
     
-
-Users = Blueprint('Users', __name__)
 
 @Users.route('/upload', methods=['GET', 'POST'])
 def upload():

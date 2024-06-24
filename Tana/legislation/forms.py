@@ -14,11 +14,11 @@ class MotionsForm(FlaskForm):
 
 class StatementsForm(FlaskForm):
     """Statements form"""
-    document = StringField('Document', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    document = FileField('Document', validators=[DataRequired()])
     date = StringField('Date', validators=[DataRequired()])
-    status = SelectField('Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], validators=[DataRequired()])
+    status = SelectField('Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected')], validators=[DataRequired()])
     submit = SubmitField('Submit')
-
 class LegislationForm(FlaskForm):
     """Legislation form"""
     title = StringField('Title', validators=[DataRequired()])
