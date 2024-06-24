@@ -93,6 +93,13 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
 
+    def get_user_by_email(self, email):
+        """Retrieve a user by their email."""
+        try:
+            query_result = self.__session.query(users).filter_by(email=email).first()
+            return query_result
+        except SQLAlchemyError as e:
+            print("An Error Occured:", e)
     def delete(self, obj=None):
         """Deletes the object from the current database session"""
         try:

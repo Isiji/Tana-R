@@ -27,7 +27,7 @@ jwt = JWTManager()
 @login_manager.user_loader
 def load_user(users):
     """Load user function"""
-    user = users.get_user_by_id(users)
+    user = db_storage.get_user(users)
     if user:
         return user
     else:

@@ -122,34 +122,51 @@ def search():
         constituency = ward.constituency
         return jsonify({'ward': ward.name, 'constituency': constituency.name})
     return jsonify({'error': 'Polling station not found'}), 404
+
 @Users.route('/login', methods=['GET', 'POST'])
 def login():
-    """Route for the login page"""
-    
-    from Tana import db_storage
-    
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))  # Redirect to home if user is already logged in
+
+    print("current user is not authenticated")
+
     form = LoginForm()
+
+    # Print all users for debugging
+    all_users = db_storage.all(users)
+    print("All users:", all_users)
+    print("Form is valid:", form.validate_on_submit())
+    print("Form errors:", form.errors)
+    print("Form data:", form.data)
+
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
-        print("step one passed")
 
-        user = users.get_user_by_email(email)
-        print("user fetchd:", user)
+        print(f"The email entered for the user is: {email}")
+
+        user = db_storage.get_user_by_email(email)
+
+        if user is None:
+            print("No user found")
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+        else:
+            print("User found:", user)
 
         if user and bcrypt.check_password_hash(user.password, password):
+            login_user(user, remember=form.remember.data)
+
             session['user_id'] = user.id
             session['role'] = user.role
             session['email'] = user.email
-            session['password'] = user.password
-            login_user(user, remember=form.remember.data)
 
-            return redirect(url_for('Users.redirect_based_on_role'))
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('main.home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
-            current_app.logger.error(f"Login Unsuccessful for user {email}.")
 
     return render_template('login.html', title='Login', form=form)
+
 
 @Users.route('/redirect_based_on_role', methods=['GET', 'POST'])
 @login_required
