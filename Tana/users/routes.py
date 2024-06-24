@@ -126,7 +126,7 @@ def search():
 @Users.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))  # Redirect to home if user is already logged in
+        return redirect(url_for('Users.redirect_based_on_role'))  # Redirect to home if user is already logged in
 
     print("current user is not authenticated")
 
@@ -150,8 +150,7 @@ def login():
         if user is None:
             print("No user found")
             flash('Login Unsuccessful. Please check email and password', 'danger')
-        else:
-            print("User found:", user)
+            return redirect(url_for('Users.login'))
 
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user, remember=form.remember.data)
@@ -160,13 +159,11 @@ def login():
             session['role'] = user.role
             session['email'] = user.email
 
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('main.home'))
+            flash(f'Welcome {user.name}!', 'success')
+            return redirect(url_for('Users.redirect_based_on_role'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
-
     return render_template('login.html', title='Login', form=form)
-
 
 @Users.route('/redirect_based_on_role', methods=['GET', 'POST'])
 @login_required
