@@ -1,23 +1,22 @@
-{% extends 'layout.html'%}
-{% block title%} Login {% endblock %}
+{% extends 'layout.html' %}
+{% block title %}Login{% endblock %}
 {% block content %}
-    <div class="container">
-        <h1>{{ title }}</h1>
-        <form method="POST" action="{{ url_for('Users.login') }}">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.email.label }} {{ form.email(class="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ form.password.label }} {{ form.password(class="form-control") }}
-            </div>
-            <div class="form-group form-check">
-                {{ form.remember_me(class="form-check-input") }}
-                {{ form.remember_me.label(class="form-check-input") }}
-            </div>
-            <div class=" form-group mt-5">
-                {{ form.submit(class="btn btn-primary") }}
-            </div>
-            </form>
-    </div>
+<h2>Login</h2>
+<div class="container">
+    <form method="POST">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+            <label class="form-check-label" for="remember">Remember Me</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
 {% endblock %}

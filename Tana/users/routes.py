@@ -76,22 +76,6 @@ def register():
         return redirect(url_for('Users.login'))
     return render_template('register.html', title='Register', form=form)
 
-@Users.route('/login', methods=['GET', 'POST'])
-def login():
-    from Tana import db_storage
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = db_storage.get(users, email=form.email.data)
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            flash('Login successful!', 'success')
-            return redirect(url_for('Users.redirect_based_on_role'))
-        else:
-            flash('Login unsuccessful. Please check email and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
-            
 @Users.route('/logout')
 def logout():
     logout_user()
@@ -109,31 +93,6 @@ def employee_register():
         return redirect(url_for('Users.employee_register'))
     return render_template('employee_register.html', title='Employee Register', form=form)
 
-
-@Users.route('/redirect_based_on_role', methods=['GET', 'POST'])
-def redirect_based_on_role():
-    """route to redirect based on the user role"""
-    if current_user.has_role(UserRole.ADMIN.value):
-        return redirect(url_for('Users.admin_dashboard'))
-    elif current_user.has_role(UserRole.DRIVER.value):
-        return redirect(url_for('drivers.driver_dashboard'))
-    elif current_user.has_role(UserRole.BODYGUARD.value):
-        return redirect(url_for('bodyguards.bodyguard_dashboard'))
-    elif current_user.has_role(UserRole.RESEARCHER.value):
-        return redirect(url_for('researchers.researcher_dashboard'))
-    elif current_user.has_role(UserRole.COORDINATOR.value):
-        return redirect(url_for('coordinators.coordinator_dashboard'))
-    elif current_user.has_role(UserRole.SECRETARY.value):
-        return redirect(url_for('secretaries.secretary_dashboard'))
-    elif current_user.has_role(UserRole.CHIEF_SECURITY_OFFICER.value):
-        return redirect(url_for('chief_security_officers.chief_security_officer_dashboard'))
-    elif current_user.has_role(UserRole.SUPER_ADMIN.value):
-        return redirect(url_for('Users.admin_dashboard'))
-    elif current_user.has_role(UserRole.P_A.value):
-        return redirect(url_for('personal_assistants.personal_assistant_dashboard'))
-    else:
-        return redirect(url_for('main.home'))
-    
 
 @Users.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -160,3 +119,47 @@ def search():
         constituency = ward.constituency
         return jsonify({'ward': ward.name, 'constituency': constituency.name})
     return jsonify({'error': 'Polling station not found'}), 404
+
+@Users.route('/login', methods=['GET', 'POST'])
+def login():
+    from Tana import db_storage
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = db_storage.get(users, email=form.email.data)
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            flash('Login successful!', 'success')
+            current_app.logger.info(f"User {user.email} logged in successfully. Redirecting based on role.")
+            return redirect(url_for('Users.redirect_based_on_role'))
+        else:
+            flash('Login unsuccessful. Please check email and password', 'danger')
+            current_app.logger.warning(f"Login failed for user {form.email.data}.")
+    return render_template('login.html', title='Login', form=form)
+
+@Users.route('/redirect_based_on_role', methods=['GET', 'POST'])
+@login_required
+def redirect_based_on_role():
+    """route to redirect based on the user role"""
+    current_app.logger.info(f"Redirecting user {current_user.email} with role {current_user.role}.")
+    if current_user.has_role(UserRole.ADMIN.value):
+        return redirect(url_for('Users.admin_dashboard'))
+    elif current_user.has_role(UserRole.DRIVER.value):
+        return redirect(url_for('drivers.driver_dashboard'))
+    elif current_user.has_role(UserRole.BODYGUARD.value):
+        return redirect(url_for('bodyguards.bodyguard_dashboard'))
+    elif current_user.has_role(UserRole.RESEARCHER.value):
+        return redirect(url_for('researchers.researcher_dashboard'))
+    elif current_user.has_role(UserRole.COORDINATOR.value):
+        return redirect(url_for('coordinators.coordinator_dashboard'))
+    elif current_user.has_role(UserRole.SECRETARY.value):
+        return redirect(url_for('secretaries.secretary_dashboard'))
+    elif current_user.has_role(UserRole.CHIEF_SECURITY_OFFICER.value):
+        return redirect(url_for('chief_security_officers.chief_security_officer_dashboard'))
+    elif current_user.has_role(UserRole.SUPER_ADMIN.value):
+        return redirect(url_for('Users.admin_dashboard'))
+    elif current_user.has_role(UserRole.P_A.value):
+        return redirect(url_for('personal_assistants.personal_assistant_dashboard'))
+    else:
+        return redirect(url_for('main.home'))
