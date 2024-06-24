@@ -14,12 +14,14 @@ from Tana.legislation.forms import MotionsForm, StatementsForm, LegislationForm,
 legislation_bp = Blueprint('legislation', __name__)
 
 @legislation_bp.route('/legislation')
+@login_required
 def legislation():
     """route for the legislation"""
     return render_template('legislation.html', title='Legislation')
 
 #route for adding a motion using addmotion form
 @legislation_bp.route('/add_motion', methods=['GET', 'POST'])
+@login_required
 def add_motion():
     """route for the motions"""
     form = AddMotionForm()
@@ -31,17 +33,20 @@ def add_motion():
     return render_template('add_motion.html', title='Add Motion', form=form)
 
 @legislation_bp.route('/motions', methods=['GET', 'POST'])
+@login_required
 def motions():
     """route for the motions"""
     return render_template('motions.html', title='Motions')
 
 
 @legislation_bp.route('/statements', methods=['GET', 'POST'])
+@login_required
 def statements():
     """route for the statements"""
     return render_template('statements.html', title='Statements')
 
 @legislation_bp.route('/add_statement', methods=['GET', 'POST'])
+@login_required
 def add_statement():
     """route for the statements"""
     form = StatementsForm()
@@ -53,11 +58,13 @@ def add_statement():
     return render_template('add_statement.html', title='Add Statement', form=form)
 
 @legislation_bp.route('/questions', methods=['GET', 'POST'])
+@login_required
 def questions():
     """route for the questions"""
     return render_template('questions.html', title='Questions')
 
 @legislation_bp.route('/add_question', methods=['GET', 'POST'])
+@login_required
 def add_question():
     """route for the questions"""
     form = QuestionsForm()
@@ -67,3 +74,9 @@ def add_question():
         flash('Question has been created!', 'success')
         return redirect(url_for('legislation.add_question'))
     return render_template('add_question.html', title='Add Question', form=form)
+
+#create a route for functions
+@legislation_bp.route('/functions', methods=['GET', 'POST'])
+def functions():
+    """route for the functions"""
+    return render_template('functions.html', title='Functions')
