@@ -93,7 +93,7 @@ def employee_register():
         employee = EmployeeRegister(name=form.name.data, time_in=form.time_in.data, time_out=form.time_out.data, date=form.date.data, status=form.status.data)
         db_storage.save(employee)
         flash('Registered!', 'success')
-        return redirect(url_for('Users.employee_register'))
+        return redirect(url_for('Users.redirect_based_on_role'))
     return render_template('employee_register.html', title='Employee Register', form=form)
 
 
@@ -185,3 +185,20 @@ def redirect_based_on_role():
         return redirect(url_for('personal_assistants.personal_assistant_dashboard'))
     else:
         return redirect(url_for('main.home'))
+
+
+#create a route for the admin page, admins include P.A, Super Admin, Admin
+@Users.route('/admin', methods=['GET', 'POST'])
+def admin():
+    """route for the admin page"""
+    if current_user.is_authenticated:
+        if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value):
+            return render_template('admin.html', title='Admin')
+        else:
+            flash('You do not have permission to access this page', 'danger')
+            return redirect(url_for('main.home'))
+    else:
+        flash('You need to be logged in to access this page', 'danger')
+        return redirect(url_for('Users.login'))
+    
+    

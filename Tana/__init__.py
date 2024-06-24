@@ -14,7 +14,7 @@ from Tana.engine.storage import DBStorage
 from Tana.models.base_model import Base
 from Tana.models.members import users
 from werkzeug.utils import secure_filename
-
+from sqlalchemy.orm import configure_mappers
 
 db_storage = DBStorage()
 bcrypt = Bcrypt()
@@ -60,13 +60,15 @@ def create_app(config_class=Config):
     
     with app.app_context():
        db_storage.reload()
+
+       configure_mappers()
        
        if not db_storage.get_user('ziggy@gmail.com'):
            users.create_super_admin()
 
 
     from Tana.users.routes import Users
-    from Tana.functions.routes import functions_bp
+    from Tana.events.routes import events
     from Tana.offices.routes import offices
     from Tana.reminder.routes import reminders
     from Tana.humanresource.routes import humanresource
@@ -88,7 +90,7 @@ def create_app(config_class=Config):
 
 
     app.register_blueprint(Users)
-    app.register_blueprint(functions_bp)
+    app.register_blueprint(events)
     app.register_blueprint(offices)
     app.register_blueprint(reminders)
     app.register_blueprint(humanresource)

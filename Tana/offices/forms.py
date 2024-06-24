@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from Tana.models.offices import Offices
 from Tana.models.members import users
 from Tana.models.humanresource import HumanResource
-from Tana.models.functions import Functions
+from Tana.models.events import Events
 from Tana.models.contributions import Contributions
 from Tana.models.tasks import Tasks
 from Tana.models.attendees import Attendees

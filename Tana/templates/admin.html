@@ -1,0 +1,22 @@
+{%extends 'layout.html'%}
+{%block title%}Admin Dashboard{%endblock%}
+{%block content%}
+<h2>Admin Dashboard</h2>
+<!--include all the functions here that the admin can do such as creating an office, registering a new user, accesing diary, functions, calendars etc-->
+
+<!--start with creating an office, give the link to the create office route, use bootstrap-->
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <a href="{{ url_for('office.create_office') }}" class="btn btn-primary">Create Office</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('Users.register') }}" class="btn btn-primary">Register User</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('diary') }}" class="btn btn-primary">Diary</a>
+        </div>
+    </div>
+</div>
+{%endblock%}
+

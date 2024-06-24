@@ -11,9 +11,11 @@ class Attendees(BaseModel, Base):
     attendee_name = Column(String(128), nullable=False)
     attendee_email = Column(String(128), nullable=False)
     attendee_phone = Column(Integer, nullable=False)
-    function_id = Column(Integer, ForeignKey('functions.id'), nullable=False)
+    attendee_location = Column(String(128), nullable=False)
+    event_id = Column(Integer, ForeignKey('events.id'), nullable=False)
 
-    functions = relationship("Functions", back_populates="attendees")
+    event = relationship("Events", back_populates="attendees")
+    
 
     def __init__(self, *args, **kwargs):
         """Initialization of the attendees model"""

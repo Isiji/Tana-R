@@ -11,9 +11,9 @@ class Contributions(BaseModel, Base):
     contribution_title = Column(String(128), nullable=False)
     contribution_description = Column(String(128), nullable=False)
     contribution_date = Column(Date, nullable=False)
-    function_id = Column(Integer, ForeignKey('functions.id'))
+    event_id = Column(Integer, ForeignKey('events.id'))
 
-    functions = relationship("Functions", back_populates="contributions")
+    event = relationship("Events", back_populates="contributions")
     def __init__(self, *args, **kwargs):
         """Initialization of the contributions model"""
         super().__init__(*args, **kwargs)
