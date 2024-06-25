@@ -1,0 +1,92 @@
+{%extends 'layout.html'%}
+{%block title%}Create an Event{%endblock%}
+{%block content%}
+<!--uses the labels from the eventform-->
+<div class="container">
+    <h2>Create an Event</h2>
+    <form method="POST" action="{{ url_for('events.add_event') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.event_name.label(class="form-control-label") }}
+            {{ form.event_name(class="form-control form-control-lg") }}
+            {% if form.event_name.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.event_name.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.impact_level.label(class="form-control-label") }}
+            {{ form.impact_level(class="form-control form-control-lg") }}
+            {% if form.impact_level.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.impact_level.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.event_date.label(class="form-control-label") }}
+            {{ form.event_date(class="form-control form-control-lg") }}
+            {% if form.event_date.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.event_date.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.event_owner.label(class="form-control-label") }}
+            {{ form.event_owner(class="form-control form-control-lg") }}
+            {% if form.event_owner.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.event_owner.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.event_contact.label(class="form-control-label") }}
+            {{ form.event_contact(class="form-control form-control-lg") }}
+            {% if form.event_contact.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.event_contact.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.event_location.label(class="form-control-label") }}
+            {{ form.event_location(class="form-control form-control-lg") }}
+            {% if form.event_location.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.event_location.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.event_description.label(class="form-control-label") }}
+            {{ form.event_description(class="form-control form-control-lg") }}
+            {% if form.event_description.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.event_description.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{%endblock%}

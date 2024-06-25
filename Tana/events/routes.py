@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Routes for the app"""
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for
-from Tana.models.funcategory import FunctionCategory
+from Tana.models.eventcategory import EventCategory
 from Tana.models.events import Events
 from Tana import db_storage, bcrypt
 from Tana.events.forms import EventForm

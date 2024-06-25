@@ -1,22 +1,23 @@
 #!/usr/bin/python3
-"""forms for the functions"""
+"""forms for the events"""
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, SelectField, IntegerField
+from wtforms import StringField, SubmitField, TextAreaField, SelectField, IntegerField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from Tana.models.events import Events
-from Tana.models.funcategory import FunctionCategory
+from Tana.models.eventcategory import EventCategory
 from Tana import db_storage, bcrypt
 
 
-# create a class to register a function
+# create a class to register a event
 class EventForm(FlaskForm):
-    function_name = StringField('Function Name', validators=[DataRequired()])
-    function_description = TextAreaField('Function Description', validators=[DataRequired()])
-    function_impact = SelectField('Function Impact', validators=[DataRequired()], choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')])
-    function_owner = StringField('Function Owner', validators=[DataRequired()])
-    function_location = StringField('Function Location', validators=[DataRequired()])
-    function_contact = StringField('Function Contact', validators=[DataRequired()])
-    submit = SubmitField('Register Function')
+    event_name = StringField('Event Name', validators=[DataRequired()])
+    event_description = TextAreaField('Event Description', validators=[DataRequired()])
+    impact_level = SelectField('Impact Level', validators=[DataRequired()], choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')])
+    event_owner = StringField('Event Owner', validators=[DataRequired()])
+    event_location = StringField('Event Location', validators=[DataRequired()])
+    event_contact = StringField('Event Contact', validators=[DataRequired()])
+    event_date = DateField('Event Date', validators=[DataRequired()])
+    submit = SubmitField('Register event')
 
 
 

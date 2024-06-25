@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Routes for the app"""
 from flask import Blueprint, request,jsonify, flash, render_template, redirect, url_for, session
-from Tana.models.funcategory import FunctionCategory
+from Tana.models.eventcategory import EventCategory
 from Tana.models.offices import Offices
 from Tana.offices.forms import OfficeForm, LoginOfficeForm
 from flask_login import login_required, current_user, login_user, logout_user

@@ -13,7 +13,7 @@ from Tana.models.commitments import Commitments
 from Tana.models.calendarEvents import CalendarEvents
 from Tana.models.reminder import Reminder
 from Tana.models.roles import UserRole
-from Tana.models.funcategory import FunctionCategory
+from Tana.models.eventcategory import EventCategory
 from Tana.models.impactlevel import ImpactLevel
 from Tana import bcrypt, db_storage
 from flask_login import login_required, current_user, login_user, logout_user

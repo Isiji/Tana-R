@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-"""FunctionCategory class for the function categories"""
+"""EventsCategory class for the function categories"""
 from enum import Enum as PyEnum
 
-class FunctionCategory(PyEnum):
+class EventCategory(PyEnum):
     Geographical = "Geographical"
     Categorical = "Categorical"

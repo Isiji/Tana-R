@@ -8,13 +8,12 @@
 <div class="container">
     <div class="row">
         <div class="col-md-4">
-            <a href="{{ url_for('office.create_office') }}" class="btn btn-primary">Create Office</a>
+            <p>Create an office here</p>
+            <a href="{{ url_for('offices.create_office') }}" class="btn btn-primary">Create Office</a>
         </div>
         <div class="col-md-4">
-            <a href="{{ url_for('Users.register') }}" class="btn btn-primary">Register User</a>
-        </div>
-        <div class="col-md-4">
-            <a href="{{ url_for('diary') }}" class="btn btn-primary">Diary</a>
+            <p>create an event here</p>
+            <a href="{{ url_for('events.add_event') }}" class="btn btn-primary">Create Event</a>
         </div>
     </div>
 </div>
