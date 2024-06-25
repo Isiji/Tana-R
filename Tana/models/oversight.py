@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Oversight class module for the oversight"""
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean, Enum
+from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean, Enum, LargeBinary
 from sqlalchemy.orm import relationship, backref
 
 class Oversight(BaseModel, Base):
@@ -9,7 +9,7 @@ class Oversight(BaseModel, Base):
     __tablename__ = 'oversight'
     id = Column(Integer, primary_key=True)
     type = Column(Enum("Primary", "Secondary"), nullable=False)
-    document = Column(String(255), nullable=False)
+    document = Column(LargeBinary, nullable=False)
     date = Column(Date, nullable=False)
     
     

@@ -14,4 +14,9 @@ class Bills(BaseModel, Base):
     third_reading = Column(Boolean, default=False)
     presidential_assent = Column(Boolean, default=False)
     commencement = Column(Boolean, default=False)
+
     documents = relationship("LegislationStages", back_populates="bill")
+
+    def __init__(self, *args, **kwargs):
+        """Initialization of the bills model"""
+        super().__init__(*args, **kwargs)

@@ -2,7 +2,7 @@
 """Motions class module for the motions, should be similar to the oversight class module for the oversight and a place to add the files for the motions"""
 
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean, Enum
+from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean, Enum, LargeBinary
 from sqlalchemy.orm import relationship, backref
 
 
@@ -13,7 +13,7 @@ class Motions(BaseModel, Base):
     __tablename__ = 'motions'
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
-    document = Column(String(255), nullable=False)
+    document = Column(LargeBinary, nullable=False)
     date = Column(Date, nullable=False)
     status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)
         

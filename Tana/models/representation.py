@@ -12,6 +12,8 @@ class Representation(BaseModel, Base):
     ward = Column(String(128), nullable=False)
     village = Column(String(128), nullable=False)
     polling_station = Column(String(128), nullable=False)
+
+    primary_oversight = relationship("PrimaryOversight", back_populates="representation")
     
     def __init__(self, *args, **kwargs):
         """Initialization of the representation model"""
