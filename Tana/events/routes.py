@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Routes for the app"""
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash
 from Tana.models.eventcategory import EventCategory
 from Tana.models.events import Events
 from Tana import db_storage, bcrypt
@@ -11,7 +11,7 @@ events_bp = Blueprint('events', __name__)
 # create a route to add events
 @events_bp.route('/add_event', methods=['GET', 'POST'], strict_slashes=False)
 def add_event():
-    """route to add an event"""
+    """Route to add an event"""
     form = EventForm()
     if form.validate_on_submit():
         event_name = form.event_name.data
@@ -20,10 +20,24 @@ def add_event():
         event_owner = form.event_owner.data
         event_location = form.event_location.data
         event_contact = form.event_contact.data
-        event = Events(event_name=event_name, event_description=event_description, impact_level=impact_level, event_owner=event_owner, event_location=event_location, event_contact=event_contact)
+        event_date = form.event_date.data
+
+        event = Events(
+            event_name=event_name, 
+            event_description=event_description, 
+            impact_level=impact_level, 
+            event_owner=event_owner, 
+            event_location=event_location, 
+            event_contact=event_contact,
+            event_date=event_date
+        )
+
         db_storage.new(event)
         db_storage.save()
+
+        flash('Event has been created!', 'success')
         return redirect(url_for('events.add_event'))
+
     return render_template('add_event.html', title='Add Event', form=form)
 
 # create a route to view events
