@@ -80,24 +80,27 @@ def logout():
 #route for employee register using employee register form
 
 @Users.route('/employee_register', methods=['GET', 'POST'])
+@login_required
 def employee_register():
-    """Route for the employee register"""
     form = EmployeeRegisterForm()
     if form.validate_on_submit():
-        user_id = form.user_id.data  # Assuming you have a way to get the user ID from the form
-        employee = EmployeeRegister(
-            name=form.name.data,
-            time_in=form.time_in.data,
-            date=date.today(),
-            status=form.status.data,
-            user_id=user_id
-        )
-        db_storage.new(employee)
-        db_storage.save()
-        flash('Registered!', 'success')
-        return redirect(url_for('Users.redirect_based_on_role'))
-    return render_template('employee_register.html', title='Employee Register', form=form)
+        user_id = form.user_id.data
+        name = form.name.data
+        time_in = form.time_in.data
+        date = form.date.data
+        status = form.status.data
 
+        # Create a new EmployeeRegister object
+        new_employee = EmployeeRegister(user_id=user_id, name=name, time_in=time_in, date=date, status=status)
+        
+        # Add and commit the new employee to the database
+        db_storage.new(new_employee)
+        db_storage.save()
+
+        flash('Employee registered successfully!', 'success')
+        return redirect(url_for('Users.employee_records'))
+    
+    return render_template('employee_register.html', title='Employee Register', form=form)
 #route for getting all employee records
 @Users.route('/employee_records', methods=['GET'])
 @login_required

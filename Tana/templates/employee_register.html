@@ -1,57 +1,45 @@
+<!-- templates/employee_register.html -->
 {% extends 'layout.html' %}
-{% block title %}Employee Register{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2>Employee Register</h2>
-    <form method="POST" action="{{ url_for('Users.employee_register') }}">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.name.label(class="form-control-label") }}
-            {{ form.name(class="form-control form-control-lg") }}
-            {% if form.name.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.name.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            {{ form.time_in.label(class="form-control-label") }}
-            {{ form.time_in(class="form-control form-control-lg") }}
-            {% if form.time_in.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.time_in.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            {{ form.date.label(class="form-control-label") }}
-            {{ form.date(class="form-control form-control-lg") }}
-            {% if form.date.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.date.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            {{ form.status.label(class="form-control-label") }}
-            {{ form.status(class="form-control form-control-lg") }}
-            {% if form.status.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.status.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">Register</button>
-        </div>
-    </form>
-</div>
+<h1>Register Employee</h1>
+<form method="POST" action="{{ url_for('Users.employee_register') }}">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.user_id.label }}<br>
+        {{ form.user_id(size=32) }}<br>
+        {% for error in form.user_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.name.label }}<br>
+        {{ form.name(size=32) }}<br>
+        {% for error in form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.time_in.label }}<br>
+        {{ form.time_in(size=32) }}<br>
+        {% for error in form.time_in.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.date.label }}<br>
+        {{ form.date(size=32) }}<br>
+        {% for error in form.date.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.status.label }}<br>
+        {{ form.status(size=32) }}<br>
+        {% for error in form.status.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
 {% endblock %}
