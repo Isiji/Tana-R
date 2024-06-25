@@ -88,7 +88,6 @@ class LoginForm(FlaskForm):
 class EmployeeRegisterForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     time_in = StringField('Time In', validators=[DataRequired()])
-    time_out = StringField('Time Out', validators=[DataRequired()])
     date = StringField('Date', validators=[DataRequired()])
     status = SelectField('Status', choices=[('Present', 'Present'), ('Absent', 'Absent'), ('Sick', 'Sick'), ('Vacation', 'Vacation')], validators=[DataRequired()])
     submit = SubmitField('Submit')

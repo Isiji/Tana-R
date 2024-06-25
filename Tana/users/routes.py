@@ -74,14 +74,22 @@ def logout():
 #route for employee register using employee register form
 @Users.route('/employee_register', methods=['GET', 'POST'])
 def employee_register():
-    """route for the employee register"""
+    """Route for the employee register"""
     form = EmployeeRegisterForm()
     if form.validate_on_submit():
-        employee = EmployeeRegister(name=form.name.data, time_in=form.time_in.data, time_out=form.time_out.data, date=form.date.data, status=form.status.data)
+        employee = EmployeeRegister(name=form.name.data, time_in=form.time_in.data, date=form.date.data, status=form.status.data)
         db_storage.save(employee)
         flash('Registered!', 'success')
         return redirect(url_for('Users.redirect_based_on_role'))
     return render_template('employee_register.html', title='Employee Register', form=form)
+
+#route for getting all employee records
+@Users.route('/employee_records', methods=['GET'])
+@login_required
+def employee_records():
+    """Route to display employee records"""
+    employees = db_storage.get_all_users()  # Replace with your method to fetch employees
+    return render_template('employee_records.html', title='Employee Records', employees=employees)
 
 
 @Users.route('/upload', methods=['GET', 'POST'])

@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %} Employee Records {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Employee Records</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Time In</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.time_in.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ employee.date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ employee.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

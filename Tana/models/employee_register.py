@@ -11,7 +11,6 @@ class EmployeeRegister(BaseModel, Base):
     __tablename__ = 'employee_register'
     name = Column(String(255), nullable=False)
     time_in = Column(String(255), nullable=False)
-    time_out = Column(String(255), nullable=False)
     date = Column(Date, nullable=False)
     status = Column(Enum("Present", "Absent", "Sick", "Leave"), nullable=False)
         

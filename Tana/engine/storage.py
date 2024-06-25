@@ -17,6 +17,11 @@ from Tana.models.calendarEvents import CalendarEvents
 from Tana.models.contributions import Contributions
 from Tana.models.events import Events
 from Tana.models.humanresource import HumanResource
+from Tana.models.impactlevel import ImpactLevel
+from Tana.models.eventcategory import EventCategory
+from Tana.models.pollingstation import PollingStation
+from Tana.models.ward import Ward
+from Tana.models.constituency import Constituency
 
 class DBStorage:
     """Database storage class"""
@@ -165,3 +170,13 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
             return []
+        
+    #create a function to display all user records
+    def get_all_users(self):
+        """Returns a list of all user objects"""
+        try:
+            return self.__session.query(users).all()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
+            return []
+        
