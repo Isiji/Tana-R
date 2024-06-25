@@ -20,5 +20,7 @@ class EventForm(FlaskForm):
     submit = SubmitField('Register event')
 
 
-
+#create a form to view events that have been created
+class ViewEventForm(FlaskForm):
+    submit = SubmitField('View Events')
 

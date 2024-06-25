@@ -68,7 +68,7 @@ def create_app(config_class=Config):
 
 
     from Tana.users.routes import Users
-    from Tana.events.routes import events
+    from Tana.events.routes import events_bp
     from Tana.offices.routes import offices
     from Tana.reminder.routes import reminders
     from Tana.humanresource.routes import humanresource
@@ -90,7 +90,7 @@ def create_app(config_class=Config):
 
 
     app.register_blueprint(Users)
-    app.register_blueprint(events)
+    app.register_blueprint(events_bp)
     app.register_blueprint(offices)
     app.register_blueprint(reminders)
     app.register_blueprint(humanresource)

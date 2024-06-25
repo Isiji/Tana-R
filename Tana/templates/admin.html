@@ -16,6 +16,15 @@
             <a href="{{ url_for('events.add_event') }}" class="btn btn-primary">Create Event</a>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-4">
+            <p>View events here</p>
+        <a href="{{ url_for('events.view_events')}}" class="btn btn-primary">View Events</a>
+        </div>
+        <div class="col-md-4">
+            <p>View all users here</p>
+        </div>
+
 </div>
 {%endblock%}
 
