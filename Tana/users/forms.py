@@ -1,7 +1,7 @@
 #!/bin/usr/python3
 """Forms module for the users"""
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField
+from wtforms import StringField, DateField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from Tana.models.members import users
 from flask_login import current_user, UserMixin, login_user, logout_user, login_required, LoginManager
@@ -88,10 +88,9 @@ class LoginForm(FlaskForm):
 class EmployeeRegisterForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     time_in = StringField('Time In', validators=[DataRequired()])
-    date = StringField('Date', validators=[DataRequired()])
-    status = SelectField('Status', choices=[('Present', 'Present'), ('Absent', 'Absent'), ('Sick', 'Sick'), ('Vacation', 'Vacation')], validators=[DataRequired()])
-    submit = SubmitField('Submit')
-        
+    date = DateField('Date', format='%Y-%m-%d', validators=[DataRequired()])
+    status = SelectField('Status', choices=[('Present', 'Present'), ('Absent', 'Absent'), ('Sick', 'Sick'), ('Leave', 'Leave')], validators=[DataRequired()])
+    submit = SubmitField('Submit')        
 class FileUploadForm(FlaskForm):
     polling_station = StringField('Polling Station', validators=[DataRequired()])
     ward = StringField('Ward', render_kw={'readonly': True})

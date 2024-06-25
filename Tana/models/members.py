@@ -5,7 +5,7 @@ from sqlalchemy import Column, Boolean, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from Tana.models.roles import UserRole
-
+from datetime import datetime, date
 class users(BaseModel, Base, UserMixin):
     """This class defines the users model"""
     __tablename__ = 'users'
@@ -23,6 +23,8 @@ class users(BaseModel, Base, UserMixin):
     tasks_assigned_to = relationship("Tasks", back_populates="assigned_to_user", foreign_keys="Tasks.assigned_to")
     reminders = relationship("Reminder", back_populates="user")
     offices = relationship("Offices", back_populates="users")
+    # Remove the explicit employee_registers relationship
+    # employee_registers = relationship("EmployeeRegister", back_populates="user")
 
     def __init__(self, *args, **kwargs):
         """Initialization of the users model"""
@@ -32,29 +34,29 @@ class users(BaseModel, Base, UserMixin):
         """string representation of a user"""
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
-    
     @staticmethod
     def get_user_by_email(email):
         """get a user by email"""
         return users.query.filter_by(email=email).first()
-    
+
     @staticmethod
     def get_user_by_id(id):
         """get a user by id"""
         return users.query.filter_by(id=id).first()
-    
+
     def has_role(self, role):
         """check if a user has a role"""
         return self.role == role
-    
+
     @staticmethod
     def create_user(name, email, password, phone, ID_No, role, office_id):
         """creates a user"""
         from Tana import db_storage
-
+        from Tana.models.employee_register import EmployeeRegister  # Import inside the method
+        
         if role not in UserRole._value2member_map_:
             raise ValueError("Invalid role")
-        
+
         user = users(
             name=name,
             email=email,
@@ -64,11 +66,24 @@ class users(BaseModel, Base, UserMixin):
             role=role,
             office_id=office_id,
         )
-        
+
         db_storage.new(user)
         db_storage.save()
+
+        # Create employee register entry
+        employee_register = EmployeeRegister(
+            name=name,
+            time_in='09:00',  # example default time_in
+            date=date.today(),
+            status="Present",  # default status
+            user_id=user.id
+        )
+
+        db_storage.new(employee_register)
+        db_storage.save()
+
         return user
-    
+
     @staticmethod
     def create_super_admin():
         """creates a superadmin user"""
@@ -83,18 +98,18 @@ class users(BaseModel, Base, UserMixin):
             role=UserRole.SUPER_ADMIN.value,
             office_id=None,
         )
-        
+
         db_storage.new(super_admin)
         db_storage.save()
         return super_admin
-    
+
     def can_register_user(self, role):
         """checks if the current user can register a user"""
         allowed_roles = {
             UserRole.SUPER_ADMIN: [
-                UserRole.ADMIN, UserRole.DRIVER, UserRole.MANAGER, UserRole.BODYGUARD, 
-                UserRole.RESEARCHER, UserRole.SECRETARY, UserRole.CHIEF_FIELD_OFFICER, 
-                UserRole.CHIEF_SECURITY_OFFICER, UserRole.COORDINATOR, UserRole.FIELD_OFFICER, 
+                UserRole.ADMIN, UserRole.DRIVER, UserRole.MANAGER, UserRole.BODYGUARD,
+                UserRole.RESEARCHER, UserRole.SECRETARY, UserRole.CHIEF_FIELD_OFFICER,
+                UserRole.CHIEF_SECURITY_OFFICER, UserRole.COORDINATOR, UserRole.FIELD_OFFICER,
                 UserRole.P_A
             ],
             UserRole.ADMIN: [UserRole.P_A, UserRole.DRIVER, UserRole.BODYGUARD, UserRole.RESEARCHER, UserRole.COORDINATOR, UserRole.SECRETARY, UserRole.CHIEF_SECURITY_OFFICER, UserRole.CHIEF_FIELD_OFFICER, UserRole.FIELD_OFFICER],
