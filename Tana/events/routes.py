@@ -1,15 +1,20 @@
 #!/usr/bin/python3
 """Routes for the app"""
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash
+from flask import Blueprint, current_app, jsonify, request, render_template, redirect, url_for, flash
 from Tana.models.eventcategory import EventCategory
 from Tana.models.events import Events
 from Tana import db_storage, bcrypt
 from Tana.events.forms import EventForm, ViewEventForm
+from flask_login import current_user, login_required
+from Tana.models.roles import UserRole
+import logging
+
 
 events_bp = Blueprint('events', __name__)
 
 # create a route to add events
 @events_bp.route('/add_event', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
 def add_event():
     """Route to add an event"""
     form = EventForm()
@@ -36,10 +41,33 @@ def add_event():
         db_storage.save()
 
         flash('Event has been created!', 'success')
-        return redirect(url_for('events.add_event'))
+        return redirect_based_on_role()
 
     return render_template('add_event.html', title='Add Event', form=form)
 
+def redirect_based_on_role():
+    """Function to redirect based on the user role"""
+    current_app.logger.info(f"Redirecting user {current_user.email} with role {current_user.role}.")
+    if current_user.has_role(UserRole.ADMIN.value):
+        return redirect(url_for('Users.admin_dashboard'))
+    elif current_user.has_role(UserRole.DRIVER.value):
+        return redirect(url_for('drivers.driver_dashboard'))
+    elif current_user.has_role(UserRole.BODYGUARD.value):
+        return redirect(url_for('bodyguards.bodyguard_dashboard'))
+    elif current_user.has_role(UserRole.RESEARCHER.value):
+        return redirect(url_for('researchers.researcher_dashboard'))
+    elif current_user.has_role(UserRole.COORDINATOR.value):
+        return redirect(url_for('coordinators.coordinator_dashboard'))
+    elif current_user.has_role(UserRole.SECRETARY.value):
+        return redirect(url_for('secretaries.secretary_dashboard'))
+    elif current_user.has_role(UserRole.CHIEF_SECURITY_OFFICER.value):
+        return redirect(url_for('chief_security_officers.chief_security_officer_dashboard'))
+    elif current_user.has_role(UserRole.SUPER_ADMIN.value):
+        return redirect(url_for('Users.admin_dashboard'))
+    elif current_user.has_role(UserRole.P_A.value):
+        return redirect(url_for('personal_assistants.personal_assistant_dashboard'))
+    else:
+        return redirect(url_for('main.home'))
 # create a route to view events
 @events_bp.route('/view_events', methods=['GET', 'POST'], strict_slashes=False)
 def view_events():
