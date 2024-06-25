@@ -16,6 +16,7 @@ from Tana.models.constituency import Constituency
 from werkzeug.utils import secure_filename
 from Tana.models.offices import Offices
 import logging
+from datetime import datetime, date
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -79,26 +80,22 @@ def logout():
 #route for employee register using employee register form
 
 @Users.route('/employee_register', methods=['GET', 'POST'])
-@login_required
 def employee_register():
     """Route for the employee register"""
     form = EmployeeRegisterForm()
     if form.validate_on_submit():
-        try:
-            employee = EmployeeRegister(
-                name=form.name.data,
-                time_in=form.time_in.data,
-                date=form.date.data,
-                status=form.status.data,
-                user_id=current_user.id  # Associate the register with the current user
-            )
-            db_storage.new(employee)
-            db_storage.save()
-            flash('Registered!', 'success')
-            return redirect(url_for('Users.redirect_based_on_role'))
-        except Exception as e:
-            logger.error("Error registering employee: %s", e)
-            flash('An error occurred while registering the employee.', 'danger')
+        user_id = form.user_id.data  # Assuming you have a way to get the user ID from the form
+        employee = EmployeeRegister(
+            name=form.name.data,
+            time_in=form.time_in.data,
+            date=date.today(),
+            status=form.status.data,
+            user_id=user_id
+        )
+        db_storage.new(employee)
+        db_storage.save()
+        flash('Registered!', 'success')
+        return redirect(url_for('Users.redirect_based_on_role'))
     return render_template('employee_register.html', title='Employee Register', form=form)
 
 #route for getting all employee records
@@ -106,7 +103,7 @@ def employee_register():
 @login_required
 def employee_records():
     """Route to display employee records"""
-    employees = db_storage.get_all_users()  # Replace with your method to fetch employees
+    employees = db_storage.all(EmployeeRegister).values()  # Replace with your method to fetch employees
     return render_template('employee_records.html', title='Employee Records', employees=employees)
 
 

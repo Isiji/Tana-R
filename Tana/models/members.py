@@ -5,7 +5,7 @@ from sqlalchemy import Column, Boolean, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from Tana.models.roles import UserRole
-from datetime import datetime, date
+
 class users(BaseModel, Base, UserMixin):
     """This class defines the users model"""
     __tablename__ = 'users'
@@ -23,8 +23,7 @@ class users(BaseModel, Base, UserMixin):
     tasks_assigned_to = relationship("Tasks", back_populates="assigned_to_user", foreign_keys="Tasks.assigned_to")
     reminders = relationship("Reminder", back_populates="user")
     offices = relationship("Offices", back_populates="users")
-    # Remove the explicit employee_registers relationship
-    # employee_registers = relationship("EmployeeRegister", back_populates="user")
+    # Removed the employee_registers relationship
 
     def __init__(self, *args, **kwargs):
         """Initialization of the users model"""
@@ -52,8 +51,7 @@ class users(BaseModel, Base, UserMixin):
     def create_user(name, email, password, phone, ID_No, role, office_id):
         """creates a user"""
         from Tana import db_storage
-        from Tana.models.employee_register import EmployeeRegister  # Import inside the method
-        
+
         if role not in UserRole._value2member_map_:
             raise ValueError("Invalid role")
 
@@ -69,19 +67,6 @@ class users(BaseModel, Base, UserMixin):
 
         db_storage.new(user)
         db_storage.save()
-
-        # Create employee register entry
-        employee_register = EmployeeRegister(
-            name=name,
-            time_in='09:00',  # example default time_in
-            date=date.today(),
-            status="Present",  # default status
-            user_id=user.id
-        )
-
-        db_storage.new(employee_register)
-        db_storage.save()
-
         return user
 
     @staticmethod
