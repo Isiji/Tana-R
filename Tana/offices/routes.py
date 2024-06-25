@@ -8,23 +8,59 @@ from flask_login import login_required, current_user, login_user, logout_user
 from Tana import bcrypt, db_storage
 from Tana.models.members import users
 import logging
+from Tana.users.forms import RegistrationForm
 
 offices = Blueprint('offices', __name__)
 
 #create a route for creating offices by the admin
 @offices.route('/create_office', methods=['POST', 'GET'])
 def create_office():
-    """route for creation of offices"""
+    """Route for the creation of offices."""
     form = OfficeForm()
     if form.validate_on_submit():
-        office = Offices(office_name=form.office_name.data, office_location=form.office_location.data, office_description=form.office_description.data, email=form.email.data, office_manager=form.office_manager.data)
+        office = Offices(
+            office_name=form.office_name.data,
+            office_location=form.office_location.data,
+            office_description=form.office_description.data,
+            email=form.email.data,
+            office_manager=form.office_manager.data
+        )
         db_storage.new(office)
         db_storage.save()
-        flash(f'Your office has been created! You are now able to view office details', 'success')
-        return redirect(url_for('offices.office_dashboard'))
+        flash('Your office has been created! You can now view office details.', 'success')
+        return redirect(url_for('offices.office_details', office_id=office.id))
     return render_template('create_office.html', title='Create Office', form=form)
 
-
+#route for viewing office details by id
+@offices.route('/office_details/<int:office_id>', methods=['GET', 'POST'])
+@login_required
+def office_details(office_id):
+    """Route to display office details."""
+    office = db_storage.get_office_by_id(office_id)
+    if office is None:
+        flash('Office not found.', 'danger')
+        return redirect(url_for('main.home'))
+    
+    members = db_storage.get_users_by_office_id(office_id)
+    
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = users.create_user(
+            name=form.name.data,
+            email=form.email.data,
+            password=hashed_password,
+            phone=form.phone.data,
+            ID_No=form.ID_No.data,
+            role=form.role.data,
+            office_id=office_id
+        )
+        db_storage.new(user)
+        db_storage.save()
+        flash('User registered successfully.', 'success')
+        return redirect(url_for('offices.office_details', office_id=office_id))
+    
+    return render_template('office_details.html', title=office.office_name, office=office, members=members, form=form)
 #route for office dashboard
 
 
