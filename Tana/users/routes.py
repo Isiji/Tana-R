@@ -14,6 +14,7 @@ from Tana.models.pollingstation import PollingStation
 from Tana.models.ward import Ward
 from Tana.models.constituency import Constituency
 from werkzeug.utils import secure_filename
+from Tana.models.offices import Offices
 
 Users = Blueprint('Users', __name__)
 
@@ -54,30 +55,50 @@ def admin_dashboard():
     else:
         flash('You need to be logged in to access this page', 'danger')
         return redirect(url_for('Users.login'))
-    
 
-@Users.route('/register', methods=['GET', 'POST'],strict_slashes=False)
+#route for user registration
+
+@Users.route('/register', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
     form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = users.create_user(
-            name=form.name.data,
-            email=form.email.data,
-            password=hashed_password,
-            phone=form.phone.data,
-            ID_No=form.ID_No.data,
-            role=form.role.data,
-            office_id=form.office_id.data if form.office_id.data else None
-        )
-        db_storage.new(user)
-        db_storage.save()
 
-        flash(f'Account created for {form.name.data}!', 'success')
-        return redirect(url_for('Users.login'))
-    return render_template('register.html', title='Register', form=form)
+    if form.validate_on_submit():
+        print("Form validated successfully")
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        
+        if current_user.has_role('SUPER_ADMIN') or current_user.has_role('P_A'):
+            office_id = form.office_id.data
+        elif current_user.has_role('ADMIN'):
+            office_id = current_user.office_id
+        else:
+            office_id = None  # Ensure office_id is set to a valid value
+
+        try:
+            new_user_role = form.role.data
+            if new_user_role not in UserRole._value2member_map_:
+                raise ValueError("Invalid role")
+
+            user = users.create_user(
+                name=form.name.data,
+                email=form.email.data,
+                password=hashed_password,
+                phone=form.phone.data,
+                ID_No=form.ID_No.data,
+                role=new_user_role,
+                office_id=office_id
+            )
+            
+            db_storage.new(user)
+            db_storage.save()
+            print("User saved successfully")
+            flash('User registered successfully.', 'success')
+            return redirect(url_for('main.home'))
+        except Exception as e:
+            print(f"Error registering user: {e}")
+            flash('Error registering user.', 'danger')
+    
+    return render_template('register.html', title='Register User', form=form)
 
 @Users.route('/logout')
 def logout():
@@ -200,5 +221,4 @@ def admin():
     else:
         flash('You need to be logged in to access this page', 'danger')
         return redirect(url_for('Users.login'))
-    
     

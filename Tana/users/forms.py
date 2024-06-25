@@ -1,7 +1,7 @@
 #!/bin/usr/python3
 """Forms module for the users"""
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from Tana.models.members import users
 from flask_login import current_user, UserMixin, login_user, logout_user, login_required, LoginManager
@@ -11,24 +11,42 @@ from Tana.models.roles import UserRole
 
 
 # create a class to register a user by admin
+
 class RegistrationForm(FlaskForm):
-    name = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    name = StringField('Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     phone = StringField('Phone', validators=[DataRequired()])
-    ID_No = StringField('ID No', validators=[DataRequired()])
-    role = SelectField('Role', choices=[(role.value, role.name.replace('_', ' ').title()) for role in UserRole], validators=[DataRequired()])
-    office_id = StringField('Office ID', validators=[])
+    ID_No = StringField('ID Number', validators=[DataRequired()])
+    
+    role = SelectField('Role', choices=[
+        (UserRole.ADMIN.value, 'Admin'),
+        (UserRole.P_A.value, 'Personal Assistant'),
+        (UserRole.SUPER_ADMIN.value, 'Super Admin'),
+        (UserRole.DRIVER.value, 'Driver'),
+        (UserRole.BODYGUARD.value, 'Bodyguard'),
+        (UserRole.RESEARCHER.value, 'Researcher'),
+        (UserRole.COORDINATOR.value, 'Coordinator'),
+        (UserRole.SECRETARY.value, 'Secretary'),
+        (UserRole.CHIEF_SECURITY_OFFICER.value, 'Chief Security Officer'),
+        (UserRole.CHIEF_FIELD_OFFICER.value, 'Chief Field Officer'),
+        (UserRole.FIELD_OFFICER.value, 'Field Officer'),
+        (UserRole.OTHER.value, 'Other')
+    ], validators=[DataRequired()])
+    
+    office_id = StringField('Office ID')  # Adjust as needed
     submit = SubmitField('Register')
+
     def validate_email(self, email):
-        user = db_storage.get(users, email=email.data)
+        user = db_storage.get_user_by_email(email.data)
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
-    
-    def validate_office_id(self, office_id):
-        if self.role.data == UserRole.SUPER_ADMIN.value and office_id.data:
-            raise ValidationError('Admins should not have an office ID.')            
+
+    def validate_ID_No(self, ID_No):
+        user = db_storage.get_user_by_id(ID_No.data)
+        if user:
+            raise ValidationError('That ID Number is taken. Please choose a different one.')
 class UpdateAccountForm(FlaskForm):
     name = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
