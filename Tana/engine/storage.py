@@ -149,3 +149,11 @@ class DBStorage:
             return query_result
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
+
+    def get_all_offices(self):
+        """Returns a list of all office objects"""
+        try:
+            return self.__session.query(Offices).all()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
+            return []

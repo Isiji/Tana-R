@@ -42,19 +42,6 @@ def account():
         form.email.data = current_user.email
     return render_template('account.html', title='Account', form=form)
 
-#create route for admin dashboard
-@Users.route('/admin_dashboard', methods=['POST', 'GET'], strict_slashes=False)
-def admin_dashboard():
-    """route for the admin dashboard"""
-    if current_user.is_authenticated:
-        if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value):
-            return render_template('admin_dashboard.html', title='Admin Dashboard')
-        else:
-            flash('You do not have permission to access this page', 'danger')
-            return redirect(url_for('main.home'))
-    else:
-        flash('You need to be logged in to access this page', 'danger')
-        return redirect(url_for('Users.login'))
 
 #route for user registration
 
@@ -201,3 +188,14 @@ def admin():
         flash('You need to be logged in to access this page', 'danger')
         return redirect(url_for('Users.login'))
     
+#route for the admin dashboard
+@Users.route('/admin_dashboard', methods=['GET'])
+@login_required
+def admin_dashboard():
+    """Route for the admin dashboard"""
+    if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value) or current_user.has_role(UserRole.P_A.value):
+        offices = db_storage.get_all_offices()
+        return render_template('admin_dashboard.html', title='Admin Dashboard', offices=offices)
+    else:
+        flash('You do not have permission to access this page', 'danger')
+        return redirect(url_for('main.home'))
