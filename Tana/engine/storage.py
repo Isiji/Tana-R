@@ -157,3 +157,11 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
             return []
+
+    def get_offices_for_user(self, user_id):
+        """Returns offices associated with a specific user"""
+        try:
+            return self.__session.query(Offices).filter_by(user_id=user_id).all()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
+            return []

@@ -4,20 +4,21 @@
 {% block content %}
 <div class="container">
     <h1>Welcome to Tana River Senate Office</h1>
+    <h2>Admin Dashboard</h2>
 
     <p>Our mission is to serve the people of Tana River County by providing the best services possible.</p>
 
     <p>Our vision is to be the best Senate Office in Kenya.</p>
 
-    <p>The following are what you can access and do:</p>
 
-    <p>Our contact information is:</p>
+    <p>Your contact information is:</p>
 
     <ul>
         <li>Email: {{ current_user.email }}</li>
+        <li>Phone: {{current_user.phone}}</li>
     </ul>
-
-    <h2>Admin Dashboard</h2>
+    <h2>The following are what you can access and do:</h2>
+    <li>
     <h3>View office details and add new members</h3>
     <div class="list-group">
         {% for office in offices %}
@@ -26,5 +27,6 @@
         </a>
         {% endfor %}
     </div>
+    </li>
 </div>
 {% endblock %}

@@ -194,7 +194,11 @@ def admin():
 def admin_dashboard():
     """Route for the admin dashboard"""
     if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value) or current_user.has_role(UserRole.P_A.value):
-        offices = db_storage.get_all_offices()
+        if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.P_A.value):
+            offices = db_storage.get_all_offices()
+        else:
+            # Assuming get_offices_for_user method is defined in DBStorage class
+            offices = db_storage.get_offices_for_user(current_user.id)
         return render_template('admin_dashboard.html', title='Admin Dashboard', offices=offices)
     else:
         flash('You do not have permission to access this page', 'danger')
