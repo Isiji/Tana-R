@@ -1,32 +1,62 @@
 #!/usr/bin/python3
-"""Routes for the bills"""
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from Tana.models.members import users
-from Tana import db_storage, bcrypt
+"""Bills routes"""
+from flask import render_template, flash, redirect, url_for, request, Blueprint
+from flask_login import login_required
+from Tana import db_storage
 from Tana.models.bills import Bills
-from flask_login import login_user, current_user, logout_user, login_required, LoginManager
-from Tana.models.legislationstages import LegislationStages
 from Tana.bills.forms import BillsForm
+import logging
 
 bills_bp = Blueprint('bills', __name__)
 
-
-#create a route to add a bill using the form
 @bills_bp.route('/add_bill', methods=['GET', 'POST'], strict_slashes=False)
 def add_bill():
     form = BillsForm()
     if form.validate_on_submit():
-        bill = Bills(name=form.name.data, submitted_date=form.submitted_date.data, first_reading=form.first_reading.data, second_reading=form.second_reading.data, third_reading=form.third_reading.data, presidential_assent=form.presidential_assent.data, commencement=form.commencement.data, documents=form.documents.data)
-        db_storage.new(bill)
-        db_storage.save()
-        flash('Bill has been added!', 'success')
-        return redirect(url_for('bills.view_bills'))
-    return render_template('bills.html', form=form)
+        try:
+            bill = Bills(
+                name=form.bill_name.data,
+                submitted_date=form.submitted_date.data,
+                first_reading=form.first_reading.data,
+                second_reading=form.second_reading.data,
+                third_reading=form.third_reading.data,
+                presidential_assent=form.presidential_assent.data,
+                commencement=form.commencement.data
+            )
+            db_storage.new(bill)
+            db_storage.save()
+            flash('Bill has been added!', 'success')
+            return redirect(url_for('bills.view_bills'))
+        except Exception as e:
+            logging.error(f"Error adding bill: {e}")
+            flash('An error occurred while adding the bill. Please try again.', 'danger')
+    return render_template('add_bill.html', form=form)
 
-
-
-#create a route to view the bills
-@bills_bp.route('/view_bills', methods=['GET', 'POST'], strict_slashes=False)
+@bills_bp.route('/view_bills', strict_slashes=False)
 def view_bills():
     bills = db_storage.all(Bills)
     return render_template('view_bills.html', bills=bills)
+
+@bills_bp.route('/view_bill/<int:bill_id>', methods=['GET'], strict_slashes=False)
+def view_bill(bill_id):
+    bill = db_storage.get(Bills, bill_id)
+    return render_template('view_bill.html', bill=bill)
+
+@bills_bp.route('/edit_bill/<int:bill_id>', methods=['GET', 'POST'], strict_slashes=False)
+def edit_bill(bill_id):
+    bill = db_storage.get(Bills, bill_id)
+    form = BillsForm(obj=bill)
+    if form.validate_on_submit():
+        form.populate_obj(bill)
+        db_storage.save()
+        flash('Bill has been updated!', 'success')
+        return redirect(url_for('bills.view_bills'))
+    return render_template('edit_bill.html', form=form, bill=bill)
+
+@bills_bp.route('/delete_bill/<int:bill_id>', methods=['POST'], strict_slashes=False)
+def delete_bill(bill_id):
+    bill = db_storage.get(Bills, bill_id)
+    db_storage.delete(bill)
+    db_storage.save()
+    flash('Bill has been deleted!', 'success')
+    return redirect(url_for('bills.view_bills'))

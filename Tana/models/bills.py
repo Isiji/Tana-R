@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 """Bills class module for the bills"""
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, Date, Boolean
+from sqlalchemy.orm import relationship
 
 class Bills(BaseModel, Base):
     __tablename__ = 'bills'
