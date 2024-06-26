@@ -91,21 +91,31 @@ def employee_register():
         form.time_in.data = datetime.now().strftime('%H:%M')
 
     if form.validate_on_submit():
-        user_id = form.user_id.data
-        name = form.name.data
-        time_in = form.time_in.data
-        date = form.date.data
-        status = form.status.data
+        try:
+            user_id = form.user_id.data
+            name = form.name.data
+            time_in = form.time_in.data
+            date = form.date.data
+            status = form.status.data
 
-        # Create a new EmployeeRegister object
-        new_employee = EmployeeRegister(user_id=user_id, name=name, time_in=datetime.strptime(time_in, '%H:%M').time(), date=date, status=status)
-        
-        # Add and commit the new employee to the database
-        db_storage.new(new_employee)
-        db_storage.save()
+            # Create a new EmployeeRegister object
+            new_employee = EmployeeRegister(
+                user_id=user_id,
+                name=name,
+                time_in=time_in,  # No need to convert to datetime.time()
+                date=date,
+                status=status
+            )
+            
+            # Add and commit the new employee to the database
+            db_storage.new(new_employee)
+            db_storage.save()
 
-        flash('Employee registered successfully!', 'success')
-        return redirect(url_for('Users.employee_records'))
+            flash('Employee registered successfully!', 'success')
+            return redirect(url_for('Users.employee_records'))
+        except Exception as e:
+            logging.error(f"Error registering employee: {e}")
+            flash('An error occurred while registering the employee. Please try again.', 'danger')
 
     return render_template('employee_register.html', title='Employee Register', form=form)
 

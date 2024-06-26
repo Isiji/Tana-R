@@ -2,19 +2,16 @@
 """ employees should be able to register and time in and out of work"""
 
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, DateTime, Integer, ForeignKey, Date, Boolean, Enum
+from sqlalchemy import Column, Time, String, DateTime, Integer, ForeignKey, Date, Boolean, Enum
 from sqlalchemy.orm import relationship, backref
 class EmployeeRegister(BaseModel, Base):
-    """This class defines the employee register model"""
     __tablename__ = 'employee_register'
-    name = Column(String(255), nullable=False)
-    time_in = Column(DateTime, nullable=False)
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False)
+    name = Column(String(50), nullable=False)
+    time_in = Column(String(8), nullable=False)  # or Time if supported
     date = Column(Date, nullable=False)
-    status = Column(Enum("Present", "Absent", "Sick", "Leave"), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-
-    user = relationship("users", backref=backref("employee_registers", cascade="all, delete-orphan"))
-
+    status = Column(String(20), nullable=False)
     def __init__(self, *args, **kwargs):
         """Initialization of the employee register model"""
         super().__init__(*args, **kwargs)

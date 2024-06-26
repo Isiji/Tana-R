@@ -19,6 +19,8 @@
     </ul>
     <h2>The following are what you can access and do:</h2>
     <li>
+        <h3>Create an office</h3>
+        <a href="{{ url_for('offices.create_office') }}" class="btn btn-primary">Create Office</a>
     <h3>View office details and add new members</h3>
     <div class="list-group">
         {% for office in offices %}
