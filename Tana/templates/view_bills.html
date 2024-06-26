@@ -9,11 +9,6 @@
             <tr>
                 <th>Bill Name</th>
                 <th>Date Submitted</th>
-                <th>First Reading</th>
-                <th>Second Reading</th>
-                <th>Third Reading</th>
-                <th>Presidential Assent</th>
-                <th>Commencement</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,12 +16,7 @@
             {% for bill in bills %}
             <tr>
                 <td>{{ bill.name }}</td>
-                <td>{{ bill.submitted_date.strftime('%Y-%m-%d') }}</td>
-                <td>{{ 'Yes' if bill.first_reading else 'No' }}</td>
-                <td>{{ 'Yes' if bill.second_reading else 'No' }}</td>
-                <td>{{ 'Yes' if bill.third_reading else 'No' }}</td>
-                <td>{{ 'Yes' if bill.presidential_assent else 'No' }}</td>
-                <td>{{ 'Yes' if bill.commencement else 'No' }}</td>
+                <td>{{ bill.submitted_date.strftime('%Y-%m-%d') }}</td>  {# Assuming date is the submitted_date attribute #}
                 <td>
                     <a href="{{ url_for('bills.view_bill', bill_id=bill.id) }}" class="btn btn-info btn-sm">View</a>
                     <a href="{{ url_for('bills.edit_bill', bill_id=bill.id) }}" class="btn btn-warning btn-sm">Edit</a>

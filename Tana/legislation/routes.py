@@ -14,39 +14,39 @@ from Tana.legislation.forms import MotionsForm, StatementsForm, LegislationForm,
 legislation_bp = Blueprint('legislation', __name__)
 
 @legislation_bp.route('/legislation')
-@login_required
 def legislation():
     """route for the legislation"""
     return render_template('legislation.html', title='Legislation')
 
 #route for adding a motion using addmotion form
 @legislation_bp.route('/add_motion', methods=['GET', 'POST'])
-@login_required
 def add_motion():
-    """route for the motions"""
+    """Route for the motions"""
     form = AddMotionForm()
     if form.validate_on_submit():
-        motion = Motions(name=form.name.data, document=form.document.data, date=form.date.data, status=form.status.data)
-        db_storage.save(motion)
+        motion = Motions(
+            name=form.name.data,
+            document=form.document.data.read(),  # Read the file data
+            date=form.date.data,
+            status=form.status.data
+        )
+        db_storage.new(motion)
+        db_storage.save()
         flash('Motion has been created!', 'success')
         return redirect(url_for('legislation.add_motion'))
     return render_template('add_motion.html', title='Add Motion', form=form)
-
 @legislation_bp.route('/motions', methods=['GET', 'POST'])
-@login_required
 def motions():
     """route for the motions"""
     return render_template('motions.html', title='Motions')
 
 
 @legislation_bp.route('/statements', methods=['GET', 'POST'])
-@login_required
 def statements():
     """route for the statements"""
     return render_template('statements.html', title='Statements')
 
 @legislation_bp.route('/add_statement', methods=['GET', 'POST'])
-@login_required
 def add_statement():
     """route for the statements"""
     form = StatementsForm()

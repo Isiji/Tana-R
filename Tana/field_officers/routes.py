@@ -14,3 +14,8 @@ fieldofficers = Blueprint('fieldofficers', __name__)
 def fieldofficer_dashboard():
     """route for the field officer dashboard"""
     return render_template('fieldofficer.html', title='Field Officer Dashboard')
+
+
+@fieldofficers.route('/field_officers')
+def field_officers():
+    return render_template('field_officers.html')

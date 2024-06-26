@@ -214,6 +214,8 @@ def redirect_based_on_role():
         return redirect(url_for('Users.admin_dashboard'))
     elif current_user.has_role(UserRole.P_A.value):
         return redirect(url_for('personal_assistants.personal_assistant_dashboard'))
+    elif current_user.has_role(UserRole.FIELD_OFFICER.value):
+        return redirect(url_for('fieldofficers.field_officers'))
     else:
         return redirect(url_for('main.home'))
 

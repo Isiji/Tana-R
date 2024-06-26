@@ -33,7 +33,6 @@ class AddMotionForm(FlaskForm):
     date = StringField('Date', validators=[DataRequired()])
     status = SelectField('Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], validators=[DataRequired()])
     submit = SubmitField('Submit')
-
 class QuestionsForm(FlaskForm):
     """Questions form"""
     name = StringField('Name', validators=[DataRequired()])
