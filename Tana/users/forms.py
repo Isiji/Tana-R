@@ -1,7 +1,7 @@
 #!/bin/usr/python3
 """Forms module for the users"""
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateTimeField,Field, PasswordField, SubmitField, BooleanField, SelectField, IntegerField
+from wtforms import StringField, DateField, DateTimeField,Field, PasswordField, SubmitField, BooleanField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from Tana.models.members import users
 from flask_login import current_user, UserMixin, login_user, logout_user, login_required, LoginManager
@@ -85,13 +85,15 @@ class LoginForm(FlaskForm):
         if user is None:
             raise ValidationError('That email is not registered. Please register first.')
 #class for employee register
+
 class EmployeeRegisterForm(FlaskForm):
     user_id = IntegerField('User ID', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
-    time_in = DateTimeField('Time In', format='%Y-%m-%d %H:%M:%S', validators=[DataRequired()])
-    date = DateTimeField('Date', format='%Y-%m-%d', validators=[DataRequired()])
-    status = StringField('Status', validators=[DataRequired()])
+    time_in = StringField('Time In', validators=[DataRequired()], render_kw={"placeholder": "HH:MM"})
+    date = DateField('Date', format='%Y-%m-%d', validators=[DataRequired()])
+    status = SelectField('Status', choices=[('present', 'Present'), ('absent', 'Absent'), ('leave', 'On Leave')], validators=[DataRequired()])
     submit = SubmitField('Register')
+
 class FileUploadForm(FlaskForm):
     polling_station = StringField('Polling Station', validators=[DataRequired()])
     ward = StringField('Ward', render_kw={'readonly': True})

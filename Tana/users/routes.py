@@ -78,11 +78,18 @@ def logout():
     return redirect(url_for('main.home'))
 
 #route for employee register using employee register form
-
 @Users.route('/employee_register', methods=['GET', 'POST'])
 @login_required
 def employee_register():
     form = EmployeeRegisterForm()
+
+    if request.method == 'GET':
+        # Pre-fill the form with current user info
+        form.user_id.data = current_user.id
+        form.name.data = current_user.name
+        form.date.data = datetime.now().date()
+        form.time_in.data = datetime.now().strftime('%H:%M')
+
     if form.validate_on_submit():
         user_id = form.user_id.data
         name = form.name.data
@@ -91,7 +98,7 @@ def employee_register():
         status = form.status.data
 
         # Create a new EmployeeRegister object
-        new_employee = EmployeeRegister(user_id=user_id, name=name, time_in=time_in, date=date, status=status)
+        new_employee = EmployeeRegister(user_id=user_id, name=name, time_in=datetime.strptime(time_in, '%H:%M').time(), date=date, status=status)
         
         # Add and commit the new employee to the database
         db_storage.new(new_employee)
@@ -99,8 +106,9 @@ def employee_register():
 
         flash('Employee registered successfully!', 'success')
         return redirect(url_for('Users.employee_records'))
-    
+
     return render_template('employee_register.html', title='Employee Register', form=form)
+
 #route for getting all employee records
 @Users.route('/employee_records', methods=['GET'])
 @login_required
