@@ -169,7 +169,7 @@ def login():
 
         if user is None or not bcrypt.check_password_hash(user.password, password):
             flash('Login Unsuccessful. Please check email and password', 'danger')
-            return redirect(url_for('login'))  # Redirect to login page if credentials are invalid
+            return redirect(url_for('Users.login'))  # Redirect to login page if credentials are invalid
 
         login_user(user, remember=form.remember.data)
 
@@ -216,6 +216,8 @@ def redirect_based_on_role():
         return redirect(url_for('personal_assistants.personal_assistant_dashboard'))
     elif current_user.has_role(UserRole.FIELD_OFFICER.value):
         return redirect(url_for('fieldofficers.field_officers'))
+    elif current_user.has_role(UserRole.CHIEF_FIELD_OFFICER.value):
+        return redirect(url_for('chieffieldofficers.chieffieldofficer_dashboard'))
     else:
         return redirect(url_for('main.home'))
 
