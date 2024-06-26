@@ -32,6 +32,7 @@ def add_bill():
             flash('An error occurred while adding the bill. Please try again.', 'danger')
     return render_template('add_bill.html', form=form)
 
+<<<<<<< HEAD
 #route to view bills
 @bills_bp.route('/view_bills', methods=['GET'], strict_slashes=False)
 def view_bills():
@@ -40,6 +41,13 @@ def view_bills():
     return render_template('view_bills.html', bills=bills)
 
 
+=======
+@bills_bp.route('/view_bills', strict_slashes=False)
+def view_bills():
+    bills = db_storage.all(Bills)
+    return render_template('view_bills.html', bills=bills)
+
+>>>>>>> a5de19a408b72a51cdc6c8c8d0e23af59ed38b58
 @bills_bp.route('/view_bill/<int:bill_id>', methods=['GET'], strict_slashes=False)
 def view_bill(bill_id):
     bill = db_storage.get(Bills, bill_id)

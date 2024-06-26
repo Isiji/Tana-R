@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+<<<<<<< HEAD
 {% block title %}View Bills{% endblock %}
 {% block content %}
 <div class="container">
@@ -39,5 +40,29 @@
             {% endfor %}
         </tbody>
     </table>
+=======
+{% block title %}View Bill{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>View Bill</h2>
+    <dl class="row">
+        <dt class="col-sm-3">Bill Name:</dt>
+        <dd class="col-sm-9">{{ bill.name }}</dd>
+        <dt class="col-sm-3">Submitted Date:</dt>
+        <dd class="col-sm-9">{{ bill.submitted_date.strftime('%Y-%m-%d') }}</dd>
+        <dt class="col-sm-3">First Reading:</dt>
+        <dd class="col-sm-9">{{ 'Yes' if bill.first_reading else 'No' }}</dd>
+        <dt class="col-sm-3">Second Reading:</dt>
+        <dd class="col-sm-9">{{ 'Yes' if bill.second_reading else 'No' }}</dd>
+        <dt class="col-sm-3">Third Reading:</dt>
+        <dd class="col-sm-9">{{ 'Yes' if bill.third_reading else 'No' }}</dd>
+        <dt class="col-sm-3">Presidential Assent:</dt>
+        <dd class="col-sm-9">{{ 'Yes' if bill.presidential_assent else 'No' }}</dd>
+        <dt class="col-sm-3">Commencement:</dt>
+        <dd class="col-sm-9">{{ 'Yes' if bill.commencement else 'No' }}</dd>
+    </dl>
+    <a href="{{ url_for('bills.edit_bill', bill_id=bill.id) }}" class="btn btn-warning">Edit</a>
+    <a href="{{ url_for('bills.view_bills') }}" class="btn btn-secondary">Back to List</a>
+>>>>>>> a5de19a408b72a51cdc6c8c8d0e23af59ed38b58
 </div>
 {% endblock %}
