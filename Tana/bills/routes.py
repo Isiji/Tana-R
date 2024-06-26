@@ -35,8 +35,6 @@ def add_bill():
 @bills_bp.route('/view_bills', methods=['GET'], strict_slashes=False)
 def view_bills():
     bills = db_storage.all(Bills)
-    for bill in bills:  # Debug: Check the content of bills
-        print(f"Bill ID: {bill.id}, Name: {bill.name}, Submitted Date: {bill.submitted_date}")
     return render_template('view_bills.html', bills=bills)
 
 
