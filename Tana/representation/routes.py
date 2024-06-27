@@ -1,5 +1,5 @@
 import logging
-from flask import Blueprint, render_template, current_app, request, flash, redirect, url_for, jsonify
+from flask import Blueprint, current_app, render_template, request, flash, jsonify, redirect, url_for
 from Tana.models.constituency import Constituency
 from Tana.models.ward import Ward
 from Tana.models.pollingstation import PollingStation
@@ -55,34 +55,34 @@ def process_csv():
         logger.exception('Error processing CSV: %s', e)  # Log the exception
     return redirect(url_for('representation.autofill'))  # Redirect to appropriate page
 
-@representation.route('/pollingstations', methods=['GET'])
-def get_polling_stations():
-    print('getting polling stations')
-    polling_stations = db_storage.all('PollingStation')
-    result = []
-    for key, station in polling_stations.items():
-        result.append({
-            'id': station.id,
-            'name': station.name,
-            'ward_id': station.ward_id,
-            'constituency_id': station.constituency_id
-        })
-    return jsonify(result)   
+@representation.route('/pollingstations_list', methods=['GET'])
+def get_pollingstations_list():
+    """Route to fetch the list of polling station names"""
+    try:
+        polling_stations = db_storage.all(PollingStation)  # Fetch all polling stations from the database
+        if not polling_stations:
+            return jsonify([])  # Return an empty list if no polling stations are found
+        polling_station_names = [station.name for station in polling_stations.values()]
+        return jsonify(polling_station_names)
+    except Exception as e:
+        # Log the exception if there's an error
+        logging.error(f"Error fetching polling stations: {e}")
+        return jsonify([]), 500
+
 @representation.route('/polling_station_details/<string:polling_station_name>', methods=['GET'])
 def get_polling_station_details_by_name(polling_station_name):
     """Route to fetch the details of a specific polling station"""
     polling_station = db_storage.get(PollingStation, name=polling_station_name)
     if polling_station:
+        ward = db_storage.get(Ward, id=polling_station.ward_id)
+        constituency = db_storage.get(Constituency, id=ward.constituency_id)
         details = {
-            'ward': polling_station.ward.name,
-            'constituency': polling_station.constituency.name
+            'ward': ward.name,
+            'constituency': constituency.name
         }
         return jsonify(details)
     else:
         return jsonify({'error': 'Polling station not found'}), 404
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'csv'}
 
 def process_csv_file():
     try:
@@ -116,18 +116,3 @@ def autofill_polling_station(polling_station_name):
     except Exception as e:
         logger.exception('Error autofilling polling station: %s', e)  # Log the exception
         return None
-
-@representation.route('/pollingstations_list', methods=['GET'])
-def get_pollingstations_list():
-    """Route to fetch the list of polling station names"""
-    try:
-        polling_stations = db_storage.all(PollingStation)  # Fetch all polling stations from the database
-        print(f"Polling stations fetched: {polling_stations}")  # Debug statement to check the data
-        if not polling_stations:
-            return jsonify([])  # Return an empty list if no polling stations are found
-        polling_station_names = [station.name for station in polling_stations.values()]
-        return jsonify(polling_station_names)
-    except Exception as e:
-        # Log the exception if there's an error
-        logging.error(f"Error fetching polling stations: {e}")
-        return jsonify([]), 500

@@ -8,6 +8,9 @@
         <div class="input-group">
             <select id="pollingStationSelect" class="form-control" onchange="fetchDetails()">
                 <option value="">Select a Polling Station</option>
+                {% for polling_station in polling_stations %}
+                <option value="{{ polling_station.name }}">{{ polling_station.name }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>
