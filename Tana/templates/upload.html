@@ -1,18 +1,83 @@
 {% extends 'layout.html' %}
-{% block title %} Upload CSV File {% endblock %}
+{% block title %} Upload CSV {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2>Upload CSV File</h2>
-    <form action="{{ url_for('representation.process_csv') }}" method="get">
-        <button type="submit" class="btn btn-primary">Process CSV</button>
+    <h2>Upload CSV</h2>
+    <p>
+        You are currently reading data from the CSV file located in the directory.
+        If you need to update or change this file, please replace or modify it directly in the directory.
+    </p>
+    
+    <a href="{{ url_for('representation.process_csv') }}" class="btn btn-primary">Process CSV</a>
+    
+    <hr>
+    
+    <h3>Autofill Form</h3>
+    <form method="post" action="{{ url_for('representation.autofill') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="polling_station">Select Polling Station:</label>
+            <select class="form-control" id="polling_station" name="polling_station">
+                <option value="">Select Polling Station</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ward">Ward:</label>
+            <input type="text" class="form-control" id="ward" name="ward" readonly>
+        </div>
+        <div class="form-group">
+            <label for="constituency">Constituency:</label>
+            <input type="text" class="form-control" id="constituency" name="constituency" readonly>
+        </div>
+        <button type="submit" class="btn btn-primary">Autofill</button>
     </form>
-    {% with messages = get_flashed_messages() %}
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message[1] }}">{{ message[0] }}</div>
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch polling stations and populate the dropdown
+    fetch('{{ url_for("representation.get_polling_stations") }}')
+        .then(response => response.json())
+        .then(data => {
+            const pollingStationSelect = document.getElementById('polling_station');
+            data.forEach(station => {
+                const option = document.createElement('option');
+                option.value = station.id;
+                option.textContent = station.name;
+                pollingStationSelect.appendChild(option);
+            });
+        });
+
+    // Add event listener to polling station dropdown
+    document.getElementById('polling_station').addEventListener('change', function() {
+        const pollingStationId = this.value;
+        if (pollingStationId) {
+            fetch(`{{ url_for('representation.get_polling_station_details', polling_station_id=0) }}`.replace('0', pollingStationId))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        document.getElementById('ward').value = data.ward;
+                        document.getElementById('constituency').value = data.constituency;
+                    }
+                });
+        } else {
+            document.getElementById('ward').value = '';
+            document.getElementById('constituency').value = '';
+        }
+    });
+});
+</script>
 {% endblock %}
