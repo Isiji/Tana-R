@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Select Polling Station</h2>
+    <div class="form-group">
+        <label for="pollingStation">Polling Station</label>
+        <div class="input-group">
+            <select id="pollingStationSelect" class="form-control" onchange="fetchDetails()">
+                <option value="">Select a Polling Station</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="ward">Ward</label>
+        <input type="text" id="ward" class="form-control" readonly>
+    </div>
+    <div class="form-group">
+        <label for="constituency">Constituency</label>
+        <input type="text" id="constituency" class="form-control" readonly>
+    </div>
+</div>
+
+<script>
+    async function fetchPollingStationNames() {
+        try {
+            const response = await fetch('/pollingstations_list');
+            const pollingStationNames = await response.json();
+            const pollingStationSelect = document.getElementById('pollingStationSelect');
+            pollingStationSelect.innerHTML = '<option value="">Select a Polling Station</option>'; // Clear existing options
+            pollingStationNames.forEach((pollingStationName) => {
+                const option = document.createElement('option');
+                option.value = pollingStationName;
+                option.textContent = pollingStationName;
+                pollingStationSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error fetching polling station names:', error);
+            const pollingStationSelect = document.getElementById('pollingStationSelect');
+            pollingStationSelect.innerHTML = '<option value="">Error loading polling stations</option>';
+        }
+    }
+
+    async function fetchDetails() {
+        const pollingStationSelect = document.getElementById('pollingStationSelect');
+        const selectedPollingStation = pollingStationSelect.value.trim();
+
+        if (!selectedPollingStation) {
+            document.getElementById('ward').value = '';
+            document.getElementById('constituency').value = '';
+            return;
+        }
+
+        try {
+            let url = `{{ url_for('representation.get_polling_station_details_by_name', polling_station_name='') }}${selectedPollingStation}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.error) {
+                document.getElementById('ward').value = '';
+                document.getElementById('constituency').value = '';
+                alert(data.error);
+            } else {
+                document.getElementById('ward').value = data.ward;
+                document.getElementById('constituency').value = data.constituency;
+            }
+        } catch (error) {
+            console.error('Error fetching details:', error);
+            alert('Error fetching details. Please try again.');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchPollingStationNames);
+</script>
+
+{% endblock %}

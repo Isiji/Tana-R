@@ -20,8 +20,14 @@ logger.addHandler(file_handler)
 
 @representation.route('/read_csv', methods=['GET'])
 def read_csv():
-    polling_stations = db_storage.all(PollingStation)
-    return render_template('upload.html', polling_stations=polling_stations)
+    try:
+        polling_stations = db_storage.all(PollingStation)
+        print(f"Polling Stations: {polling_stations}")
+        return render_template('select_polling_station.html', polling_stations=polling_stations)
+    except Exception as e:
+        logger.exception('Error retrieving polling stations: %s', e)
+        flash('Error retrieving polling stations', 'danger')
+        return render_template('error.html', error=str(e))
 
 
 @representation.route('/autofill', methods=['POST'])
@@ -49,32 +55,31 @@ def process_csv():
         logger.exception('Error processing CSV: %s', e)  # Log the exception
     return redirect(url_for('representation.autofill'))  # Redirect to appropriate page
 
-@representation.route('/get_polling_stations', methods=['GET'])
+@representation.route('/pollingstations', methods=['GET'])
 def get_polling_stations():
-    try:
-        polling_stations = db_storage.all(PollingStation)
-        stations = [{'id': ps.id, 'name': ps.name} for ps in polling_stations.values()]
-        return jsonify(stations)
-    except Exception as e:
-        logger.exception('Error retrieving polling stations: %s', e)  # Log the exception
-        return jsonify({'error': 'Failed to retrieve polling stations'}), 500
-
-@representation.route('/get_polling_station_details/<int:polling_station_id>', methods=['GET'])
-def get_polling_station_details(polling_station_id):
-    try:
-        polling_station = db_storage.get(PollingStation, id=polling_station_id)
-        if polling_station:
-            ward = db_storage.get(Ward, id=polling_station.ward_id)
-            constituency = db_storage.get(Constituency, id=ward.constituency_id)
-            return jsonify({
-                'polling_station': polling_station.name,
-                'ward': ward.name,
-                'constituency': constituency.name
-            })
-        return jsonify({'error': 'Polling Station not found'}), 404
-    except Exception as e:
-        logger.exception('Error retrieving polling station details: %s', e)  # Log the exception
-        return jsonify({'error': 'Failed to retrieve polling station details'}), 500
+    print('getting polling stations')
+    polling_stations = db_storage.all('PollingStation')
+    result = []
+    for key, station in polling_stations.items():
+        result.append({
+            'id': station.id,
+            'name': station.name,
+            'ward_id': station.ward_id,
+            'constituency_id': station.constituency_id
+        })
+    return jsonify(result)   
+@representation.route('/polling_station_details/<string:polling_station_name>', methods=['GET'])
+def get_polling_station_details_by_name(polling_station_name):
+    """Route to fetch the details of a specific polling station"""
+    polling_station = db_storage.get(PollingStation, name=polling_station_name)
+    if polling_station:
+        details = {
+            'ward': polling_station.ward.name,
+            'constituency': polling_station.constituency.name
+        }
+        return jsonify(details)
+    else:
+        return jsonify({'error': 'Polling station not found'}), 404
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'csv'}
@@ -111,3 +116,18 @@ def autofill_polling_station(polling_station_name):
     except Exception as e:
         logger.exception('Error autofilling polling station: %s', e)  # Log the exception
         return None
+
+@representation.route('/pollingstations_list', methods=['GET'])
+def get_pollingstations_list():
+    """Route to fetch the list of polling station names"""
+    try:
+        polling_stations = db_storage.all(PollingStation)  # Fetch all polling stations from the database
+        print(f"Polling stations fetched: {polling_stations}")  # Debug statement to check the data
+        if not polling_stations:
+            return jsonify([])  # Return an empty list if no polling stations are found
+        polling_station_names = [station.name for station in polling_stations.values()]
+        return jsonify(polling_station_names)
+    except Exception as e:
+        # Log the exception if there's an error
+        logging.error(f"Error fetching polling stations: {e}")
+        return jsonify([]), 500
