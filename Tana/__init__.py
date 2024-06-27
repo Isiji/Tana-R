@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-"""Module for the Tana package"""
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -24,9 +22,9 @@ login_manager.login_message_category = 'info'
 cors = CORS()
 mail = Mail()
 jwt = JWTManager()
+
 @login_manager.user_loader
 def load_user(user_id):
-    """Load user function"""
     user = db_storage.get_user_by_id(user_id)
     if user:
         return user
@@ -36,18 +34,18 @@ def load_user(user_id):
             return office
     return None
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'xls', 'xlsx'}
-
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'xls', 'xlsx', 'csv', 'pdf'}
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
 def allowed_file(filename):
-    """Check if the file is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def create_app(config_class=Config):
-    """Creates the app"""
     app = Flask(__name__, static_folder='static')
     app.config.from_object(Config)
-
-
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+    app.config['BASE_DIR'] = os.path.dirname(os.path.abspath(__file__))
+    
     db_storage
     bcrypt.init_app(app)
     login_manager.init_app(app)
@@ -55,17 +53,12 @@ def create_app(config_class=Config):
     mail.init_app(app)
     jwt.init_app(app)
 
-
-    
-    
     with app.app_context():
        db_storage.reload()
-
        configure_mappers()
        
        if not db_storage.get_user('ziggy@gmail.com'):
            users.create_super_admin()
-
 
     from Tana.users.routes import Users
     from Tana.events.routes import events_bp
@@ -88,7 +81,6 @@ def create_app(config_class=Config):
     from Tana.representation.routes import representation
     from Tana.lobbying.routes import lobbying
 
-
     app.register_blueprint(Users)
     app.register_blueprint(events_bp)
     app.register_blueprint(offices)
@@ -109,7 +101,4 @@ def create_app(config_class=Config):
     app.register_blueprint(representation)
     app.register_blueprint(lobbying)
     
-   
-    
     return app
-

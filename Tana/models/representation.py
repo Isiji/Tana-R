@@ -7,10 +7,8 @@ from sqlalchemy.orm import relationship, backref
 class Representation(BaseModel, Base):
     __tablename__ = 'representation'
     id = Column(Integer, primary_key=True)
-    county = Column(String(128), nullable=False)
     constituency = Column(String(128), nullable=False)
     ward = Column(String(128), nullable=False)
-    village = Column(String(128), nullable=False)
     polling_station = Column(String(128), nullable=False)
 
     primary_oversight = relationship("PrimaryOversight", back_populates="representation")

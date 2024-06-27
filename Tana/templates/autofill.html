@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% block title %}Autofill Result{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Autofill Result</h2>
+    {% if result %}
+        <p><strong>Polling Station:</strong> {{ result['Polling Station'] }}</p>
+        <p><strong>Ward:</strong> {{ result['Ward'] }}</p>
+        <p><strong>Constituency:</strong> {{ result['Constituency'] }}</p>
+    {% else %}
+        <p class="error-message">Polling Station not found</p>
+    {% endif %}
+    <a href="{{ url_for('representation.autofill') }}" class="btn btn-primary">Back to Autofill</a>
+</div>
+{% endblock %}

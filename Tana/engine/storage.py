@@ -190,3 +190,17 @@ class DBStorage:
             print("An Error Occurred:", e)
             return []
         
+    def get_or_create(self, model, defaults=None, **kwargs):
+        """Returns an existing object or creates a new one if it doesn't exist"""
+        try:
+            instance = self.__session.query(model).filter_by(**kwargs).first()
+            if instance:
+                return instance, False
+            else:
+                params = {**kwargs, **(defaults or {})}
+                instance = model(**params)
+                self.new(instance)
+                self.save()
+                return instance, True
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)      

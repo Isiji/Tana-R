@@ -7,30 +7,51 @@
     <h2>Admin Dashboard</h2>
 
     <p>Our mission is to serve the people of Tana River County by providing the best services possible.</p>
-
     <p>Our vision is to be the best Senate Office in Kenya.</p>
 
-
     <p>Your contact information is:</p>
-
     <ul>
         <li>Email: {{ current_user.email }}</li>
-        <li>Phone: {{current_user.phone}}</li>
+        <li>Phone: {{ current_user.phone }}</li>
     </ul>
+
     <h2>The following are what you can access and do:</h2>
     <li>
         <h3>Create an office</h3>
         <a href="{{ url_for('offices.create_office') }}" class="btn btn-primary">Create Office</a>
-    <h3>View office details and add new members</h3>
-    <div class="list-group">
-        {% for office in offices %}
-        <a href="{{ url_for('offices.office_details', office_id=office.id) }}" class="list-group-item list-group-item-action">
-            {{ office.office_name }}
-        </a>
-        {% endfor %}
-    </div>
-    <h3>View Records of employee_register</h3>
-    <a href="{{ url_for('Users.employee_records') }}" class="btn btn-primary">View Records</a>
     </li>
+    <li>
+        <h3>View office details and add new members</h3>
+        <div class="list-group">
+            {% for office in offices %}
+            <a href="{{ url_for('offices.office_details', office_id=office.id) }}" class="list-group-item list-group-item-action">
+                {{ office.office_name }}
+            </a>
+            {% endfor %}
+        </div>
+    </li>
+    <li>
+        <h3>View Records of employee_register</h3>
+        <a href="{{ url_for('Users.employee_records') }}" class="btn btn-primary">View Records</a>
+    </li>
+
+    <li>
+        <h3>Upload Excel File</h3>
+        <a href="{{ url_for('representation.upload_file') }}" class="btn btn-primary">Upload File</a>   
+    <h2>Autofill Polling Station</h2>
+    <form action="{{ url_for('representation.autofill') }}" method="post">
+        <label for="polling_station">Polling Station:</label>
+        <input type="text" id="polling_station" name="polling_station" required>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    {% if result %}
+        <h3>Autofill Result</h3>
+        <p><strong>Polling Station:</strong> {{ result['Polling Station'] }}</p>
+        <p><strong>Ward:</strong> {{ result['Ward'] }}</p>
+        <p><strong>Constituency:</strong> {{ result['Constituency'] }}</p>
+    {% endif %}
 </div>
 {% endblock %}
