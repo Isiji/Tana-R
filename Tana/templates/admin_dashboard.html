@@ -53,5 +53,15 @@
         <p><strong>Ward:</strong> {{ result['Ward'] }}</p>
         <p><strong>Constituency:</strong> {{ result['Constituency'] }}</p>
     {% endif %}
+    <!--add link for diaries-->
+    <li>
+        <h3>View Diaries</h3>
+        <a href="{{ url_for('Users.view_diaries') }}" class="btn btn-primary">View Diaries</a>
+    </li>
+    <!--add link for create diary-->
+    <li>
+        <h3>Create a Diary</h3>
+        <a href="{{ url_for('Users.create_diary') }}" class="btn btn-primary">Create Diary</a>
+    </li>
 </div>
 {% endblock %}

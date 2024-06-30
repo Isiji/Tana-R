@@ -8,6 +8,7 @@ from flask_login import current_user, UserMixin, login_user, logout_user, login_
 from flask_wtf.file import FileField, FileAllowed
 from Tana import bcrypt, db_storage
 from Tana.models.roles import UserRole
+from datetime import date
 
 
 # create a class to register a user by admin
@@ -101,3 +102,7 @@ class FileUploadForm(FlaskForm):
     file = FileField('Upload File', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class DiaryForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired(), Length(max=128)])
+    content = StringField('Content', validators=[DataRequired(), Length(max=128)])
+    entry_date = DateField('Entry Date', format='%Y-%m-%d', validators=[DataRequired()], default=date.today)

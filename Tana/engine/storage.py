@@ -203,4 +203,13 @@ class DBStorage:
                 self.save()
                 return instance, True
         except SQLAlchemyError as e:
-            print("An Error Occurred:", e)      
+            print("An Error Occurred:", e)
+
+    #create function to get diaries by user
+    def get_diaries_by_user(self, user_id):
+        """Returns diaries associated with a specific user"""
+        try:
+            return self.__session.query(Diary).filter_by(user_id=user_id).all()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
+            return []      

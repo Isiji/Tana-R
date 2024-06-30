@@ -9,7 +9,7 @@ from Tana.users.forms import UpdateAccountForm, RequestResetForm, LoginForm,Rese
 from flask_login import current_user, login_required, login_user, logout_user
 from Tana import bcrypt, db_storage, allowed_file
 from Tana.models.employee_register import EmployeeRegister
-from Tana.users.forms import FileUploadForm
+from Tana.users.forms import DiaryForm, FileUploadForm
 from Tana.models.pollingstation import PollingStation
 from Tana.models.ward import Ward
 from Tana.models.constituency import Constituency
@@ -17,6 +17,7 @@ from werkzeug.utils import secure_filename
 from Tana.models.offices import Offices
 import logging
 from datetime import datetime, date
+from Tana.models.diary import Diary
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -252,3 +253,69 @@ def admin_dashboard():
     else:
         flash('You do not have permission to access this page', 'danger')
         return redirect(url_for('main.home'))
+    
+#create a route for creating the diary
+@Users.route('/create_diary', methods=['GET', 'POST'])
+def create_diary():
+    """route to create a diary"""
+    form = DiaryForm()
+
+    if form.validate_on_submit():
+        title = form.title.data
+        content = form.content.data
+        entry_date = form.entry_date.data
+
+        diary = Diary(
+            title=title,
+            content=content,
+            entry_date=entry_date,
+            user_id=current_user.id
+        )
+
+        db_storage.new(diary)
+        db_storage.save()
+
+        flash('Diary created successfully!', 'success')
+        return redirect(url_for('Users.view_diaries'))
+    
+    return render_template('create_diary.html', title='Create Diary', form=form)
+
+#create a route to view diaries
+#route to view diaries
+@Users.route('/view_diaries', methods=['GET'])
+def view_diaries():
+    """route to view all diaries"""
+    diaries = db_storage.all(Diary).values()
+    return render_template('diary.html', title='View Diaries', diaries=diaries)
+
+#route to delete a diary
+@Users.route('/delete_diary/<int:diary_id>', methods=['GET', 'POST'])
+def delete_diary(diary_id):
+    """route to delete a diary"""
+    diary = db_storage.get(Diary, diary_id)
+    if diary is None:
+        return redirect(url_for('Users.view_diaries'))
+    db_storage.delete(diary)
+    db_storage.save()
+    return redirect(url_for('Users.view_diaries'))
+
+#route to edit a diary
+@Users.route('/edit_diary/<int:diary_id>', methods=['GET', 'POST'])
+def edit_diary(diary_id):
+    """route to edit a diary"""
+    diary = db_storage.get(Diary, diary_id)
+    if diary is None:
+        return redirect(url_for('Users.view_diaries'))
+    form = DiaryForm()
+    if form.validate_on_submit():
+        diary.title = form.title.data
+        diary.content = form.content.data
+        diary.entry_date = form.entry_date.data
+        db_storage.save()
+        flash('Diary updated successfully!', 'success')
+        return redirect(url_for('Users.view_diaries'))
+    
+    form.title.data = diary.title
+    form.content.data = diary.content
+    form.entry_date.data = diary.entry_date
+    return render_template('edit_diary.html', title='Edit Diary', form=form)
