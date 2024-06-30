@@ -11,10 +11,21 @@
     <h1>Create an Event</h1>
     <!--use button-->
     <a href="{{ url_for('events.add_event') }}" class="btn btn-primary">Create Event</a>
-    <p>Our contact information is:</p>
-    <ul>
-        <li>Email: {{current_user.email}}</li>
-    </ul>
+    
+    <h1>View events</h1>
+    <!--add url for view events-->
+    <a href="{{ url_for('events.view_events') }}" class="btn btn-primary">View Events</a>
+    
+    <p>My contact information is:</p>
+    
+    
+    <h2>My Profile</h2>
+
+    <p>My name is {{current_user.name}}</p>
+    <p>My role is {{current_user.role}}</p>
+    <p>My email is {{current_user.email}}</p>
+    <p>My phone number is {{current_user.phone_number}}</p>
+    
 </div>
     
 {%endblock%}

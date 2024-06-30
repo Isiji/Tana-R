@@ -3,18 +3,18 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Select Polling Station</h2>
-    <div class="form-group">
-        <label for="pollingStation">Polling Station</label>
-        <div class="input-group">
-            <select id="pollingStationSelect" class="form-control" onchange="fetchDetails()">
-                <option value="">Select a Polling Station</option>
-                {% for polling_station in polling_stations %}
-                <option value="{{ polling_station.name }}">{{ polling_station.name }}</option>
+    <form action="{{ url_for('representation.autofill') }}" method="POST">
+        <div class="form-group">
+            <label for="pollingStation">Polling Station</label>
+            <select id="pollingStationSelect" class="form-control" name="polling_station">
+                {% for station in polling_stations %}
+                    <option value="{{ station.name }}">{{ station.name }}</option>
                 {% endfor %}
             </select>
         </div>
-    </div>
-    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <div class="form-group mt-3">
         <label for="ward">Ward</label>
         <input type="text" id="ward" class="form-control" readonly>
     </div>
@@ -25,25 +25,6 @@
 </div>
 
 <script>
-    async function fetchPollingStationNames() {
-        try {
-            const response = await fetch('/pollingstations_list');
-            const pollingStationNames = await response.json();
-            const pollingStationSelect = document.getElementById('pollingStationSelect');
-            pollingStationSelect.innerHTML = '<option value="">Select a Polling Station</option>'; // Clear existing options
-            pollingStationNames.forEach((pollingStationName) => {
-                const option = document.createElement('option');
-                option.value = pollingStationName;
-                option.textContent = pollingStationName;
-                pollingStationSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error fetching polling station names:', error);
-            const pollingStationSelect = document.getElementById('pollingStationSelect');
-            pollingStationSelect.innerHTML = '<option value="">Error loading polling stations</option>';
-        }
-    }
-
     async function fetchDetails() {
         const pollingStationSelect = document.getElementById('pollingStationSelect');
         const selectedPollingStation = pollingStationSelect.value.trim();
@@ -73,7 +54,7 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', fetchPollingStationNames);
+    document.getElementById('pollingStationSelect').addEventListener('change', fetchDetails);
 </script>
 
 {% endblock %}

@@ -4,7 +4,7 @@ from flask import Blueprint, current_app, jsonify, request, render_template, red
 from Tana.models.eventcategory import EventCategory
 from Tana.models.events import Events
 from Tana import db_storage, bcrypt
-from Tana.events.forms import EventForm, ViewEventForm
+from Tana.events.forms import EventForm
 from flask_login import current_user, login_required
 from Tana.models.roles import UserRole
 import logging
@@ -41,7 +41,7 @@ def add_event():
         db_storage.save()
 
         flash('Event has been created!', 'success')
-        return redirect_based_on_role()
+        return render_template('events.html')
 
     return render_template('add_event.html', title='Add Event', form=form)
 
@@ -72,11 +72,10 @@ def redirect_based_on_role():
 @events_bp.route('/view_events', methods=['GET', 'POST'], strict_slashes=False)
 def view_events():
     """route to view events"""
-    form = ViewEventForm()
-    if form.validate_on_submit():
-        events = db_storage.all(Events)
-        return render_template('view_events.html', title='View Events', events=events)
-    return render_template('events.html', title='View Events', form=form)
+    events = db_storage.all(Events)
+    return render_template('events.html', events=events)
+
+
 
 @events_bp.route('/delete_event/<int:event_id>', methods=['GET', 'POST'], strict_slashes=False)
 def delete_event(event_id):
