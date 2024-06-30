@@ -302,20 +302,19 @@ def delete_diary(diary_id):
 #route to edit a diary
 @Users.route('/edit_diary/<int:diary_id>', methods=['GET', 'POST'])
 def edit_diary(diary_id):
-    """route to edit a diary"""
-    diary = db_storage.get(Diary, diary_id)
-    if diary is None:
-        return redirect(url_for('Users.view_diaries'))
-    form = DiaryForm()
-    if form.validate_on_submit():
-        diary.title = form.title.data
-        diary.content = form.content.data
-        diary.entry_date = form.entry_date.data
-        db_storage.save()
-        flash('Diary updated successfully!', 'success')
+    """Route to edit a diary entry"""
+    diary = db_storage.get(Diary, id=diary_id)
+    if not diary:
+        flash('Diary not found', 'danger')
         return redirect(url_for('Users.view_diaries'))
     
-    form.title.data = diary.title
-    form.content.data = diary.content
-    form.entry_date.data = diary.entry_date
-    return render_template('edit_diary.html', title='Edit Diary', form=form)
+    # Add logic for handling form submission to edit the diary
+    if request.method == 'POST':
+        # Update the diary fields here
+        diary.title = request.form['title']
+        diary.content = request.form['content']
+        db_storage.save()
+        flash('Diary updated successfully', 'success')
+        return redirect(url_for('Users.view_diaries'))
+    
+    return render_template('edit_diary.html', title='Edit Diary', diary=diary)
