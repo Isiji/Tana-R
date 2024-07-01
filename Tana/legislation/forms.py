@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """forms for the legislation"""
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, SelectField, FileField
+from wtforms import StringField,DateField, SubmitField, TextAreaField, SelectField, FileField
 from wtforms.validators import DataRequired
 
 class MotionsForm(FlaskForm):
@@ -37,7 +37,7 @@ class QuestionsForm(FlaskForm):
     """Questions form"""
     name = StringField('Name', validators=[DataRequired()])
     document = FileField('Document', validators=[DataRequired()])
-    date = StringField('Date', validators=[DataRequired()])
+    date = DateField('Date', validators=[DataRequired()])
     status = SelectField('Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], validators=[DataRequired()])
     submit = SubmitField('Submit')
 

@@ -70,7 +70,8 @@ def add_question():
     form = QuestionsForm()
     if form.validate_on_submit():
         question = Questions(name=form.name.data, document=form.document.data, date=form.date.data, status=form.status.data)
-        db_storage.save(question)
+        db_storage.new(question)
+        db_storage.save()
         flash('Question has been created!', 'success')
         return redirect(url_for('legislation.add_question'))
     return render_template('add_question.html', title='Add Question', form=form)
