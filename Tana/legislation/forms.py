@@ -16,9 +16,8 @@ class StatementsForm(FlaskForm):
     name = StringField('Statement Title', validators=[DataRequired()])
     document = FileField('Upload Document', validators=[DataRequired()])
     date = StringField('Statement Date', validators=[DataRequired()])
-    status = SelectField('Statement Status', choices=[('Passed', 'Passed'), ('Failed', 'Failed'), ('Withdrawn', 'Withdrawn')], validators=[DataRequired()])
+    status = SelectField('Statement Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], validators=[DataRequired()])
     submit = SubmitField('Submit')
-
 
 class LegislationForm(FlaskForm):
     """Legislation form"""

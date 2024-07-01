@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-"""Statements class module for the statements, should be similar to the oversight class module for the oversight and a place to add the files for the statements"""
+"""Statements class module for the statements"""
 
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean, Enum, LargeBinary
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, Integer, Date, Enum, LargeBinary
+from sqlalchemy.orm import relationship
 
 class Statements(BaseModel, Base):
     """This class defines the statements model"""
@@ -13,11 +13,13 @@ class Statements(BaseModel, Base):
     date = Column(Date, nullable=False)
     status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)
         
-    def __init__(self, *args, **kwargs):
+    def __init__(self, document, date, status, *args, **kwargs):
         """Initialization of the statements model"""
         super().__init__(*args, **kwargs)
+        self.document = document
+        self.date = date
+        self.status = status
         
     def __str__(self):
-        """string represenation of a statements"""
-        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id,
-                                         self.__dict__)
+        """String representation of a statement"""
+        return f"{self.__class__.__name__} (ID: {self.id}, Date: {self.date}, Status: {self.status})"

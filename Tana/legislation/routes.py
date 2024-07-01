@@ -87,14 +87,68 @@ def statements():
 
 @legislation_bp.route('/add_statement', methods=['GET', 'POST'])
 def add_statement():
-    """route for the statements"""
+    """Route for adding statements"""
     form = StatementsForm()
     if form.validate_on_submit():
-        statement = Statements(name=form.name.data, document=form.document.data, date=form.date.data, status=form.status.data)
-        db_storage.save(statement)
-        flash('Statement has been created!', 'success')
-        return redirect(url_for('legislation.add_statement'))
+        try:
+            statement = Statements(
+                name=form.name.data,
+                document=form.document.data.read(),  # Read file data for document
+                date=form.date.data,
+                status=form.status.data
+            )
+            db_storage.new(statement)
+            db_storage.save()
+            flash('Statement has been created!', 'success')
+            logger.info(f'Statement "{statement.name}" created successfully.')
+            return redirect(url_for('legislation.add_statement'))
+        except Exception as e:
+            db_storage.rollback()
+            flash(f'An error occurred: {str(e)}', 'danger')
+            logger.error(f'Error creating statement: {str(e)}')
     return render_template('add_statement.html', title='Add Statement', form=form)
+
+@legislation_bp.route('/view_statements', methods=['GET'])
+def view_statements():
+    statements_dict = db_storage.all(Statements)
+    statements = list(statements_dict.values())
+    return render_template('view_statements.html', title='View Statements', statements=statements)
+
+#create function to edit statements
+@legislation_bp.route('/edit_statement/<int:statement_id>', methods=['GET', 'POST'], strict_slashes=False)
+def edit_statement(statement_id):
+    statement = db_storage.get(Statements, id=statement_id)
+    form = StatementsForm(obj=statement)
+    if form.validate_on_submit():
+        try:
+            statement.name = form.name.data
+            statement.date = form.date.data
+            statement.status = form.status.data
+            if form.document.data:
+                statement.document = form.document.data.read()
+            db_storage.save()
+            flash('Statement has been updated!', 'success')
+            return redirect(url_for('legislation.view_statements'))
+        except Exception as e:
+            logging.error(f"Error editing statement: {e}")
+            flash('An error occurred while editing the statement. Please try again.', 'danger')
+    return render_template('edit_statement.html', title='Edit Statement', form=form, statement=statement)
+
+#create function to delete statements
+@legislation_bp.route('/delete_statement/<int:statement_id>', methods=['POST'], strict_slashes=False)
+def delete_statement(statement_id):
+    statement = db_storage.get(Statements, id=statement_id)
+    db_storage.delete(statement)
+    db_storage.save()
+    flash('Statement has been deleted!', 'success')
+    return redirect(url_for('legislation.view_statements'))
+
+#route to download the statement
+@legislation_bp.route('/download_statement/<int:statement_id>', methods=['GET'])
+def download_statement(statement_id):
+    statement = db_storage.get(Statements, id=statement_id)
+    return statement.document
+
 
 @legislation_bp.route('/questions', methods=['GET', 'POST'])
 @login_required
