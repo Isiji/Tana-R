@@ -34,7 +34,9 @@ def add_bill():
 
 @bills_bp.route('/view_bills', methods=['GET'], strict_slashes=False)
 def view_bills():
-    bills = db_storage.all(Bills)
+    bills_dict = db_storage.all(Bills)
+    bills = list(bills_dict.values())
+    print("here are some of the bills", bills)
     return render_template('view_bills.html', bills=bills)
 
 
