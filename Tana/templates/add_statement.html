@@ -1,29 +1,39 @@
-{%extends 'layout.html'%}
+{% extends 'layout.html' %}
 {% block title %} Add Statement {% endblock %}
 {% block content %}
-<h2>Add Statement</h2>
-<div class="container">
-    <form method="POST">
-        <div class="form-group">
-            <label for="name">Statement Title</label>
-            <input type="text" class="form-control" id="name" name="name">
-        </div>
-        <div class="form-group">
-            <label for="document">Upload Document:</label>
-            <input type="file" class="form-control" id="document" name="document" required>
-        </div>
-        <div class="form-group">
-            <label for="date">Statement Date</label>
-            <input type="date" class="form-control" id="date" name="date">
-        </div>
-        <div class="form-group">
-            <label for="category">Statement Status</label>
-            <select class="form-control" id="category" name="category">
-                <option>Passed</option>
-                <option>Failed</option>
-                <option>Withdrawn</option>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
+    <h2>Add Statement</h2>
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.name.label(for="name") }}
+                {{ form.name(class="form-control", id="name") }}
+                {% for error in form.name.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                {{ form.document.label(for="document") }}
+                {{ form.document(class="form-control", id="document") }}
+                {% for error in form.document.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                {{ form.date.label(for="date") }}
+                {{ form.date(class="form-control", id="date") }}
+                {% for error in form.date.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                {{ form.status.label(for="status") }}
+                {{ form.status(class="form-control", id="status") }}
+                {% for error in form.status.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 {% endblock %}
