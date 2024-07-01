@@ -10,6 +10,11 @@ from Tana.models.motions import Motions
 from Tana.models.questions import Questions
 from Tana.models.statements import Statements
 from Tana.legislation.forms import MotionsForm, StatementsForm, LegislationForm, AddMotionForm, QuestionsForm
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 legislation_bp = Blueprint('legislation', __name__)
 
@@ -21,8 +26,10 @@ def legislation():
 #route for adding a motion using addmotion form
 @legislation_bp.route('/add_motion', methods=['GET', 'POST'])
 def add_motion():
-    """Route for the motions"""
-    form = AddMotionForm()
+    """Route for adding motions"""
+    print('add motion route has been hit')
+    form = MotionsForm()
+    print('form created')
     if form.validate_on_submit():
         motion = Motions(
             name=form.name.data,
@@ -30,16 +37,48 @@ def add_motion():
             date=form.date.data,
             status=form.status.data
         )
-        db_storage.new(motion)
-        db_storage.save()
-        flash('Motion has been created!', 'success')
+        try:
+            db_storage.new(motion)
+            db_storage.save()
+            flash('Motion has been created!', 'success')
+            logger.info(f"Motion '{motion.name}' added to the database.")
+        except Exception as e:
+            db_storage.rollback()
+            flash(f'An error occurred: {str(e)}', 'danger')
+            logger.error(f"Failed to add motion '{form.name.data}' to the database. Error: {str(e)}")
         return redirect(url_for('legislation.add_motion'))
     return render_template('add_motion.html', title='Add Motion', form=form)
-@legislation_bp.route('/motions', methods=['GET', 'POST'])
+@legislation_bp.route('/motions', methods=['GET'])
 def motions():
-    """route for the motions"""
-    return render_template('motions.html', title='Motions')
+    motions_dict = db_storage.all(Motions)
+    motions = list(motions_dict.values())
+    return render_template('motions.html', title='View Motions', motions=motions)
+@legislation_bp.route('/edit_motion/<int:motion_id>', methods=['GET', 'POST'], strict_slashes=False)
+def edit_motion(motion_id):
+    motion = db_storage.get(Motions, id=motion_id)
+    form = MotionsForm(obj=motion)
+    if form.validate_on_submit():
+        try:
+            motion.name = form.name.data
+            motion.date = form.date.data
+            motion.status = form.status.data
+            if form.document.data:
+                motion.document = form.document.data.read()
+            db_storage.save()
+            flash('Motion has been updated!', 'success')
+            return redirect(url_for('legislation.view_motions'))
+        except Exception as e:
+            logging.error(f"Error editing motion: {e}")
+            flash('An error occurred while editing the motion. Please try again.', 'danger')
+    return render_template('edit_motion.html', title='Edit Motion', form=form, motion=motion)
 
+@legislation_bp.route('/delete_motion/<int:motion_id>', methods=['POST'], strict_slashes=False)
+def delete_motion(motion_id):
+    motion = db_storage.get(Motions, id=motion_id)
+    db_storage.delete(motion)
+    db_storage.save()
+    flash('Motion has been deleted!', 'success')
+    return redirect(url_for('legislation.motions'))
 
 @legislation_bp.route('/statements', methods=['GET', 'POST'])
 def statements():

@@ -1,9 +1,5 @@
-#!/usr/bin/python3
-"""Motions class module for the motions, similar to the oversight class module for the oversight."""
-
+from sqlalchemy import Column, String, Integer, Date, Enum, LargeBinary
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean, Enum, LargeBinary
-from sqlalchemy.orm import relationship, backref
 
 class Motions(BaseModel, Base):
     """This class defines the motions model"""
