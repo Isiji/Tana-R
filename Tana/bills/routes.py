@@ -42,7 +42,7 @@ def view_bills():
 
 @bills_bp.route('/edit_bill/<int:bill_id>', methods=['GET', 'POST'], strict_slashes=False)
 def edit_bill(bill_id):
-    bill = db_storage.get(Bills, bill_id)
+    bill = db_storage.get(Bills, id=bill_id)
     form = BillsForm(obj=bill)
     if form.validate_on_submit():
         form.populate_obj(bill)
@@ -51,9 +51,10 @@ def edit_bill(bill_id):
         return redirect(url_for('bills.view_bills'))
     return render_template('edit_bill.html', form=form, bill=bill)
 
+
 @bills_bp.route('/delete_bill/<int:bill_id>', methods=['POST'], strict_slashes=False)
 def delete_bill(bill_id):
-    bill = db_storage.get(Bills, bill_id)
+    bill = db_storage.get(Bills, id=bill_id)
     db_storage.delete(bill)
     db_storage.save()
     flash('Bill has been deleted!', 'success')

@@ -8,6 +8,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>Submitted Date</th>
+            <th>Actions</th> <!-- Add a column for actions -->
         </tr>
     </thead>
     <tbody>
@@ -16,6 +17,12 @@
             <td>{{ bill.id }}</td>
             <td>{{ bill.name }}</td>
             <td>{{ bill.submitted_date.strftime('%Y-%m-%d') }}</td>
+            <td>
+                <a href="{{ url_for('bills.edit_bill', bill_id=bill.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                <form action="{{ url_for('bills.delete_bill', bill_id=bill.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
