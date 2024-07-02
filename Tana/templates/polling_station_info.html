@@ -24,7 +24,7 @@
 <script>
     // Fetch polling stations on page load
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('/representation/get_polling_stations')
+        fetch('/representation/get_all_polling_stations')
             .then(response => {
                 console.log(`Response status: ${response.status}`);
                 if (!response.ok) {
@@ -35,7 +35,7 @@
             .then(data => {
                 console.log('Polling stations data:', data);
                 const selectElement = document.getElementById('pollingStation');
-                data.forEach(station => {
+                data.pollingStations.forEach(station => {
                     const option = document.createElement('option');
                     option.value = station;
                     option.textContent = station;
@@ -59,4 +59,5 @@
         }
     });
 </script>
+
 {% endblock %}

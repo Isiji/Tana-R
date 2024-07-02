@@ -1,12 +1,10 @@
+# Tana/representation/routes.py
 import logging
-from flask import Blueprint, current_app, render_template, request, flash, jsonify, redirect, url_for
+from flask import Blueprint, current_app, render_template, request, jsonify
 from Tana.models.constituency import Constituency
 from Tana.models.ward import Ward
 from Tana.models.pollingstation import PollingStation
 from Tana import db_storage
-import pandas as pd
-import os
-import csv
 
 representation = Blueprint('representation', __name__)
 
@@ -19,32 +17,21 @@ file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-
-@representation.route('/pollingstations', methods=['GET'])
+@representation.route('/pollingstations')
 def pollingstations():
-    constituencies = db_storage.all(Constituency).values()
-    wards = db_storage.all(Ward).values()
-    polling_stations = db_storage.all(PollingStation).values()
-    return render_template('results.html', title='Results', constituencies=constituencies, wards=wards, polling_stations=polling_stations)
+    return render_template('polling_station_info.html')
 
-@representation.route('/polling_station_form')
-def polling_station_form():
-    return render_template('polling_station_form.html')
-
-    
-@representation.route('/get_polling_stations', methods=['GET'])
-def get_polling_stations():
-    print("get_polling_stations route has been hit")
+@representation.route('/get_all_polling_stations', methods=['GET'])
+def get_all_polling_stations():
     current_app.logger.info('Fetching all polling stations')
     try:
         polling_stations = db_storage.all(PollingStation)
         current_app.logger.info('Polling stations fetched: %s', polling_stations)
         polling_station_list = [ps.name for ps in polling_stations.values()]
-        return jsonify(polling_station_list)
+        return jsonify({'pollingStations': polling_station_list})
     except Exception as e:
         current_app.logger.error('Error fetching polling stations: %s', e)
         return jsonify({"error": str(e)}), 500
-
 
 @representation.route('/get_polling_station_info', methods=['GET'])
 def get_polling_station_info():
