@@ -36,23 +36,6 @@
     </li>
 
     <li>
-        <h3>Acces the polling_station</h3>
-        <a href="{{ url_for('representation.read_csv') }}" class="btn btn-primary">View polling station</a>   
-    <h2>Autofill Polling Station</h2>
-    <form action="{{ url_for('representation.autofill') }}" method="post">
-        <label for="polling_station">Polling Station:</label>
-        <input type="text" id="polling_station" name="polling_station" required>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
-    {% if result %}
-        <h3>Autofill Result</h3>
-        <p><strong>Polling Station:</strong> {{ result['Polling Station'] }}</p>
-        <p><strong>Ward:</strong> {{ result['Ward'] }}</p>
-        <p><strong>Constituency:</strong> {{ result['Constituency'] }}</p>
-    {% endif %}
     <!--add link for diaries-->
     <li>
         <h3>View Diaries</h3>
@@ -71,12 +54,17 @@
     <!--add link for create statement-->
     <li>
         <h3>Create a Statement</h3>
-        <a href="{{ url_for('legislation.create_statement') }}" class="btn btn-primary">Create Statement</a>
+        <a href="{{ url_for('legislation.add_statement') }}" class="btn btn-primary">Create Statement</a>
     </li>
     <!--add link for view statements-->
     <li>
         <h3>View Statements</h3>
         <a href="{{ url_for('legislation.view_statements') }}" class="btn btn-primary">View Statements</a>
+    </li>
+    <!--add link to search for polling station-->
+    <li>
+        <h3>Search for Polling Station</h3>
+        <a href="{{ url_for('representation.polling_station_form') }}" class="btn btn-primary">Search Polling Station</a>
     </li>
 </div>
 {% endblock %}

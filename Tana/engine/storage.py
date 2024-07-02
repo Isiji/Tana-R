@@ -33,12 +33,13 @@ from Tana.models.secondaryoversight import SecondaryOversight
 from Tana.models.primaryoversight import PrimaryOversight
 from Tana.models.representation import Representation
 from Tana.models.statements import Statements
+
 class DBStorage:
     """Database storage class"""
     __engine = None
     __session = None
 
-    def __init__(self,  app=None):
+    def __init__(self, app=None):
         """Initializes the database storage"""
         if app is not None:
             self.__engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], pool_pre_ping=True)
@@ -49,6 +50,7 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
         Base.metadata.create_all(self.__engine)
         self.__session = scoped_session(sessionmaker(bind=self.__engine))
+
     def all(self, cls=None):
         """Returns a dictionary of all objects"""
         objects = {}
@@ -69,7 +71,6 @@ class DBStorage:
             print("An Error Occurred:", e)
         return objects
 
-    
     def new(self, obj):
         """Adds the object to the current database session"""
         try:
@@ -83,7 +84,7 @@ class DBStorage:
             self.__session.commit()
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
-    
+
     def get_user(self, email):
         """Returns the user object"""
         try:
@@ -99,6 +100,7 @@ class DBStorage:
             return query_result
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
+
     def get(self, cls, **kwargs):
         """Returns the object based on the class and keyword arguments"""
         try:
@@ -122,6 +124,7 @@ class DBStorage:
             return query_result
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
+
     def delete(self, obj=None):
         """Deletes the object from the current database session"""
         try:
@@ -140,10 +143,9 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
 
-
     def close(self):
         """Closes the current session"""
-        try:    
+        try:
             self.__session.remove()
             self.__session.close()
         except SQLAlchemyError as e:
@@ -160,6 +162,9 @@ class DBStorage:
     def get_office_by_id(self, office_id):
         """Returns the office object by ID"""
         try:
+            query_result
+           
+
             query_result = self.__session.query(Offices).filter_by(id=office_id).first()
             return query_result
         except SQLAlchemyError as e:
@@ -180,8 +185,7 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
             return []
-        
-    #create a function to display all user records
+
     def get_all_users(self):
         """Returns a list of all user objects"""
         try:
@@ -189,7 +193,7 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
             return []
-        
+
     def get_or_create(self, model, defaults=None, **kwargs):
         """Returns an existing object or creates a new one if it doesn't exist"""
         try:
@@ -205,7 +209,6 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
 
-    #create function to get diaries by user
     def get_diaries_by_user(self, user_id):
         """Returns diaries associated with a specific user"""
         try:
@@ -213,13 +216,45 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
             return []
-        
+
     def get_constituency_by_name(self, name):
-        return self.__session.query(Constituency).filter_by(name=name).first()
+        """Returns a constituency object by name"""
+        try:
+            return self.__session.query(Constituency).filter_by(name=name).first()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
 
     def get_ward_by_name(self, name):
-        return self.__session.query(Ward).filter_by(name=name).first()
+        """Returns a ward object by name"""
+        try:
+            return self.__session.query(Ward).filter_by(name=name).first()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
 
     def get_polling_station_by_name(self, name):
-        return self.__session.query(PollingStation).filter_by(name=name).first()
+        """Returns a polling station object by name"""
+        try:
+            return self.__session.query(PollingStation).filter_by(name=name).first()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
 
+    def get_pollingstation_by_name(self, name):
+        """Returns a polling station object by name"""
+        try:
+            return self.__session.query(PollingStation).filter_by(name=name).first()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
+
+    def get_ward_by_id(self, ward_id):
+        """Returns a ward object by ID"""
+        try:
+            return self.__session.query(Ward).filter_by(id=ward_id).first()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
+
+    def get_constituency_by_id(self, constituency_id):
+        """Returns a constituency object by ID"""
+        try:
+            return self.__session.query(Constituency).filter_by(id=constituency_id).first()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)

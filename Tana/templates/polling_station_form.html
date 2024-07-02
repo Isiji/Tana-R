@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Polling Station Information</h2>
+    <form>
+        <div class="form-group">
+            <label for="pollingStation">Polling Station</label>
+            <input type="text" class="form-control" id="pollingStation" name="pollingStation" placeholder="Select or type a polling station">
+        </div>
+        <div class="form-group">
+            <label for="ward">Ward</label>
+            <input type="text" class="form-control" id="ward" name="ward" readonly>
+        </div>
+        <div class="form-group">
+            <label for="constituency">Constituency</label>
+            <input type="text" class="form-control" id="constituency" name="constituency" readonly>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('pollingStation').addEventListener('input', function() {
+        var pollingStation = this.value;
+        if (pollingStation) {
+            fetch(`/representation/get_polling_station_info?polling_station=${pollingStation}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('ward').value = data.ward || '';
+                    document.getElementById('constituency').value = data.constituency || '';
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+</script>
+{% endblock %}
