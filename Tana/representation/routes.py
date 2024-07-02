@@ -20,3 +20,9 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
+@representation.route('/results', methods=['GET'])
+def view_results():
+    constituencies = db_storage.all(Constituency).values()
+    wards = db_storage.all(Ward).values()
+    polling_stations = db_storage.all(PollingStation).values()
+    return render_template('results.html', title='Results', constituencies=constituencies, wards=wards, polling_stations=polling_stations)

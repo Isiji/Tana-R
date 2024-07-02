@@ -222,3 +222,4 @@ class DBStorage:
 
     def get_polling_station_by_name(self, name):
         return self.__session.query(PollingStation).filter_by(name=name).first()
+
