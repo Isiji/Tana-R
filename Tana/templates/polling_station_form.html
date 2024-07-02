@@ -6,7 +6,9 @@
     <form>
         <div class="form-group">
             <label for="pollingStation">Polling Station</label>
-            <input type="text" class="form-control" id="pollingStation" name="pollingStation" placeholder="Select or type a polling station">
+            <select class="form-control" id="pollingStation" name="pollingStation">
+                <option value="">Select a polling station</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="ward">Ward</label>
@@ -20,7 +22,31 @@
 </div>
 
 <script>
-    document.getElementById('pollingStation').addEventListener('input', function() {
+    // Fetch polling stations on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/representation/get_polling_stations')
+            .then(response => {
+                console.log(`Response status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Polling stations data:', data);
+                const selectElement = document.getElementById('pollingStation');
+                data.forEach(station => {
+                    const option = document.createElement('option');
+                    option.value = station;
+                    option.textContent = station;
+                    selectElement.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching polling stations:', error));
+    });
+
+    // Fetch ward and constituency information on polling station change
+    document.getElementById('pollingStation').addEventListener('change', function() {
         var pollingStation = this.value;
         if (pollingStation) {
             fetch(`/representation/get_polling_station_info?polling_station=${pollingStation}`)
