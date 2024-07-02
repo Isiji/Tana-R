@@ -1,4 +1,5 @@
 import os
+import csv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -11,7 +12,9 @@ from Tana.config import Config
 from Tana.engine.storage import DBStorage
 from Tana.models.base_model import Base
 from Tana.models.members import users
-from werkzeug.utils import secure_filename
+from Tana.models.constituency import Constituency
+from Tana.models.ward import Ward
+from Tana.models.pollingstation import PollingStation
 from sqlalchemy.orm import configure_mappers
 
 db_storage = DBStorage()
@@ -36,6 +39,7 @@ def load_user(user_id):
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'xls', 'xlsx', 'csv', 'pdf'}
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -59,6 +63,22 @@ def create_app(config_class=Config):
        
        if not db_storage.get_user('ziggy@gmail.com'):
            users.create_super_admin()
+
+       # CSV processing logic
+       csv_file_path = app.config['CSV_FILE_PATH']
+       if os.path.exists(csv_file_path):
+           with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
+               reader = csv.DictReader(csvfile)
+               for row in reader:
+                   constituency_name = row['constituency']
+                   ward_name = row['ward']
+                   polling_station_name = row['polling_station']
+
+                   constituency, _ = db_storage.get_or_create(Constituency, defaults={'name': constituency_name}, name=constituency_name)
+                   ward, _ = db_storage.get_or_create(Ward, defaults={'name': ward_name, 'constituency_id': constituency.id}, name=ward_name, constituency_id=constituency.id)
+                   polling_station, _ = db_storage.get_or_create(PollingStation, defaults={'name': polling_station_name, 'ward_id': ward.id}, name=polling_station_name, ward_id=ward.id)
+
+       db_storage.save()
 
     from Tana.users.routes import Users
     from Tana.events.routes import events_bp
