@@ -212,4 +212,13 @@ class DBStorage:
             return self.__session.query(Diary).filter_by(user_id=user_id).all()
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
-            return []      
+            return []
+        
+    def get_constituency_by_name(self, name):
+        return self.__session.query(Constituency).filter_by(name=name).first()
+
+    def get_ward_by_name(self, name):
+        return self.__session.query(Ward).filter_by(name=name).first()
+
+    def get_polling_station_by_name(self, name):
+        return self.__session.query(PollingStation).filter_by(name=name).first()
