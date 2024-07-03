@@ -132,12 +132,15 @@ def get_all_polling_stations():
 
 @events_bp.route('/get_polling_station_info', methods=['GET'])
 def get_polling_station_info():
-    """Route to get ward and constituency based on polling station name"""
     polling_station_name = request.args.get('polling_station')
+
+    if not polling_station_name:
+        return jsonify({'error': 'Polling station name is required'}), 400
+
     polling_station = db_storage.find_one(PollingStation, name=polling_station_name)
 
     if not polling_station:
-        return jsonify({'error': 'Polling station not found'})
+        return jsonify({'error': 'Polling station not found'}), 404
 
     ward = db_storage.find_one(Ward, id=polling_station.ward_id)
     constituency = db_storage.find_one(Constituency, id=ward.constituency_id)

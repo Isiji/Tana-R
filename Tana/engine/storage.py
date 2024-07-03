@@ -258,3 +258,11 @@ class DBStorage:
             return self.__session.query(Constituency).filter_by(id=constituency_id).first()
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
+
+
+    def find_one(self, model, **kwargs):
+            """Find a single instance of model that matches the given kwargs."""
+            try:
+                return self.__session.query(model).filter_by(**kwargs).first()
+            except SQLAlchemyError as e:
+                print("An Error Occurred:", e)
