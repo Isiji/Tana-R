@@ -17,9 +17,16 @@ file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-@representation.route('/pollingstations')
+@representation.route('/pollingstations', methods=['GET'])
 def pollingstations():
-    return render_template('polling_station_info.html')
+    constituencies = db_storage.all(Constituency).values()
+    wards = db_storage.all(Ward).values()
+    polling_stations = db_storage.all(PollingStation).values()
+    return render_template('results.html', title='Results', constituencies=constituencies, wards=wards, polling_stations=polling_stations)
+
+@representation.route('/select_polling_station', methods=['GET'])
+def select_polling_station():
+    return render_template('select_polling_station.html')
 
 @representation.route('/get_all_polling_stations', methods=['GET'])
 def get_all_polling_stations():
@@ -49,4 +56,22 @@ def get_polling_station_info():
         })
     else:
         logging.debug("Polling station not found")
+        return jsonify({'error': 'Polling station not found'}), 404
+    
+
+@representation.route('/pollingstations_list', methods=['GET'])
+def pollingstations_list():
+    polling_stations = db_storage.all(PollingStation)
+    polling_station_names = [ps.name for ps in polling_stations]
+    return jsonify(polling_station_names)
+
+@representation.route('/pollingstations/<polling_station_name>', methods=['GET'])
+def get_polling_station_details_by_name(polling_station_name):
+    polling_station = db_storage.get_polling_station_by_name(polling_station_name)
+    if polling_station:
+        return jsonify({
+            'ward': polling_station.ward.name,
+            'constituency': polling_station.constituency.name
+        })
+    else:
         return jsonify({'error': 'Polling station not found'}), 404
