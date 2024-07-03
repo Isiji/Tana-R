@@ -12,7 +12,7 @@ from Tana import db_storage, bcrypt
 class EventForm(FlaskForm):
     event_name = StringField('Event Name', validators=[DataRequired()])
     event_description = TextAreaField('Event Description', validators=[DataRequired()])
-    impact_level = StringField('Impact Level', validators=[DataRequired()])
+    impact_level = SelectField('Impact Level', choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')], validators=[DataRequired()])
     event_owner = StringField('Event Owner', validators=[DataRequired()])
     event_location = StringField('Event Location', validators=[DataRequired()])
     event_contact = StringField('Event Contact', validators=[DataRequired()])
