@@ -13,4 +13,4 @@ class Constituency(BaseModel, Base):
         super().__init__(*args, **kwargs)
 
     def __str__(self):
-        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        return "[{:s}] ({:d}) {}".format(self.__class__.__name__, self.id, self.name)

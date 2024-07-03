@@ -1,48 +1,41 @@
 {% extends 'layout.html' %}
-{% block title %}Events{% endblock %}
+
 {% block content %}
-<!-- Create a page that provides a button to create an event, all the events are seen at this page -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Events</h1>
-            <a href="{{ url_for('events.add_event') }}" class="btn btn-primary">Create Event</a>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Event Name</th>
-                        <th>Event Date</th>
-                        <th>Event Time</th>
-                        <th>Event Location</th>
-                        <th>Event Description</th>
-                        <th>Event Creator</th>
-                        <th>Polling Station</th>
-                        <th>Ward</th>
-                        <th>Constituency</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for event in events %}
-                    <tr>
-                        <td>{{ event.name }}</td>
-                        <td>{{ event.date }}</td>
-                        <td>{{ event.time }}</td>
-                        <td>{{ event.location }}</td>
-                        <td>{{ event.description }}</td>
-                        <td>{{ event.creator }}</td>
-                        <td>{{ event.polling_station }}</td>  <!-- Replace with actual polling station field -->
-                        <td>{{ event.ward }}</td>  <!-- Replace with actual ward field -->
-                        <td>{{ event.constituency }}</td>  <!-- Replace with actual constituency field -->
-                        <td>
-                            <a href="{{ url_for('edit_event', id=event.id) }}" class="btn btn-warning">Edit</a>
-                            <a href="{{ url_for('delete_event', id=event.id) }}" class="btn btn-danger">Delete</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <h1>Events List</h1>
+    <div class="mb-3">
+        <a href="{{ url_for('events.add_event') }}" class="btn btn-primary">Add New Event</a>
     </div>
-</div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Impact Level</th>
+                <th>Event Owner</th>
+                <th>Event Location</th>
+                <th>Event Contact</th>
+                <th>Event Description</th>
+                <th>Event Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.event_name }}</td>
+                    <td>{{ event.impact_level }}</td>
+                    <td>{{ event.event_owner }}</td>
+                    <td>{{ event.event_location }}</td>
+                    <td>{{ event.event_contact }}</td>
+                    <td>{{ event.event_description }}</td>
+                    <td>{{ event.event_date }}</td>
+                    <td>
+                        <a href="{{ url_for('events.edit_event', id=event.id) }}" class="btn btn-warning">Edit</a>
+                        <form action="{{ url_for('events.delete_event', event_id=event.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

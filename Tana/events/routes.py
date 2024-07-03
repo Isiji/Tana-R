@@ -82,7 +82,7 @@ def redirect_based_on_role():
 @events_bp.route('/view_events', methods=['GET', 'POST'], strict_slashes=False)
 def view_events():
     """route to view events"""
-    events = db_storage.all(Events)
+    events = db_storage.all(Events).values()
     return render_template('events.html', events=events)
 
 
@@ -97,30 +97,31 @@ def delete_event(event_id):
     db_storage.save()
     return redirect(url_for('events.view_events'))
 
-@events_bp.route('/update_event/<int:event_id>', methods=['GET', 'POST'], strict_slashes=False)
-def update_event(event_id):
-    """route to update an event"""
-    event = db_storage.get(Events, event_id)
-    if event is None:
+@events_bp.route('/edit_event/<int:id>', methods=['GET', 'POST'])
+def edit_event(id):
+    event = db_storage.find_one(Events, id=id)
+    if not event:
+        flash('Event not found.')
         return redirect(url_for('events.view_events'))
-    form = EventForm()
-    if form.validate_on_submit():
-        event_name = form.event_name.data
-        event_description = form.event_description.data
-        event_impact = form.event_impact.data
-        event_owner = form.event_owner.data
-        event_location = form.event_location.data
-        event_contact = form.event_contact.data
-        event.event_name = event_name
-        event.event_description = event_description
-        event.event_impact = event_impact
-        event.event_owner = event_owner
-        event.event_location = event_location
-        event.event_contact = event_contact
+    
+    if request.method == 'POST':
+        event.name = request.form.get('name')
+        event.date = request.form.get('date')
+        event.time = request.form.get('time')
+        event.location = request.form.get('location')
+        event.description = request.form.get('description')
+        event.creator = request.form.get('creator')
+        event.polling_station = request.form.get('polling_station')
+        event.ward = request.form.get('ward')
+        event.constituency = request.form.get('constituency')
+        
         db_storage.save()
+        flash('Event updated successfully.')
+        
         return redirect(url_for('events.view_events'))
-    return render_template('add_event.html', title='Update Event', form=form)
 
+    return render_template('edit_event.html', event=event)
+        
 
 
 @events_bp.route('/get_all_polling_stations', methods=['GET'])

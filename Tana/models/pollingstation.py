@@ -1,9 +1,6 @@
-#!/usr/bin/python3
-"""PollingStation class module for the polling station"""
-from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-
+from Tana.models.base_model import BaseModel, Base
 
 class PollingStation(BaseModel, Base):
     __tablename__ = 'polling_stations'
@@ -17,4 +14,4 @@ class PollingStation(BaseModel, Base):
         super().__init__(*args, **kwargs)
 
     def __str__(self):
-        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        return "[{:s}] ({:d}) {}".format(self.__class__.__name__, self.id, self.name)
