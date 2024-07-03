@@ -1,125 +1,75 @@
 {% extends 'layout.html' %}
-{% block title %}Create an Event{% endblock %}
+
 {% block content %}
-<!--uses the labels from the eventform-->
-<div class="container">
-    <h2>Create an Event</h2>
+<div class="container mt-5">
+    <h2>Create Event</h2>
     <form method="POST" action="{{ url_for('events.add_event') }}">
         {{ form.hidden_tag() }}
+        
         <div class="form-group">
-            {{ form.event_name.label(class="form-control-label") }}
-            {{ form.event_name(class="form-control form-control-lg") }}
-            {% if form.event_name.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.event_name.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
+            {{ form.event_name.label(class="form-label") }},
+            {{ form.event_name(class="form-control") }}
         </div>
+        
         <div class="form-group">
-            {{ form.impact_level.label(class="form-control-label") }}
-            {{ form.impact_level(class="form-control form-control-lg") }}
-            {% if form.impact_level.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.impact_level.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
+            {{ form.event_description.label(class="form-label") }}
+            {{ form.event_description(class="form-control") }}
         </div>
+        
         <div class="form-group">
-            {{ form.event_date.label(class="form-control-label") }}
-            {{ form.event_date(class="form-control form-control-lg") }}
-            {% if form.event_date.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.event_date.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
+            {{ form.impact_level.label(class="form-label") }}
+            {{ form.impact_level(class="form-control") }}
         </div>
+        
         <div class="form-group">
-            {{ form.event_owner.label(class="form-control-label") }}
-            {{ form.event_owner(class="form-control form-control-lg") }}
-            {% if form.event_owner.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.event_owner.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
+            {{ form.event_owner.label(class="form-label") }}
+            {{ form.event_owner(class="form-control") }}
         </div>
+        
         <div class="form-group">
-            {{ form.event_contact.label(class="form-control-label") }}
-            {{ form.event_contact(class="form-control form-control-lg") }}
-            {% if form.event_contact.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.event_contact.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
+            {{ form.event_location.label(class="form-label") }}
+            {{ form.event_location(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.event_contact.label(class="form-label") }}
+            {{ form.event_contact(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.event_date.label(class="form-label") }}
+            {{ form.event_date(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            <label for="pollingStationSelect">Polling Station</label>
+            <select id="pollingStationSelect" name="polling_station_name" class="form-control" onchange="fetchDetails()" required>
+                <option value="">Select a Polling Station</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="ward">Ward</label>
+            <input type="text" id="ward" class="form-control" name="ward_name" readonly>
+        </div>
+        
+        <div class="form-group">
+            <label for="constituency">Constituency</label>
+            <input type="text" id="constituency" class="form-control" name="constituency_name" readonly>
         </div>
 
-        <div class="form-group">
-            {{ form.event_location.label(class="form-control-label") }}
-            {{ form.event_location(class="form-control form-control-lg") }}
-            {% if form.event_location.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.event_location.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div class="form-group">
-            {{ form.event_description.label(class="form-control-label") }}
-            {{ form.event_description(class="form-control form-control-lg") }}
-            {% if form.event_description.errors %}
-            <div class="invalid-feedback">
-                {% for error in form.event_description.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- Polling Station Selection -->
-        <div class="container mt-5">
-            <h2>Select Polling Station</h2>
-            <div class="form-group">
-                <label for="pollingStation">Polling Station</label>
-                <div class="input-group">
-                    <select id="pollingStationSelect" class="form-control" onchange="fetchDetails()">
-                        <option value="">Select a Polling Station</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="ward">Ward</label>
-                <input type="text" id="ward" class="form-control" readonly>
-            </div>
-            <div class="form-group">
-                <label for="constituency">Constituency</label>
-                <input type="text" id="constituency" class="form-control" readonly>
-            </div>
-        </div>
-
-        <div class="form-group">
-            {{ form.submit(class="btn btn-primary") }}
-        </div>
+        <button type="submit" class="btn btn-primary">Create Event</button>
     </form>
 </div>
 
 <script>
     async function fetchPollingStationNames() {
         try {
-            const response = await fetch('/get_all_polling_stations');
+            const response = await fetch('{{ url_for("events.get_all_polling_stations") }}');
             const data = await response.json();
             const pollingStationNames = data.pollingStations;
             const pollingStationSelect = document.getElementById('pollingStationSelect');
-            pollingStationSelect.innerHTML = '<option value="">Select a Polling Station</option>'; // Clear existing options
+            pollingStationSelect.innerHTML = '<option value="">Select a Polling Station</option>';
             pollingStationNames.forEach((pollingStationName) => {
                 const option = document.createElement('option');
                 option.value = pollingStationName;
@@ -144,7 +94,7 @@
         }
 
         try {
-            const url = `/get_polling_station_info?polling_station=${selectedPollingStation}`;
+            const url = `{{ url_for('events.get_polling_station_info') }}?polling_station=${selectedPollingStation}`;
             const response = await fetch(url);
             const data = await response.json();
 
@@ -164,4 +114,5 @@
 
     document.addEventListener('DOMContentLoaded', fetchPollingStationNames);
 </script>
+
 {% endblock %}

@@ -8,7 +8,9 @@ from Tana.events.forms import EventForm
 from flask_login import current_user, login_required
 from Tana.models.roles import UserRole
 import logging
-
+from Tana.models.constituency import Constituency
+from Tana.models.ward import Ward
+from Tana.models.pollingstation import PollingStation
 
 events_bp = Blueprint('events', __name__)
 
@@ -27,6 +29,14 @@ def add_event():
         event_contact = form.event_contact.data
         event_date = form.event_date.data
 
+        polling_station_name = form.polling_station_name.data
+
+        polling_station = db_storage.find_one(PollingStation, name=polling_station_name)
+
+        if not polling_station:
+            flash('Polling station not found!', 'danger')
+            return redirect(url_for('events.add_event'))
+
         event = Events(
             event_name=event_name, 
             event_description=event_description, 
@@ -34,14 +44,14 @@ def add_event():
             event_owner=event_owner, 
             event_location=event_location, 
             event_contact=event_contact,
-            event_date=event_date
+            event_date=event_date,
+            polling_station_id=polling_station.id
         )
 
         db_storage.new(event)
         db_storage.save()
-
         flash('Event has been created!', 'success')
-        return render_template('events.html')
+        return redirect(url_for('events.view_events'))
 
     return render_template('add_event.html', title='Add Event', form=form)
 
@@ -110,3 +120,29 @@ def update_event(event_id):
         db_storage.save()
         return redirect(url_for('events.view_events'))
     return render_template('add_event.html', title='Update Event', form=form)
+
+
+
+@events_bp.route('/get_all_polling_stations', methods=['GET'])
+def get_all_polling_stations():
+    """Route to get all polling station names"""
+    polling_stations = db_storage.all(PollingStation)
+    polling_station_names = [station.name for station in polling_stations.values()]
+    return jsonify({'pollingStations': polling_station_names})
+
+@events_bp.route('/get_polling_station_info', methods=['GET'])
+def get_polling_station_info():
+    """Route to get ward and constituency based on polling station name"""
+    polling_station_name = request.args.get('polling_station')
+    polling_station = db_storage.find_one(PollingStation, name=polling_station_name)
+
+    if not polling_station:
+        return jsonify({'error': 'Polling station not found'})
+
+    ward = db_storage.find_one(Ward, id=polling_station.ward_id)
+    constituency = db_storage.find_one(Constituency, id=ward.constituency_id)
+
+    return jsonify({
+        'ward': ward.name,
+        'constituency': constituency.name
+    })

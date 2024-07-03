@@ -17,8 +17,10 @@ class EventForm(FlaskForm):
     event_location = StringField('Event Location', validators=[DataRequired()])
     event_contact = StringField('Event Contact', validators=[DataRequired()])
     event_date = DateField('Event Date', validators=[DataRequired()])
+    ward_name = StringField('Ward Name', validators=[DataRequired()])  # Add Ward Name field
+    polling_station_name = StringField('Polling Station Name', validators=[DataRequired()])  # Add Polling Station Name field
+    constituency_name = StringField('Constituency Name', validators=[DataRequired()])  # Add Constituency Name field
     submit = SubmitField('Register event')
-
 
 #create a form to view events that have been created
 
