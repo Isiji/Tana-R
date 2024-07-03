@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Create Event</h2>
-    <form method="POST" action="{{ url_for('events.add_event') }}">
+    <h2>Edit Event</h2>
+    <form method="POST" action="{{ url_for('events.edit_event', id=event.id) }}">
         {{ form.hidden_tag() }}
         
         <div class="form-group">
@@ -45,44 +45,27 @@
             <label for="pollingStationSelect">Polling Station</label>
             <select id="pollingStationSelect" name="polling_station_name" class="form-control" onchange="fetchDetails()" required>
                 <option value="">Select a Polling Station</option>
+                {% for polling_station in polling_stations %}
+                    <option value="{{ polling_station.name }}" {% if polling_station.name == event.polling_station.name %} selected {% endif %}>{{ polling_station.name }}</option>
+                {% endfor %}
             </select>
         </div>
         
         <div class="form-group">
             <label for="ward">Ward</label>
-            <input type="text" id="ward" class="form-control" name="ward_name" readonly>
+            <input type="text" id="ward" class="form-control" name="ward_name" value="{{ event.polling_station.ward.name }}" readonly>
         </div>
         
         <div class="form-group">
             <label for="constituency">Constituency</label>
-            <input type="text" id="constituency" class="form-control" name="constituency_name" readonly>
+            <input type="text" id="constituency" class="form-control" name="constituency_name" value="{{ event.polling_station.ward.constituency.name }}" readonly>
         </div>
 
-        <button type="submit" class="btn btn-primary">Create Event</button>
+        <button type="submit" class="btn btn-primary">Update Event</button>
     </form>
 </div>
 
 <script>
-    async function fetchPollingStationNames() {
-        try {
-            const response = await fetch('{{ url_for("events.get_all_polling_stations") }}');
-            const data = await response.json();
-            const pollingStationNames = data.pollingStations;
-            const pollingStationSelect = document.getElementById('pollingStationSelect');
-            pollingStationSelect.innerHTML = '<option value="">Select a Polling Station</option>';
-            pollingStationNames.forEach((pollingStationName) => {
-                const option = document.createElement('option');
-                option.value = pollingStationName;
-                option.textContent = pollingStationName;
-                pollingStationSelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error fetching polling station names:', error);
-            const pollingStationSelect = document.getElementById('pollingStationSelect');
-            pollingStationSelect.innerHTML = '<option value="">Error loading polling stations</option>';
-        }
-    }
-
     async function fetchDetails() {
         const pollingStationSelect = document.getElementById('pollingStationSelect');
         const selectedPollingStation = pollingStationSelect.value.trim();
@@ -112,7 +95,7 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', fetchPollingStationNames);
+    document.addEventListener('DOMContentLoaded', fetchDetails);
 </script>
 
 {% endblock %}

@@ -90,7 +90,7 @@ def view_events():
 @events_bp.route('/delete_event/<int:event_id>', methods=['GET', 'POST'], strict_slashes=False)
 def delete_event(event_id):
     """route to delete an event"""
-    event = db_storage.get(Events, event_id)
+    event = db_storage.get(Events, id=event_id)
     if event is None:
         return redirect(url_for('events.view_events'))
     db_storage.delete(event)
