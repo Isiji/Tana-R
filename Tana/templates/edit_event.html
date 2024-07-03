@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Edit Event</h2>
-    <form method="POST" action="{{ url_for('events.edit_event', id=event.id) }}">
+    <form method="POST" action="{{ url_for('events.edit_event', event_id=event.id) }}">
         {{ form.hidden_tag() }}
         
         <div class="form-group">
@@ -95,7 +95,12 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', fetchDetails);
+    // Ensure fetchDetails is called on initial page load and when the dropdown changes
+    document.addEventListener('DOMContentLoaded', () => {
+        const pollingStationSelect = document.getElementById('pollingStationSelect');
+        pollingStationSelect.addEventListener('change', fetchDetails);
+        fetchDetails(); // Initial fetch on page load
+    });
 </script>
 
 {% endblock %}

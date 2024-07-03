@@ -76,31 +76,19 @@ def delete_event(event_id):
     db_storage.save()
     return redirect(url_for('events.view_events'))
 
-@events_bp.route('/edit_event/<int:id>', methods=['GET', 'POST'])
-def edit_event(id):
-    event = db_storage.find_one(Events, id=id)
-    if not event:
-        flash('Event not found.')
-        return redirect(url_for('events.view_events'))
-    
-    if request.method == 'POST':
-        event.name = request.form.get('name')
-        event.date = request.form.get('date')
-        event.time = request.form.get('time')
-        event.location = request.form.get('location')
-        event.description = request.form.get('description')
-        event.creator = request.form.get('creator')
-        event.polling_station = request.form.get('polling_station')
-        event.ward = request.form.get('ward')
-        event.constituency = request.form.get('constituency')
-        
-        db_storage.save()
-        flash('Event updated successfully.')
-        
+@events_bp.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
+@login_required
+def edit_event(event_id):
+    event = db_storage.find_one(Events, id=event_id)  # Correct usage of find_one
+    form = EventForm(obj=event)
+
+    if request.method == 'POST' and form.validate_on_submit():
+        form.populate_obj(event)
+        db_storage.commit()
+        flash('Event updated successfully', 'success')
         return redirect(url_for('events.view_events'))
 
-    return render_template('edit_event.html', event=event)
-
+    return render_template('edit_event.html', form=form, event=event)
 
 @events_bp.route('/get_all_polling_stations', methods=['GET'])
 def get_all_polling_stations():
