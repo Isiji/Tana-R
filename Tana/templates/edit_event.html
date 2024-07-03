@@ -1,65 +1,101 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1>Edit Event</h1>
-    <form method="POST" action="{{ url_for('events.update_event', id=event.id) }}">
-        <!-- Event Name -->
-        <div class="mb-3">
-            <label for="event_name" class="form-label">Event Name</label>
-            <input type="text" class="form-control" id="event_name" name="event_name" value="{{ event.event_name }}" required>
+<div class="container mt-5">
+    <h2>Edit Event</h2>
+    <form method="POST" action="{{ url_for('events.edit_event', id=event.id) }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.event_name.label(class="form-label") }}
+            {{ form.event_name(class="form-control") }}
         </div>
-
-        <!-- Impact Level -->
-        <div class="mb-3">
-            <label for="impact_level" class="form-label">Impact Level</label>
-            <select class="form-select" id="impact_level" name="impact_level" required>
-                {% for level in impact_levels %}
-                    <option value="{{ level.value }}" {% if event.impact_level == level.value %} selected {% endif %}>{{ level.name }}</option>
+        
+        <div class="form-group">
+            {{ form.event_description.label(class="form-label") }}
+            {{ form.event_description(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.impact_level.label(class="form-label") }}
+            {{ form.impact_level(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.event_owner.label(class="form-label") }}
+            {{ form.event_owner(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.event_location.label(class="form-label") }}
+            {{ form.event_location(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.event_contact.label(class="form-label") }}
+            {{ form.event_contact(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.event_date.label(class="form-label") }}
+            {{ form.event_date(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            <label for="pollingStationSelect">Polling Station</label>
+            <select id="pollingStationSelect" name="polling_station_name" class="form-control" onchange="fetchDetails()" required>
+                <option value="">Select a Polling Station</option>
+                {% for polling_station in polling_stations %}
+                    <option value="{{ polling_station.name }}" {% if polling_station.name == event.polling_station.name %} selected {% endif %}>{{ polling_station.name }}</option>
                 {% endfor %}
             </select>
         </div>
-
-        <!-- Event Owner -->
-        <div class="mb-3">
-            <label for="event_owner" class="form-label">Event Owner</label>
-            <input type="text" class="form-control" id="event_owner" name="event_owner" value="{{ event.event_owner }}" required>
+        
+        <div class="form-group">
+            <label for="ward">Ward</label>
+            <input type="text" id="ward" class="form-control" name="ward_name" value="{{ event.polling_station.ward.name }}" readonly>
+        </div>
+        
+        <div class="form-group">
+            <label for="constituency">Constituency</label>
+            <input type="text" id="constituency" class="form-control" name="constituency_name" value="{{ event.polling_station.ward.constituency.name }}" readonly>
         </div>
 
-        <!-- Event Location -->
-        <div class="mb-3">
-            <label for="event_location" class="form-label">Event Location</label>
-            <input type="text" class="form-control" id="event_location" name="event_location" value="{{ event.event_location }}" required>
-        </div>
-
-        <!-- Event Contact -->
-        <div class="mb-3">
-            <label for="event_contact" class="form-label">Event Contact</label>
-            <input type="text" class="form-control" id="event_contact" name="event_contact" value="{{ event.event_contact }}" required>
-        </div>
-
-        <!-- Event Description -->
-        <div class="mb-3">
-            <label for="event_description" class="form-label">Event Description</label>
-            <textarea class="form-control" id="event_description" name="event_description" rows="5" required>{{ event.event_description }}</textarea>
-        </div>
-
-        <!-- Event Date -->
-        <div class="mb-3">
-            <label for="event_date" class="form-label">Event Date</label>
-            <input type="date" class="form-control" id="event_date" name="event_date" value="{{ event.event_date|date('YYYY-MM-DD') }}" required>
-        </div>
-
-        <!-- Polling Station -->
-        <div class="mb-3">
-            <label for="polling_station" class="form-label">Polling Station</label>
-            <select class="form-select" id="polling_station" name="polling_station" required>
-                {% for station in polling_stations %}
-                    <option value="{{ station.id }}" {% if event.polling_station_id == station.id %} selected {% endif %}>{{ station.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <!-- Submit Button -->
         <button type="submit" class="btn btn-primary">Update Event</button>
     </form>
+</div>
+
+<script>
+    async function fetchDetails() {
+        const pollingStationSelect = document.getElementById('pollingStationSelect');
+        const selectedPollingStation = pollingStationSelect.value.trim();
+
+        if (!selectedPollingStation) {
+            document.getElementById('ward').value = '';
+            document.getElementById('constituency').value = '';
+            return;
+        }
+
+        try {
+            const url = `{{ url_for('events.get_polling_station_info') }}?polling_station=${selectedPollingStation}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.error) {
+                document.getElementById('ward').value = '';
+                document.getElementById('constituency').value = '';
+                alert(data.error);
+            } else {
+                document.getElementById('ward').value = data.ward;
+                document.getElementById('constituency').value = data.constituency;
+            }
+        } catch (error) {
+            console.error('Error fetching details:', error);
+            alert('Error fetching details. Please try again.');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchDetails);
+</script>
+
 {% endblock %}

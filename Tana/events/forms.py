@@ -12,14 +12,12 @@ from Tana import db_storage, bcrypt
 class EventForm(FlaskForm):
     event_name = StringField('Event Name', validators=[DataRequired()])
     event_description = TextAreaField('Event Description', validators=[DataRequired()])
-    impact_level = SelectField('Impact Level', validators=[DataRequired()], choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')])
+    impact_level = StringField('Impact Level', validators=[DataRequired()])
     event_owner = StringField('Event Owner', validators=[DataRequired()])
     event_location = StringField('Event Location', validators=[DataRequired()])
     event_contact = StringField('Event Contact', validators=[DataRequired()])
-    event_date = DateField('Event Date', validators=[DataRequired()])
-    ward_name = StringField('Ward Name', validators=[DataRequired()])  # Add Ward Name field
-    polling_station_name = StringField('Polling Station Name', validators=[DataRequired()])  # Add Polling Station Name field
-    constituency_name = StringField('Constituency Name', validators=[DataRequired()])  # Add Constituency Name field
+    event_date = DateField('Event Date', format='%Y-%m-%d', validators=[DataRequired()])
+    polling_station_name = SelectField('Polling Station', validators=[DataRequired()], choices=[])
     submit = SubmitField('Register event')
 
 #create a form to view events that have been created

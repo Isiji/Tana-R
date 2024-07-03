@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Edit Event</h2>
-    <form method="POST" action="{{ url_for('events.edit_event', id=event.id) }}">
+    <h2>Add Event</h2>
+    <form method="POST" action="{{ url_for('events.add_event') }}">
         {{ form.hidden_tag() }}
         
         <div class="form-group">
-            {{ form.event_name.label(class="form-label") }},
+            {{ form.event_name.label(class="form-label") }}
             {{ form.event_name(class="form-control") }}
         </div>
         
@@ -46,22 +46,22 @@
             <select id="pollingStationSelect" name="polling_station_name" class="form-control" onchange="fetchDetails()" required>
                 <option value="">Select a Polling Station</option>
                 {% for polling_station in polling_stations %}
-                    <option value="{{ polling_station.name }}" {% if polling_station.name == event.polling_station.name %} selected {% endif %}>{{ polling_station.name }}</option>
+                    <option value="{{ polling_station.name }}">{{ polling_station.name }}</option>
                 {% endfor %}
             </select>
         </div>
         
         <div class="form-group">
             <label for="ward">Ward</label>
-            <input type="text" id="ward" class="form-control" name="ward_name" value="{{ event.polling_station.ward.name }}" readonly>
+            <input type="text" id="ward" class="form-control" name="ward_name" readonly>
         </div>
         
         <div class="form-group">
             <label for="constituency">Constituency</label>
-            <input type="text" id="constituency" class="form-control" name="constituency_name" value="{{ event.polling_station.ward.constituency.name }}" readonly>
+            <input type="text" id="constituency" class="form-control" name="constituency_name" readonly>
         </div>
 
-        <button type="submit" class="btn btn-primary">Update Event</button>
+        <button type="submit" class="btn btn-primary">Add Event</button>
     </form>
 </div>
 
@@ -95,7 +95,10 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', fetchDetails);
+    document.addEventListener('DOMContentLoaded', () => {
+        const pollingStationSelect = document.getElementById('pollingStationSelect');
+        pollingStationSelect.addEventListener('change', fetchDetails);
+    });
 </script>
 
 {% endblock %}

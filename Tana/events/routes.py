@@ -20,6 +20,9 @@ events_bp = Blueprint('events', __name__)
 def add_event():
     """Route to add an event"""
     form = EventForm()
+    polling_stations = db_storage.all(PollingStation).values()
+    form.polling_station_name.choices = [(ps.name, ps.name) for ps in polling_stations]
+
     if form.validate_on_submit():
         event_name = form.event_name.data
         event_description = form.event_description.data
@@ -28,7 +31,6 @@ def add_event():
         event_location = form.event_location.data
         event_contact = form.event_contact.data
         event_date = form.event_date.data
-
         polling_station_name = form.polling_station_name.data
 
         polling_station = db_storage.find_one(PollingStation, name=polling_station_name)
@@ -53,38 +55,15 @@ def add_event():
         flash('Event has been created!', 'success')
         return redirect(url_for('events.view_events'))
 
-    return render_template('add_event.html', title='Add Event', form=form)
+    return render_template('add_event.html', title='Add Event', form=form, polling_stations=polling_stations)
 
-def redirect_based_on_role():
-    """Function to redirect based on the user role"""
-    current_app.logger.info(f"Redirecting user {current_user.email} with role {current_user.role}.")
-    if current_user.has_role(UserRole.ADMIN.value):
-        return redirect(url_for('Users.admin_dashboard'))
-    elif current_user.has_role(UserRole.DRIVER.value):
-        return redirect(url_for('drivers.driver_dashboard'))
-    elif current_user.has_role(UserRole.BODYGUARD.value):
-        return redirect(url_for('bodyguards.bodyguard_dashboard'))
-    elif current_user.has_role(UserRole.RESEARCHER.value):
-        return redirect(url_for('researchers.researcher_dashboard'))
-    elif current_user.has_role(UserRole.COORDINATOR.value):
-        return redirect(url_for('coordinators.coordinator_dashboard'))
-    elif current_user.has_role(UserRole.SECRETARY.value):
-        return redirect(url_for('secretaries.secretary_dashboard'))
-    elif current_user.has_role(UserRole.CHIEF_SECURITY_OFFICER.value):
-        return redirect(url_for('chief_security_officers.chief_security_officer_dashboard'))
-    elif current_user.has_role(UserRole.SUPER_ADMIN.value):
-        return redirect(url_for('Users.admin_dashboard'))
-    elif current_user.has_role(UserRole.P_A.value):
-        return redirect(url_for('personal_assistants.personal_assistant_dashboard'))
-    else:
-        return redirect(url_for('main.home'))
+
 # create a route to view events
 @events_bp.route('/view_events', methods=['GET', 'POST'], strict_slashes=False)
 def view_events():
     """route to view events"""
     events = db_storage.all(Events).values()
     return render_template('events.html', events=events)
-
 
 
 @events_bp.route('/delete_event/<int:event_id>', methods=['GET', 'POST'], strict_slashes=False)
@@ -121,14 +100,13 @@ def edit_event(id):
         return redirect(url_for('events.view_events'))
 
     return render_template('edit_event.html', event=event)
-        
 
 
 @events_bp.route('/get_all_polling_stations', methods=['GET'])
 def get_all_polling_stations():
     """Route to get all polling station names"""
-    polling_stations = db_storage.all(PollingStation)
-    polling_station_names = [station.name for station in polling_stations.values()]
+    polling_stations = db_storage.all(PollingStation).values()
+    polling_station_names = [station.name for station in polling_stations]
     return jsonify({'pollingStations': polling_station_names})
 
 @events_bp.route('/get_polling_station_info', methods=['GET'])
