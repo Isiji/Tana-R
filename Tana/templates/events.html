@@ -17,7 +17,7 @@
                 <th>Event Date</th>
                 <th>Created At</th>
                 <th>Polling Station</th>
-                <th>Entered By</th>  <!-- Add this line -->
+                <th>Entered By</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -33,7 +33,7 @@
                     <td>{{ event.event_date }}</td>
                     <td>{{ event.created_at }}</td>
                     <td>{{ event.polling_station.name }}</td>
-                    <td>{{ event.user.username }}</td>  <!-- Add this line -->
+                    <td>{{ event.user.name }}</td>  {# Displaying the user who entered the event #}
                     <td>
                         <a href="{{ url_for('events.edit_event', event_id=event.id) }}" class="btn btn-warning">Edit</a>
                         <form action="{{ url_for('events.delete_event', event_id=event.id) }}" method="POST" style="display:inline;">
