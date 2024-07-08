@@ -59,10 +59,11 @@ def add_event():
 
 
 # create a route to view events
-@events_bp.route('/view_events', methods=['GET', 'POST'], strict_slashes=False)
+@events_bp.route('/view_events', methods=['GET'], strict_slashes=False)
 def view_events():
-    """route to view events"""
-    events = db_storage.all(Events).values()
+    """Route to view events"""
+    session = db_storage.get_session()
+    events = session.query(Events).order_by(Events.created_at.desc()).all()
     return render_template('events.html', events=events)
 
 

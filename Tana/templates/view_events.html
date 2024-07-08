@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h1>Events</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in events %}
+        <tr>
+            <td>{{ event.id }}</td>
+            <td>{{ event.name }}</td>
+            <td>{{ event.description }}</td>
+            <td>{{ event.created_at }}</td>
+            <td>
+                <a href="{{ url_for('events.edit_event', event_id=event.id) }}" class="btn btn-warning">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

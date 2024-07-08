@@ -266,3 +266,6 @@ class DBStorage:
                 return self.__session.query(model).filter_by(**kwargs).first()
             except SQLAlchemyError as e:
                 print("An Error Occurred:", e)
+    
+    def get_session(self):
+        return self.__session
