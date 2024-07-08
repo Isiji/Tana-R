@@ -16,6 +16,11 @@
     <!--use link for employee register-->
     <a href="{{url_for('Users.employee_register')}}" class="btn btn-primary">Register your status</a>
 
+    <!--display view events only-->
+    <h3>View events</h3>
+    <a href="{{url_for('events.view_events')}}" class="btn btn-primary">View Events</a>
+
+    
     <h2>Bodyguard Dashboard</h2>
     <p>Bodyguard: {{current_user.name}}</p>
     <p>Logged in: {{current_user.time_in}}</p>
