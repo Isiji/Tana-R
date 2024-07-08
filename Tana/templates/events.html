@@ -15,6 +15,8 @@
                 <th>Event Contact</th>
                 <th>Event Description</th>
                 <th>Event Date</th>
+                <th>Created At</th>
+                <th>Polling Station</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -28,6 +30,8 @@
                     <td>{{ event.event_contact }}</td>
                     <td>{{ event.event_description }}</td>
                     <td>{{ event.event_date }}</td>
+                    <td>{{ event.created_at }}</td>
+                    <td>{{ event.polling_station.name }}</td>
                     <td>
                         <a href="{{ url_for('events.edit_event', event_id=event.id) }}" class="btn btn-warning">Edit</a>
                         <form action="{{ url_for('events.delete_event', event_id=event.id) }}" method="POST" style="display:inline;">
