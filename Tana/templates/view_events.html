@@ -1,29 +1,37 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<h1>Events</h1>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Created At</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for event in events %}
-        <tr>
-            <td>{{ event.id }}</td>
-            <td>{{ event.name }}</td>
-            <td>{{ event.description }}</td>
-            <td>{{ event.created_at }}</td>
-            <td>
-                <a href="{{ url_for('events.edit_event', event_id=event.id) }}" class="btn btn-warning">Edit</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <h1>Events List</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Impact Level</th>
+                <th>Event Owner</th>
+                <th>Event Location</th>
+                <th>Event Contact</th>
+                <th>Event Description</th>
+                <th>Event Date</th>
+                <th>Created At</th>
+                <th>Polling Station</th>
+                <th>Entered By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.event_name }}</td>
+                    <td>{{ event.impact_level }}</td>
+                    <td>{{ event.event_owner }}</td>
+                    <td>{{ event.event_location }}</td>
+                    <td>{{ event.event_contact }}</td>
+                    <td>{{ event.event_description }}</td>
+                    <td>{{ event.event_date }}</td>
+                    <td>{{ event.created_at }}</td>
+                    <td>{{ event.polling_station.name }}</td>
+                    <td>{{ event.user.name }}</td>  {# Displaying the user who entered the event #}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

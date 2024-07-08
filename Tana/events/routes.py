@@ -69,6 +69,13 @@ def view_events():
     return render_template('events.html', events=events)
 
 
+#route for viweing events only, no need to edit or delete. uses view_events.html
+@events_bp.route('/view_events_only', methods=['GET'], strict_slashes=False)
+def view_events_only():
+    """Route to view events"""
+    session = db_storage.get_session()
+    events = session.query(Events).order_by(Events.created_at.desc()).all()
+    return render_template('view_events.html', events=events)
 @events_bp.route('/delete_event/<int:event_id>', methods=['GET', 'POST'], strict_slashes=False)
 def delete_event(event_id):
     """route to delete an event"""
