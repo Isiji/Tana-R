@@ -23,6 +23,7 @@ class users(BaseModel, Base, UserMixin):
     tasks_assigned_to = relationship("Tasks", back_populates="assigned_to_user", foreign_keys="Tasks.assigned_to")
     reminders = relationship("Reminder", back_populates="user")
     offices = relationship("Offices", back_populates="users")
+    events = relationship("Events", back_populates="user")
     # Removed the employee_registers relationship
 
     def __init__(self, *args, **kwargs):

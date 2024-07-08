@@ -32,6 +32,7 @@ def add_event():
         event_contact = form.event_contact.data
         event_date = form.event_date.data
         polling_station_name = form.polling_station_name.data
+        user_id = current_user.id
 
         polling_station = db_storage.find_one(PollingStation, name=polling_station_name)
 
@@ -47,7 +48,8 @@ def add_event():
             event_location=event_location, 
             event_contact=event_contact,
             event_date=event_date,
-            polling_station_id=polling_station.id
+            polling_station_id=polling_station.id,
+            user_id=user_id
         )
 
         db_storage.new(event)
