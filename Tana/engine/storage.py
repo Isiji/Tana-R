@@ -162,7 +162,6 @@ class DBStorage:
     def get_office_by_id(self, office_id):
         """Returns the office object by ID"""
         try:
-            query_result
            
 
             query_result = self.__session.query(Offices).filter_by(id=office_id).first()
