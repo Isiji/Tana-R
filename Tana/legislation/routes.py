@@ -80,6 +80,13 @@ def delete_motion(motion_id):
     flash('Motion has been deleted!', 'success')
     return redirect(url_for('legislation.motions'))
 
+#route for viewing motions
+@legislation_bp.route('/view_motions', methods=['GET'])
+def view_motions():
+    motions_dict = db_storage.all(Motions)
+    motions = list(motions_dict.values())
+    return render_template('view_motions.html', title='View Motions', motions=motions)
+
 @legislation_bp.route('/statements', methods=['GET', 'POST'])
 def statements():
     """route for the statements"""
