@@ -46,13 +46,13 @@ def add_motion():
             db_storage.rollback()
             flash(f'An error occurred: {str(e)}', 'danger')
             logger.error(f"Failed to add motion '{form.name.data}' to the database. Error: {str(e)}")
-        return redirect(url_for('legislation.add_motion'))
+        return redirect(url_for('legislation.motions'))
     return render_template('add_motion.html', title='Add Motion', form=form)
 @legislation_bp.route('/motions', methods=['GET'])
 def motions():
     motions_dict = db_storage.all(Motions)
     motions = list(motions_dict.values())
-    return render_template('motions.html', title='View Motions', motions=motions)
+    return render_template('view_motions.html', title='View Motions', motions=motions)
 @legislation_bp.route('/edit_motion/<int:motion_id>', methods=['GET', 'POST'], strict_slashes=False)
 def edit_motion(motion_id):
     motion = db_storage.get(Motions, id=motion_id)
