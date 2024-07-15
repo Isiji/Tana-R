@@ -61,10 +61,9 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is taken. Please choose a different one.')
             
 
-class RequestResetForm(FlaskForm):
+class ResetRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Request Password Reset')
-
     def validate_email(self, email):
         user = db_storage.get(users, email=email.data)
         if user is None:

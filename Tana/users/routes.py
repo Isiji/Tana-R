@@ -5,7 +5,7 @@ from flask import Blueprint, session, jsonify, render_template, redirect, url_fo
 from Tana.models.members import users
 from Tana.models.roles import UserRole
 from Tana.engine.storage import DBStorage
-from Tana.users.forms import UpdateAccountForm, RequestResetForm, LoginForm,ResetPasswordForm, RegistrationForm, EmployeeRegisterForm
+from Tana.users.forms import UpdateAccountForm, ResetRequestForm, LoginForm,ResetPasswordForm, RegistrationForm, EmployeeRegisterForm
 from flask_login import current_user, login_required, login_user, logout_user
 from Tana import bcrypt, db_storage, allowed_file
 from Tana.models.employee_register import EmployeeRegister
@@ -20,6 +20,7 @@ from datetime import datetime, date
 from Tana.models.diary import Diary
 from flask_mail import Message
 from Tana import mail, create_app
+from Tana.users.utils import generate_token, validate_token, hash_password
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -322,42 +323,75 @@ def edit_diary(diary_id):
     return render_template('edit_diary.html', title='Edit Diary', diary=diary)
 
 #create route to reset password
-@Users.route('/reset_password', methods=['GET', 'POST'])
+@Users.route('/reset_request', methods=['GET', 'POST'])
 def reset_request():
-    """Route to reset user password"""
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    form = RequestResetForm()
+    print("reset request is hit now waiting to validate form")
+    form = ResetRequestForm()
+    print("reset form is submitted")
     if form.validate_on_submit():
-        user = users.get_user_by_email(form.email.data)
+        print("form is validated, now handling the logic")
+        # Handle form submission logic
+        email = form.email.data
+        user = db_storage.get_user_by_email(email)
+        print("user has been retrieved by email")
         if user:
-            send_reset_email(user)
-            flash('An email has been sent with instructions to reset your password.', 'info')
+            token = generate_token(user.id, current_app.config['SECRET_KEY'], expiration_minutes=30)
+            reset_url = url_for('Users.reset_token', token=token, _external=True)
+            msg = Message("Password Reset Request", sender="noreply@demo.com", recipients=[email])
+            msg.body = f'To reset your password, visit the following link: {reset_url}'
+            
+            try:
+                mail.send(msg)
+                current_app.logger.info(f"Password reset email sent to {email}")
+                flash('An email has been sent with instructions to reset your password.', 'info')
+            except Exception as e:
+                current_app.logger.error(f"Failed to send password reset email to {email}: {str(e)}")
+                flash('Failed to send password reset email. Please try again later.', 'danger')
+            
+            return redirect(url_for('Users.login'))
         else:
-            flash('No account with that email. Please register first.', 'warning')
-        return redirect(url_for('Users.login'))
-    return render_template('reset_request.html', title='Reset Password', form=form)
+            flash('User not found. Please check the email address.', 'danger')
+    
+    return render_template('reset_request.html', form=form)
 
-@Users.route('/reset_password/<token>', methods=['GET', 'POST'])
+@Users.route('/reset_token/<token>', methods=['GET', 'POST'])
 def reset_token(token):
-    """Route to handle the reset token"""
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    user = users.verify_reset_token(token)
-    if not user:
-        flash('That is an invalid or expired token', 'warning')
-        return redirect(url_for('Users.reset_request'))
     form = ResetPasswordForm()
+    validation_response = validate_token(token, current_app.config['SECRET_KEY'])
+    if isinstance(validation_response, str):
+        return validation_response, 401
+    
+    user_id = validation_response['user_id']
+    user = db_storage.get_user_by_id(user_id)
+    if not user:
+        return "User not found", 404
+    
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user.password = hashed_password
+        password = form.password.data
+        user.password = hash_password(password)  # Assuming hash_password is a function to hash passwords
         db_storage.save()
-        flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('Users.login'))
-    return render_template('reset_token.html', title='Reset Password', form=form)
+    
+    return render_template('reset_password.html', form=form)
+
+@Users.route('/protected_route', methods=['GET'])
+def protected_route():
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({"message": "Token is missing"}), 401
+    
+    validation_response = validate_token(token,current_app.config['SECRET_KEY'])
+    if isinstance(validation_response, str):
+        return jsonify({"message": validation_response}), 401
+    
+    # Token is valid, proceed with the request
+    user_id = validation_response['user_id']
+    # Continue processing the request...
+    return jsonify({"message": "Access granted"})
 
 def send_reset_email(user):
-    token = users.get_reset_token
+    token = user.get_reset_token()
+    logging.debug(f'Token: {token}')
     msg = Message('Password Reset Request',
                   sender='noreply@demo.com',
                   recipients=[user.email])
@@ -367,3 +401,4 @@ def send_reset_email(user):
 If you did not make this request then simply ignore this email and no changes will be made.
 '''
     mail.send(msg)
+    logging.debug('Reset email sent')

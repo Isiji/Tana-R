@@ -13,7 +13,7 @@ class users(BaseModel, Base, UserMixin):
     __tablename__ = 'users'
     name = Column(String(128), nullable=False)
     email = Column(String(128), nullable=False, unique=True)
-    password = Column(String(128), nullable=False)
+    password = Column(String(255), nullable=False)
     phone = Column(Integer, nullable=False)
     ID_No = Column(Integer, nullable=False)
     role = Column(String(128), nullable=False)
@@ -39,20 +39,19 @@ class users(BaseModel, Base, UserMixin):
         """string representation of a user"""
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
-    def get_reset_token(self):
-        s = URLSafeSerializer(current_app.config['SECRET_KEY'])
-        expires_at = datetime.utcnow() + timedelta(hours=1)  # Set expiration time (1 hour in this case)
-        return s.dumps({'user_id': self.id, 'expires_at': expires_at.isoformat()}).decode('utf-8')
+    def get_reset_token(self, expires_sec=3600):
+            s = URLSafeSerializer(current_app.config['SECRET_KEY'])
+            expires_at = datetime.utcnow() + timedelta(seconds=expires_sec)
+            return s.dumps({'user_id': self.id, 'expires_at': expires_at.isoformat()})
 
     @staticmethod
     def verify_reset_token(token):
         s = URLSafeSerializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token.encode('utf-8'))
-            expires_at = datetime.fromisoformat(data.get('expires_at'))
+            expires_at = datetime.fromisoformat(data['expires_at'])
             if expires_at >= datetime.utcnow():
-                return data.get('user_id')
-            return None
+                return users.get(data['user_id'])
         except (BadSignature, ValueError):
             return None
 

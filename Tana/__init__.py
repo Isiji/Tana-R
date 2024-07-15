@@ -14,6 +14,7 @@ from Tana.models.constituency import Constituency
 from Tana.models.ward import Ward
 from Tana.models.pollingstation import PollingStation
 from Tana.models.members import users
+from flask_wtf.csrf import CSRFProtect
 
 db_storage = DBStorage()
 bcrypt = Bcrypt()
@@ -23,6 +24,7 @@ login_manager.login_message_category = 'info'
 cors = CORS()
 mail = Mail()
 jwt = JWTManager()
+csrf = CSRFProtect()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -53,6 +55,7 @@ def create_app(config_class=Config):
     cors.init_app(app)
     mail.init_app(app)
     jwt.init_app(app)
+    csrf.init_app(app)
 
     with app.app_context():
         db_storage.reload()
