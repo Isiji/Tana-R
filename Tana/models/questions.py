@@ -12,8 +12,7 @@ class Questions(BaseModel, Base):
     name = Column(String(255), nullable=False)
     document = Column(LargeBinary, nullable=False)
     date = Column(Date, nullable=False)
-    status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)
-        
+    status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)        
     def __init__(self, *args, **kwargs):
         """Initialization of the questions model"""
         super().__init__(*args, **kwargs)

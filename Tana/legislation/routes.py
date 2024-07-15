@@ -11,6 +11,7 @@ from Tana.models.questions import Questions
 from Tana.models.statements import Statements
 from Tana.legislation.forms import MotionsForm, StatementsForm, LegislationForm, AddMotionForm, QuestionsForm
 import logging
+from datetime import datetime
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -161,20 +162,65 @@ def download_statement(statement_id):
 @login_required
 def questions():
     """route for the questions"""
-    return render_template('questions.html', title='Questions')
+    return render_template('view_questions.html', title='Questions')
 
 @legislation_bp.route('/add_question', methods=['GET', 'POST'])
-@login_required
 def add_question():
-    """route for the questions"""
     form = QuestionsForm()
     if form.validate_on_submit():
-        question = Questions(name=form.name.data, document=form.document.data, date=form.date.data, status=form.status.data)
-        db_storage.new(question)
-        db_storage.save()
-        flash('Question has been created!', 'success')
-        return redirect(url_for('legislation.add_question'))
-    return render_template('add_question.html', title='Add Question', form=form)
+        file_data = form.document.data.read() if form.document.data else None
+        
+        new_question = Questions(
+            name=form.name.data,
+            document=file_data,
+            date=form.date.data,
+            status=form.status.data,
+            created_at=datetime.utcnow()
+        )
+        try:
+            db_storage.new(new_question)
+            db_storage.save()  # Commit the session to save the new question
+            flash('Question added successfully!', 'success')
+            return redirect(url_for('legislation.view_questions'))
+        except Exception as e:
+            flash(f'An error occurred: {e}', 'danger')
+    return render_template('add_question.html', form=form)
+
+#create route to view questions
+@legislation_bp.route('/view_questions', methods=['GET', 'POST'])
+def view_questions():
+    questions_dict = db_storage.all(Questions)
+    questions = list(questions_dict.values())
+    return render_template('view_questions.html', title='View Questions', questions=questions)
+
+@legislation_bp.route('/edit_question/<int:question_id>', methods=['GET', 'POST'], strict_slashes=False)
+def edit_question(question_id):
+    question = db_storage.get(Questions, id=question_id)
+    form = QuestionsForm(obj=question)
+    if form.validate_on_submit():
+        try:
+            question.name = form.name.data
+            question.date = form.date.data
+            question.status = form.status.data
+            if form.document.data:
+                question.document = form.document.data.read()
+            db_storage.save()
+            flash('Question has been updated!', 'success')
+            return redirect(url_for('legislation.view_questions'))
+        except Exception as e:
+            logging.error(f"Error editing statement: {e}")
+            flash('An error occurred while editing the question. Please try again.', 'danger')
+    return render_template('edit_question.html', title='Edit Question', form=form, question=question)
+
+#create function to delete statements
+@legislation_bp.route('/delete_question/<int:question_id>', methods=['POST'], strict_slashes=False)
+def delete_question(question_id):
+    question = db_storage.get(Questions, id=question_id)
+    db_storage.delete(question)
+    db_storage.save()
+    flash('Question has been deleted!', 'success')
+    return redirect(url_for('legislation.view_questions'))
+
 
 #create a route for functions
 @legislation_bp.route('/functions', methods=['GET', 'POST'])
