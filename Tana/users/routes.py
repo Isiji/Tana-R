@@ -18,6 +18,8 @@ from Tana.models.offices import Offices
 import logging
 from datetime import datetime, date
 from Tana.models.diary import Diary
+from flask_mail import Message
+from Tana import mail, create_app
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -318,3 +320,50 @@ def edit_diary(diary_id):
         return redirect(url_for('Users.view_diaries'))
     
     return render_template('edit_diary.html', title='Edit Diary', diary=diary)
+
+#create route to reset password
+@Users.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    """Route to reset user password"""
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = users.get_user_by_email(form.email.data)
+        if user:
+            send_reset_email(user)
+            flash('An email has been sent with instructions to reset your password.', 'info')
+        else:
+            flash('No account with that email. Please register first.', 'warning')
+        return redirect(url_for('Users.login'))
+    return render_template('reset_request.html', title='Reset Password', form=form)
+
+@Users.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    """Route to handle the reset token"""
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    user = users.verify_reset_token(token)
+    if not user:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('Users.reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db_storage.save()
+        flash('Your password has been updated! You are now able to log in', 'success')
+        return redirect(url_for('Users.login'))
+    return render_template('reset_token.html', title='Reset Password', form=form)
+
+def send_reset_email(user):
+    token = users.get_reset_token
+    msg = Message('Password Reset Request',
+                  sender='noreply@demo.com',
+                  recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+{url_for('Users.reset_token', token=token, _external=True)}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)

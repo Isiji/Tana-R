@@ -5,7 +5,9 @@ from sqlalchemy import Column, Boolean, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from Tana.models.roles import UserRole
-
+from itsdangerous import URLSafeSerializer, BadSignature
+from flask import current_app
+from datetime import datetime, timedelta
 class users(BaseModel, Base, UserMixin):
     """This class defines the users model"""
     __tablename__ = 'users'
@@ -30,20 +32,43 @@ class users(BaseModel, Base, UserMixin):
         """Initialization of the users model"""
         super().__init__(*args, **kwargs)
 
+
+
+
     def __str__(self):
         """string representation of a user"""
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
+    def get_reset_token(self):
+        s = URLSafeSerializer(current_app.config['SECRET_KEY'])
+        expires_at = datetime.utcnow() + timedelta(hours=1)  # Set expiration time (1 hour in this case)
+        return s.dumps({'user_id': self.id, 'expires_at': expires_at.isoformat()}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = URLSafeSerializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token.encode('utf-8'))
+            expires_at = datetime.fromisoformat(data.get('expires_at'))
+            if expires_at >= datetime.utcnow():
+                return data.get('user_id')
+            return None
+        except (BadSignature, ValueError):
+            return None
+
     @staticmethod
     def get_user_by_email(email):
         """get a user by email"""
-        return users.query.filter_by(email=email).first()
+        from Tana import db_storage
+
+        return db_storage.get_user_by_email(email)
 
     @staticmethod
     def get_user_by_id(id):
         """get a user by id"""
-        return users.query.filter_by(id=id).first()
+        from Tana import db_storage
 
+        return db_storage.get_user_by_id(id)
     def has_role(self, role):
         """check if a user has a role"""
         return self.role == role

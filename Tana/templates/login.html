@@ -23,6 +23,10 @@
             {{ form.remember(class="form-check-input") }}
             {{ form.remember.label(class="form-check-label") }}
         </div>
+        <small class="text-muted ml-2">
+            <a href="{{url_for('Users.reset_request')}}">Forgot Password</a>
+
+        </small>
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
 </div>
