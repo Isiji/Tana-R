@@ -1,6 +1,10 @@
 {% extends 'layout.html' %}
 {% block title %}View Bills{% endblock %}
 {% block content %}
+<!--add button for add bill using url for bills.add_bill-->
+<h2> Add New Bill</h2>
+<a href="{{ url_for('bills.add_bill') }}" class="btn btn-primary btn-sm">Add New Bill</a>
+
 <h2>View Bills</h2>
 <table class="table table-striped">
     <thead>

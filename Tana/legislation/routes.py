@@ -52,7 +52,7 @@ def add_motion():
 def motions():
     motions_dict = db_storage.all(Motions)
     motions = list(motions_dict.values())
-    return render_template('view_motions.html', title='View Motions', motions=motions)
+    return render_template('motions.html', title='View Motions', motions=motions)
 @legislation_bp.route('/edit_motion/<int:motion_id>', methods=['GET', 'POST'], strict_slashes=False)
 def edit_motion(motion_id):
     motion = db_storage.get(Motions, id=motion_id)
@@ -90,7 +90,7 @@ def view_motions():
 @legislation_bp.route('/statements', methods=['GET', 'POST'])
 def statements():
     """route for the statements"""
-    return render_template('statements.html', title='Statements')
+    return render_template('view_statements.html', title='Statements')
 
 @legislation_bp.route('/add_statement', methods=['GET', 'POST'])
 def add_statement():
