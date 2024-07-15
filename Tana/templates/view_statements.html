@@ -14,6 +14,7 @@
                     <th>Title</th>
                     <th>Date</th>
                     <th>Status</th>
+                    <th>Date Created</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -23,6 +24,8 @@
                         <td>{{ statement.name }}</td>
                         <td>{{ statement.date }}</td>
                         <td>{{ statement.status }}</td>
+                        <td>{{ statement.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+
                         <td>
                             <a href="{{ url_for('legislation.edit_statement', statement_id=statement.id) }}" class="btn btn-warning">Edit</a>
                             <form action="{{ url_for('legislation.delete_statement', statement_id=statement.id) }}" method="post" style="display: inline;">

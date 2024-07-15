@@ -36,7 +36,8 @@ def add_motion():
             name=form.name.data,
             document=form.document.data.read(),  # Read the file data
             date=form.date.data,
-            status=form.status.data
+            status=form.status.data,
+            created_at=datetime.utcnow()
         )
         try:
             db_storage.new(motion)
@@ -103,7 +104,8 @@ def add_statement():
                 name=form.name.data,
                 document=form.document.data.read(),  # Read file data for document
                 date=form.date.data,
-                status=form.status.data
+                status=form.status.data,
+                created_at=datetime.utcnow()
             )
             db_storage.new(statement)
             db_storage.save()
