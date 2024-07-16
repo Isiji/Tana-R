@@ -268,3 +268,11 @@ class DBStorage:
     
     def get_session(self):
         return self.__session
+    
+    def get_researchers(self):
+        """Returns a list of all researchers"""
+        try:
+            return self.__session.query(users).filter_by(role='Researcher').all()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
+            return []

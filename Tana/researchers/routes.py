@@ -12,5 +12,5 @@ researchers = Blueprint('researchers', __name__)
 @researchers.route('/researcher_dashboard')
 @login_required
 def researcher_dashboard():
-    """route for the researcher dashboard"""
-    return render_template('researcher.html', title='Researcher Dashboard')
+    researchers = db_storage.get_researchers()
+    return render_template('researcher.html', researchers=researchers)
