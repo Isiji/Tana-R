@@ -403,3 +403,15 @@ If you did not make this request then simply ignore this email and no changes wi
 '''
     mail.send(msg)
     logging.debug('Reset email sent')
+
+#create a route for admin to see all the users
+@Users.route('/all_users', methods=['GET'])
+@login_required
+def all_users():
+    """Route for the admin to view all users"""
+    if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value):
+        all_users_list = db_storage.all(users).values()
+        return render_template('users.html', title='Users', users=all_users_list)
+    else:
+        flash('You do not have permission to access this page', 'danger')
+        return redirect(url_for('main.home'))

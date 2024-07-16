@@ -66,5 +66,10 @@
         <h3>Search for Polling Station</h3>
         <a href="{{ url_for('representation.select_polling_station') }}" class="btn btn-primary">Search Polling Station</a>
     </li>
+    <!--add link for all users-->
+    <li>
+        <h3>View All Users</h3>
+        <a href="{{ url_for('Users.all_users') }}" class="btn btn-primary">View All Users</a>
+    </li>
 </div>
 {% endblock %}
