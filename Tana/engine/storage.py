@@ -276,3 +276,18 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
             return []
+
+    def get_field_officers(self):
+        """Returns a list of all field officers"""
+        try:
+            return self.__session.query(users).filter_by(role='Field Officer').all()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
+            return []
+        
+    def get_field_officer_by_name(self, name):
+        """Returns a field officer by name"""
+        try:
+            return self.__session.query(users).filter_by(name=name).first()
+        except SQLAlchemyError as e:
+            print("An Error Occurred:", e)
