@@ -367,9 +367,10 @@ def reset_token(token):
         return "User not found", 404
     
     if form.validate_on_submit():
-        password = form.password.data
-        user.password = hash_password(password)  # Assuming hash_password is a function to hash passwords
+        hash_password = bcrypt.generate_password_hash(form.password.data)
+        user.password = hash_password
         db_storage.save()
+        flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('Users.login'))
     
     return render_template('reset_password.html', form=form)

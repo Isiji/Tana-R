@@ -40,9 +40,9 @@ class users(BaseModel, Base, UserMixin):
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def get_reset_token(self, expires_sec=3600):
-            s = URLSafeSerializer(current_app.config['SECRET_KEY'])
-            expires_at = datetime.utcnow() + timedelta(seconds=expires_sec)
-            return s.dumps({'user_id': self.id, 'expires_at': expires_at.isoformat()})
+        s = URLSafeSerializer(current_app.config['SECRET_KEY'])
+        expires_at = datetime.utcnow() + timedelta(seconds=expires_sec)
+        return s.dumps({'user_id': self.id, 'expires_at': expires_at.isoformat()})
 
     @staticmethod
     def verify_reset_token(token):
