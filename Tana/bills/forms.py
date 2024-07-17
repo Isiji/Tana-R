@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Forms for the bills"""
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField, DateField, SelectField, BooleanField
+from wtforms import StringField, SubmitField, FileField, DateField, BooleanField
 from wtforms.validators import DataRequired
 
 class BillsForm(FlaskForm):

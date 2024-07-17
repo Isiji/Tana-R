@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 """Bills routes"""
 from flask import render_template, flash, redirect, url_for, request, Blueprint
-from flask_login import login_required
 from Tana import db_storage
 from Tana.models.bills import Bills
 from Tana.bills.forms import BillsForm
 import logging
+from io import BytesIO
+from flask import send_file
 
 bills_bp = Blueprint('bills', __name__)
 
@@ -21,10 +22,11 @@ def add_bill():
                 second_reading=form.second_reading.data,
                 third_reading=form.third_reading.data,
                 presidential_assent=form.presidential_assent.data,
-                commencement=form.commencement.data
+                commencement=form.commencement.data,
+                document=form.document.data.read()  # Read the uploaded file content
             )
             db_storage.new(bill)
-            db_storage.save()
+            db_storage.save()  # Ensure the session is committed
             flash('Bill has been added!', 'success')
             return redirect(url_for('bills.view_bills'))
         except Exception as e:
@@ -36,26 +38,42 @@ def add_bill():
 def view_bills():
     bills_dict = db_storage.all(Bills)
     bills = list(bills_dict.values())
-    print("here are some of the bills", bills)
     return render_template('view_bills.html', bills=bills)
-
 
 @bills_bp.route('/edit_bill/<int:bill_id>', methods=['GET', 'POST'], strict_slashes=False)
 def edit_bill(bill_id):
-    bill = db_storage.get(Bills, id=bill_id)
+    bill = db_storage.get(Bills, bill_id)
     form = BillsForm(obj=bill)
     if form.validate_on_submit():
         form.populate_obj(bill)
+        if form.document.data:  # Only update the content if a new file is uploaded
+            bill.document = form.document.data.read()
         db_storage.save()
         flash('Bill has been updated!', 'success')
         return redirect(url_for('bills.view_bills'))
     return render_template('edit_bill.html', form=form, bill=bill)
 
-
 @bills_bp.route('/delete_bill/<int:bill_id>', methods=['POST'], strict_slashes=False)
 def delete_bill(bill_id):
-    bill = db_storage.get(Bills, id=bill_id)
+    bill = db_storage.get(Bills, bill_id)
     db_storage.delete(bill)
     db_storage.save()
     flash('Bill has been deleted!', 'success')
     return redirect(url_for('bills.view_bills'))
+
+@bills_bp.route('/download_bill/<int:bill_id>', methods=['GET'])
+def download_bill(bill_id):
+    """Route to download a bill."""
+    try:
+        bill = db_storage.get(Bills, bill_id)
+        if not bill:
+            flash(f'Bill with ID {bill_id} not found.', 'error')
+            return redirect(url_for('bills.view_bills'))
+
+        # Return the bill content as a downloadable file
+        return send_file(BytesIO(bill.document), as_attachment=True, attachment_filename=f'bill_{bill_id}.pdf')
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        flash(f'An error occurred while downloading the bill: {e}', 'error')
+        return redirect(url_for('bills.view_bills'))

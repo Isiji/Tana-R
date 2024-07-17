@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """Bills class module for the bills"""
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Date, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, Date, Boolean, LargeBinary
 
 class Bills(BaseModel, Base):
     __tablename__ = 'bills'
@@ -13,9 +12,7 @@ class Bills(BaseModel, Base):
     third_reading = Column(Boolean, default=False)
     presidential_assent = Column(Boolean, default=False)
     commencement = Column(Boolean, default=False)
-
-    documents = relationship("LegislationStages", back_populates="bill")
-
+    document = Column(LargeBinary, nullable=False)  # Ensure this matches the field name in the form
     def __init__(self, *args, **kwargs):
         """Initialization of the bills model"""
         super().__init__(*args, **kwargs)
