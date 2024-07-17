@@ -135,6 +135,9 @@ def employee_records():
 
     employees = db_storage.all(EmployeeRegister).values()
 
+    # Debugging: Print initial employees list
+    print("All Employees:", employees)
+
     if name_filter:
         employees = [e for e in employees if name_filter.lower() in e.name.lower()]
     
@@ -147,10 +150,16 @@ def employee_records():
         employees = [e for e in employees if e.date <= end_date]
 
     if status_filter:
-        employees = [e for e in employees if e.status == status_filter]
+        # Debugging: Print status filter and matching employees
+        print("Status Filter:", status_filter)
+        employees = [e for e in employees if e.status.lower() == status_filter.lower()]
+        print("Filtered Employees by Status:", employees)
 
     # Sort employees by date (most recent first)
     employees = sorted(employees, key=lambda e: e.date, reverse=True)
+
+    # Debugging: Print final filtered employees list
+    print("Final Filtered Employees:", employees)
 
     return render_template('employee_records.html', title='Employee Records', employees=employees)
 

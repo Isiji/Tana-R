@@ -20,9 +20,9 @@
         <div class="form-group mr-2">
             <select name="status" class="form-control">
                 <option value="">All Statuses</option>
-                <option value="Present" {% if request.args.get('status') == 'present' %}selected{% endif %}>Present</option>
-                <option value="Absent" {% if request.args.get('status') == 'absent' %}selected{% endif %}>Absent</option>
-                <option value="Leave" {% if request.args.get('status') == 'leave' %}selected{% endif %}>Leave</option>
+                <option value="present" {% if request.args.get('status') == 'present' %}selected{% endif %}>present</option>
+                <option value="absent" {% if request.args.get('status') == 'absent' %}selected{% endif %}>absent</option>
+                <option value="leave" {% if request.args.get('status') == 'leave' %}selected{% endif %}>leave</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Filter</button>
