@@ -90,7 +90,7 @@ def delete_motion(motion_id):
 def view_motions():
     motions_dict = db_storage.all(Motions)
     motions = list(motions_dict.values())
-    return render_template('view_motions.html', title='View Motions', motions=motions)
+    return render_template('motions.html', title='View Motions', motions=motions)
 
 @legislation_bp.route('/statements', methods=['GET', 'POST'])
 def statements():
