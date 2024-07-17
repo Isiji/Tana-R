@@ -12,6 +12,9 @@ from Tana.models.statements import Statements
 from Tana.legislation.forms import MotionsForm, StatementsForm, LegislationForm, AddMotionForm, QuestionsForm
 import logging
 from datetime import datetime
+from io import BytesIO
+from flask import send_file
+from sqlalchemy.exc import SQLAlchemyError
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -229,3 +232,66 @@ def delete_question(question_id):
 def functions():
     """route for the functions"""
     return render_template('functions.html', title='Functions')
+
+@legislation_bp.route('/download_motion/<int:motion_id>', methods=['GET'])
+def download_motion(motion_id):
+    """Route to download a motion."""
+    try:
+        motion = db_storage.get(Motions, id=motion_id)
+        if not motion:
+            flash(f'Motion with ID {motion_id} not found.', 'error')
+            return redirect(url_for('legislation.view_motions'))
+
+        return send_file(BytesIO(motion.document), as_attachment=True, download_name=f'motion_{motion_id}.pdf')
+
+    except SQLAlchemyError as e:
+        logging.error(f"An SQLAlchemy error occurred: {e}")
+        flash(f'An error occurred while downloading the motion: {e}', 'error')
+        return redirect(url_for('legislation.view_motions'))
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        flash(f'An error occurred while downloading the motion: {e}', 'error')
+        return redirect(url_for('legislation.view_motions'))
+
+@legislation_bp.route('/download_statement/<int:statement_id>', methods=['GET'])
+def download_statement(statement_id):
+    """Route to download a statement."""
+    try:
+        statement = db_storage.get(Statements, id=statement_id)
+        if not statement:
+            flash(f'Statement with ID {statement_id} not found.', 'error')
+            return redirect(url_for('legislation.view_statements'))
+
+        return send_file(BytesIO(statement.document), as_attachment=True, download_name=f'statement_{statement_id}.pdf')
+
+    except SQLAlchemyError as e:
+        logging.error(f"An SQLAlchemy error occurred: {e}")
+        flash(f'An error occurred while downloading the statement: {e}', 'error')
+        return redirect(url_for('legislation.view_statements'))
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        flash(f'An error occurred while downloading the statement: {e}', 'error')
+        return redirect(url_for('legislation.view_statements'))
+
+@legislation_bp.route('/download_question/<int:question_id>', methods=['GET'])
+def download_question(question_id):
+    """Route to download a question."""
+    try:
+        question = db_storage.get(Questions, id=question_id)
+        if not question:
+            flash(f'Question with ID {question_id} not found.', 'error')
+            return redirect(url_for('legislation.view_questions'))
+
+        return send_file(BytesIO(question.document), as_attachment=True, download_name=f'question_{question_id}.pdf')
+
+    except SQLAlchemyError as e:
+        logging.error(f"An SQLAlchemy error occurred: {e}")
+        flash(f'An error occurred while downloading the question: {e}', 'error')
+        return redirect(url_for('legislation.view_questions'))
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        flash(f'An error occurred while downloading the question: {e}', 'error')
+        return redirect(url_for('legislation.view_questions'))

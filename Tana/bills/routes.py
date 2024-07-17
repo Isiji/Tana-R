@@ -7,6 +7,7 @@ from Tana.bills.forms import BillsForm
 import logging
 from io import BytesIO
 from flask import send_file
+from sqlalchemy.exc import SQLAlchemyError
 
 bills_bp = Blueprint('bills', __name__)
 
@@ -65,17 +66,23 @@ def delete_bill(bill_id):
     flash('Bill has been deleted!', 'success')
     return redirect(url_for('bills.view_bills'))
 
+
 @bills_bp.route('/download_bill/<int:bill_id>', methods=['GET'])
 def download_bill(bill_id):
     """Route to download a bill."""
     try:
-        bill = db_storage.get(Bills, bill_id)
+        bill = db_storage.get(Bills, id=bill_id)
         if not bill:
             flash(f'Bill with ID {bill_id} not found.', 'error')
             return redirect(url_for('bills.view_bills'))
 
         # Return the bill content as a downloadable file
-        return send_file(BytesIO(bill.document), as_attachment=True, attachment_filename=f'bill_{bill_id}.pdf')
+        return send_file(BytesIO(bill.document), as_attachment=True, download_name=f'bill_{bill_id}.pdf')
+
+    except SQLAlchemyError as e:
+        logging.error(f"An SQLAlchemy error occurred: {e}")
+        flash(f'An error occurred while downloading the bill: {e}', 'error')
+        return redirect(url_for('bills.view_bills'))
 
     except Exception as e:
         logging.error(f"An error occurred: {e}")
