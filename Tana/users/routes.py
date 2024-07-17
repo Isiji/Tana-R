@@ -128,7 +128,30 @@ def employee_register():
 @login_required
 def employee_records():
     """Route to display employee records"""
-    employees = db_storage.all(EmployeeRegister).values()  # Replace with your method to fetch employees
+    name_filter = request.args.get('name', '')
+    start_date = request.args.get('start_date', '')
+    end_date = request.args.get('end_date', '')
+    status_filter = request.args.get('status', '')
+
+    employees = db_storage.all(EmployeeRegister).values()
+
+    if name_filter:
+        employees = [e for e in employees if name_filter.lower() in e.name.lower()]
+    
+    if start_date:
+        start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+        employees = [e for e in employees if e.date >= start_date]
+
+    if end_date:
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        employees = [e for e in employees if e.date <= end_date]
+
+    if status_filter:
+        employees = [e for e in employees if e.status == status_filter]
+
+    # Sort employees by date (most recent first)
+    employees = sorted(employees, key=lambda e: e.date, reverse=True)
+
     return render_template('employee_records.html', title='Employee Records', employees=employees)
 
 
