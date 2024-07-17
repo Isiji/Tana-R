@@ -96,9 +96,32 @@ def view_events():
 @events_bp.route('/view_events_only', methods=['GET'], strict_slashes=False)
 def view_events_only():
     """Route to view events"""
+    from Tana.models.members import users
     session = db_storage.get_session()
-    events = session.query(Events).order_by(Events.created_at.desc()).all()
-    return render_template('view_events.html', events=events)
+
+    event_name = request.args.get('event_name', '')
+    impact_level = request.args.get('impact_level', '')
+    polling_station = request.args.get('polling_station', '')
+    entered_by = request.args.get('entered_by', '')
+
+    query = session.query(Events).join(Events.polling_station).join(Events.user)
+
+    if event_name:
+        query = query.filter(Events.event_name.ilike(f'%{event_name}%'))
+    
+    if impact_level:
+        query = query.filter(Events.impact_level == impact_level)
+    
+    if polling_station:
+        query = query.filter(PollingStation.name.ilike(f'%{polling_station}%'))
+    
+    if entered_by:
+        query = query.filter(users.name.ilike(f'%{entered_by}%'))
+
+    events = query.order_by(Events.created_at.desc()).all()
+    
+    return render_template('events.html', events=events)
+
 @events_bp.route('/delete_event/<int:event_id>', methods=['GET', 'POST'], strict_slashes=False)
 def delete_event(event_id):
     """route to delete an event"""
