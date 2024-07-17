@@ -156,11 +156,6 @@ def delete_statement(statement_id):
     flash('Statement has been deleted!', 'success')
     return redirect(url_for('legislation.view_statements'))
 
-#route to download the statement
-@legislation_bp.route('/download_statement/<int:statement_id>', methods=['GET'])
-def download_statement(statement_id):
-    statement = db_storage.get(Statements, id=statement_id)
-    return statement.document
 
 
 @legislation_bp.route('/questions', methods=['GET', 'POST'])
