@@ -42,7 +42,11 @@ def view_bills():
 
 @bills_bp.route('/edit_bill/<int:bill_id>', methods=['GET', 'POST'], strict_slashes=False)
 def edit_bill(bill_id):
-    bill = db_storage.get(Bills, bill_id)
+    bill = db_storage.get(Bills, id=bill_id)
+    if not bill:
+        flash(f'Bill with id {bill_id} not found.', 'error')
+        return redirect(url_for('bills.view_bills'))  # Redirect to a meaningful page
+
     form = BillsForm(obj=bill)
     if form.validate_on_submit():
         form.populate_obj(bill)
