@@ -62,10 +62,33 @@ def add_event():
 
 # create a route to view events
 @events_bp.route('/view_events', methods=['GET'], strict_slashes=False)
+@login_required
 def view_events():
     """Route to view events"""
+    from Tana.models.members import users
     session = db_storage.get_session()
-    events = session.query(Events).order_by(Events.created_at.desc()).all()
+    
+    event_name = request.args.get('event_name', '')
+    impact_level = request.args.get('impact_level', '')
+    polling_station = request.args.get('polling_station', '')
+    entered_by = request.args.get('entered_by', '')
+
+    query = session.query(Events).join(Events.polling_station).join(Events.user)
+
+    if event_name:
+        query = query.filter(Events.event_name.ilike(f'%{event_name}%'))
+    
+    if impact_level:
+        query = query.filter(Events.impact_level == impact_level)
+    
+    if polling_station:
+        query = query.filter(PollingStation.name.ilike(f'%{polling_station}%'))
+    
+    if entered_by:
+        query = query.filter(users.name.ilike(f'%{entered_by}%'))
+
+    events = query.order_by(Events.created_at.desc()).all()
+    
     return render_template('events.html', events=events)
 
 
