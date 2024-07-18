@@ -1,6 +1,6 @@
 import os
 import csv
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
@@ -15,6 +15,8 @@ from Tana.models.ward import Ward
 from Tana.models.pollingstation import PollingStation
 from Tana.models.members import users
 from flask_wtf.csrf import CSRFProtect
+from datetime import datetime
+
 
 db_storage = DBStorage()
 bcrypt = Bcrypt()
@@ -56,6 +58,14 @@ def create_app(config_class=Config):
     mail.init_app(app)
     jwt.init_app(app)
     csrf.init_app(app)
+
+    @app.before_request
+    def add_current_time():
+        request.current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    @app.context_processor
+    def inject_current_time():
+        return dict(current_time=request.current_time)
 
     with app.app_context():
         db_storage.reload()
