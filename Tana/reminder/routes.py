@@ -12,6 +12,7 @@ reminders = Blueprint('reminders', __name__)
 def add_reminder():
     """Route for adding a reminder"""
     form = ReminderForm()
+    
     if form.validate_on_submit():
         reminder_datetime = datetime.combine(form.reminder_date.data, form.reminder_time.data)
         if reminder_datetime <= datetime.now():
@@ -30,4 +31,7 @@ def add_reminder():
         flash('Reminder set successfully', 'success')
         return redirect(url_for('reminders.add_reminder'))
 
-    return render_template('reminders.html', title='Reminders', form=form)
+    # Fetch all reminders for the current user
+    user_reminders = db_storage.get_session().query(Reminder).filter_by(user_id=current_user.id).all()
+
+    return render_template('reminders.html', title='Reminders', form=form, reminders=user_reminders)
