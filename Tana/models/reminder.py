@@ -1,5 +1,5 @@
-#!/usr/bin/python3
-"""Reminder class module for the reminder"""
+# reminder.py
+
 from Tana.models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, ForeignKey, Date, Time
 from sqlalchemy.orm import relationship
@@ -11,8 +11,6 @@ class Reminder(BaseModel, Base):
     reminder_description = Column(String(128), nullable=False)
     reminder_date = Column(Date, nullable=False)
     reminder_time = Column(Time, nullable=False)
-    reminder_location = Column(String(128), nullable=False)
-    reminder_contact = Column(String(128), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
 
     user = relationship("users", back_populates="reminders")

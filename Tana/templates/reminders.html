@@ -2,56 +2,62 @@
 {% block title %}Reminders{% endblock %}
 {% block content %}
 <div class="container">
-    <h1>Set Reminders</h1>
-    <form method="POST" action="{{ url_for('reminders.add_reminder') }}">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.reminder_name.label }} {{ form.reminder_name(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.reminder_date.label }} {{ form.reminder_date(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.reminder_time.label }} {{ form.reminder_time(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.reminder_description.label }} {{ form.reminder_description(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.reminder_location.label }} {{ form.reminder_location(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.reminder_contact.label }} {{ form.reminder_contact(class="form-control") }}
-        </div>
-        <button type="submit" class="btn btn-primary">Set Reminder</button>
-    </form>
+    <h1>Reminders</h1>
 
-    <h2>View Reminders</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Reminder Name</th>
-                <th>Reminder Date</th>
-                <th>Reminder Time</th>
-                <th>Reminder Description</th>
-                <th>Reminder Location</th>
-                <th>Reminder Contact</th>
-                <th>Author</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for reminder in reminders %}
-            <tr>
-                <td>{{ reminder.reminder_name }}</td>
-                <td>{{ reminder.reminder_date.strftime('%Y-%m-%d') }}</td>
-                <td>{{ reminder.reminder_time.strftime('%H:%M:%S') }}</td>
-                <td>{{ reminder.reminder_description }}</td>
-                <td>{{ reminder.reminder_location }}</td>
-                <td>{{ reminder.reminder_contact }}</td>
-                <td>{{ reminder.user.username }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Reminder Form Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Set Reminder
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('reminders.add_reminder') }}">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.reminder_name.label }} {{ form.reminder_name(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.reminder_date.label }} {{ form.reminder_date(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.reminder_time.label }} {{ form.reminder_time(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.reminder_description.label }} {{ form.reminder_description(class="form-control") }}
+                </div>
+                <button type="submit" class="btn btn-primary">Set Reminder</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- List of Reminders -->
+    <div class="card">
+        <div class="card-header">
+            Your Reminders
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Reminder Name</th>
+                        <th>Reminder Date</th>
+                        <th>Reminder Time</th>
+                        <th>Reminder Description</th>
+                        <th>Author</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reminder in reminders %}
+                    <tr>
+                        <td>{{ reminder.reminder_name }}</td>
+                        <td>{{ reminder.reminder_date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ reminder.reminder_time.strftime('%H:%M:%S') }}</td>
+                        <td>{{ reminder.reminder_description }}</td>
+                        <td>{{ reminder.user.username }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
