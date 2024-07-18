@@ -8,14 +8,19 @@ import logging
 from io import BytesIO
 from flask import send_file
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.utils import secure_filename
 
 bills_bp = Blueprint('bills', __name__)
+
 
 @bills_bp.route('/add_bill', methods=['GET', 'POST'], strict_slashes=False)
 def add_bill():
     form = BillsForm()
     if form.validate_on_submit():
         try:
+            document_data = form.document.data.read()
+            document_filename = secure_filename(form.document.data.filename)
+            
             bill = Bills(
                 name=form.bill_name.data,
                 submitted_date=form.submitted_date.data,
@@ -24,16 +29,19 @@ def add_bill():
                 third_reading=form.third_reading.data,
                 presidential_assent=form.presidential_assent.data,
                 commencement=form.commencement.data,
-                document=form.document.data.read()  # Read the uploaded file content
+                document=document_data,
+                filename=document_filename
             )
             db_storage.new(bill)
             db_storage.save()  # Ensure the session is committed
             flash('Bill has been added!', 'success')
             return redirect(url_for('bills.view_bills'))
         except Exception as e:
+            db_storage.rollback()
             logging.error(f"Error adding bill: {e}")
             flash('An error occurred while adding the bill. Please try again.', 'danger')
     return render_template('add_bill.html', form=form)
+
 
 @bills_bp.route('/view_bills', methods=['GET'], strict_slashes=False)
 def view_bills():
@@ -76,8 +84,7 @@ def download_bill(bill_id):
             flash(f'Bill with ID {bill_id} not found.', 'error')
             return redirect(url_for('bills.view_bills'))
 
-        # Return the bill content as a downloadable file
-        return send_file(BytesIO(bill.document), as_attachment=True, download_name=f'bill_{bill_id}.pdf')
+        return send_file(BytesIO(bill.document), as_attachment=True, download_name=bill.filename)
 
     except SQLAlchemyError as e:
         logging.error(f"An SQLAlchemy error occurred: {e}")

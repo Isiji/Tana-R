@@ -15,6 +15,7 @@ from datetime import datetime
 from io import BytesIO
 from flask import send_file
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.utils import secure_filename
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -31,28 +32,33 @@ def legislation():
 @legislation_bp.route('/add_motion', methods=['GET', 'POST'])
 def add_motion():
     """Route for adding motions"""
-    print('add motion route has been hit')
     form = MotionsForm()
-    print('form created')
     if form.validate_on_submit():
-        motion = Motions(
-            name=form.name.data,
-            document=form.document.data.read(),  # Read the file data
-            date=form.date.data,
-            status=form.status.data,
-            created_at=datetime.utcnow()
-        )
         try:
+            document_data = form.document.data.read()
+            document_filename = secure_filename(form.document.data.filename)
+            
+            motion = Motions(
+                name=form.name.data,
+                document=document_data,
+                filename=document_filename,
+                date=form.date.data,
+                status=form.status.data,
+                created_at=datetime.utcnow()
+            )
             db_storage.new(motion)
             db_storage.save()
             flash('Motion has been created!', 'success')
             logger.info(f"Motion '{motion.name}' added to the database.")
+            return redirect(url_for('legislation.motions'))
         except Exception as e:
             db_storage.rollback()
             flash(f'An error occurred: {str(e)}', 'danger')
             logger.error(f"Failed to add motion '{form.name.data}' to the database. Error: {str(e)}")
-        return redirect(url_for('legislation.motions'))
     return render_template('add_motion.html', title='Add Motion', form=form)
+
+
+
 @legislation_bp.route('/motions', methods=['GET'])
 def motions():
     motions_dict = db_storage.all(Motions)
@@ -103,9 +109,13 @@ def add_statement():
     form = StatementsForm()
     if form.validate_on_submit():
         try:
+            document_data = form.document.data.read()
+            document_filename = secure_filename(form.document.data.filename)
+            
             statement = Statements(
                 name=form.name.data,
-                document=form.document.data.read(),  # Read file data for document
+                document=document_data,
+                filename=document_filename,
                 date=form.date.data,
                 status=form.status.data,
                 created_at=datetime.utcnow()
@@ -169,10 +179,12 @@ def add_question():
     form = QuestionsForm()
     if form.validate_on_submit():
         file_data = form.document.data.read() if form.document.data else None
+        filename = form.document.data.filename if form.document.data else None
         
         new_question = Questions(
             name=form.name.data,
             document=file_data,
+            filename=form.document.data.filename,
             date=form.date.data,
             status=form.status.data,
             created_at=datetime.utcnow()
@@ -181,10 +193,18 @@ def add_question():
             db_storage.new(new_question)
             db_storage.save()  # Commit the session to save the new question
             flash('Question added successfully!', 'success')
+            logger.info(f"Question '{new_question.name}' added to the database.")
             return redirect(url_for('legislation.view_questions'))
         except Exception as e:
+            db_storage.rollback()  # Rollback in case of error
             flash(f'An error occurred: {e}', 'danger')
+            logger.error(f"Failed to add question '{new_question.name}' to the database. Error: {e}")
+    else:
+        # Log form errors
+        logger.error(f"Form validation failed: {form.errors}")
     return render_template('add_question.html', form=form)
+
+
 
 #create route to view questions
 @legislation_bp.route('/view_questions', methods=['GET', 'POST'])
@@ -230,14 +250,13 @@ def functions():
 
 @legislation_bp.route('/download_motion/<int:motion_id>', methods=['GET'])
 def download_motion(motion_id):
-    """Route to download a motion."""
     try:
         motion = db_storage.get(Motions, id=motion_id)
         if not motion:
             flash(f'Motion with ID {motion_id} not found.', 'error')
             return redirect(url_for('legislation.view_motions'))
 
-        return send_file(BytesIO(motion.document), as_attachment=True, download_name=f'motion_{motion_id}.pdf')
+        return send_file(BytesIO(motion.document), as_attachment=True, download_name=motion.filename)
 
     except SQLAlchemyError as e:
         logging.error(f"An SQLAlchemy error occurred: {e}")
@@ -251,14 +270,13 @@ def download_motion(motion_id):
 
 @legislation_bp.route('/download_statement/<int:statement_id>', methods=['GET'])
 def download_statement(statement_id):
-    """Route to download a statement."""
     try:
         statement = db_storage.get(Statements, id=statement_id)
         if not statement:
             flash(f'Statement with ID {statement_id} not found.', 'error')
             return redirect(url_for('legislation.view_statements'))
 
-        return send_file(BytesIO(statement.document), as_attachment=True, download_name=f'statement_{statement_id}.pdf')
+        return send_file(BytesIO(statement.document), as_attachment=True, download_name=statement.filename)
 
     except SQLAlchemyError as e:
         logging.error(f"An SQLAlchemy error occurred: {e}")
@@ -270,16 +288,16 @@ def download_statement(statement_id):
         flash(f'An error occurred while downloading the statement: {e}', 'error')
         return redirect(url_for('legislation.view_statements'))
 
+
 @legislation_bp.route('/download_question/<int:question_id>', methods=['GET'])
 def download_question(question_id):
-    """Route to download a question."""
     try:
         question = db_storage.get(Questions, id=question_id)
         if not question:
             flash(f'Question with ID {question_id} not found.', 'error')
             return redirect(url_for('legislation.view_questions'))
 
-        return send_file(BytesIO(question.document), as_attachment=True, download_name=f'question_{question_id}.pdf')
+        return send_file(BytesIO(question.document), as_attachment=True, download_name=question.filename)
 
     except SQLAlchemyError as e:
         logging.error(f"An SQLAlchemy error occurred: {e}")

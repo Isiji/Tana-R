@@ -13,6 +13,7 @@ class Bills(BaseModel, Base):
     presidential_assent = Column(Boolean, default=False)
     commencement = Column(Boolean, default=False)
     document = Column(LargeBinary, nullable=False)  # Ensure this matches the field name in the form
+    filename = Column(String(255), nullable=False)    
     def __init__(self, *args, **kwargs):
         """Initialization of the bills model"""
         super().__init__(*args, **kwargs)

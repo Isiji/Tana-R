@@ -9,7 +9,8 @@ class Motions(BaseModel, Base):
     document = Column(LargeBinary, nullable=False)
     date = Column(Date, nullable=False)
     status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)
-        
+    filename = Column(String(255), nullable=False)
+                
     def __init__(self, *args, **kwargs):
         """Initialization of the motions model"""
         super().__init__(*args, **kwargs)

@@ -37,7 +37,7 @@ def load_user(user_id):
             return office
     return None
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'xls', 'xlsx', 'csv', 'pdf'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'xls', 'xlsx', 'csv', 'pdf', 'docx', 'doc'}
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

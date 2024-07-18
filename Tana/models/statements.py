@@ -2,7 +2,7 @@
 """Statements class module for the statements"""
 
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, Integer, Date, Enum, LargeBinary
+from sqlalchemy import Column, String, Integer, Date, Enum, LargeBinary
 from sqlalchemy.orm import relationship
 
 class Statements(BaseModel, Base):
@@ -12,7 +12,8 @@ class Statements(BaseModel, Base):
     document = Column(LargeBinary, nullable=False)
     date = Column(Date, nullable=False)
     status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)
-        
+    filename = Column(String(255), nullable=False)
+    
     def __init__(self, document, date, status, *args, **kwargs):
         """Initialization of the statements model"""
         super().__init__(*args, **kwargs)
