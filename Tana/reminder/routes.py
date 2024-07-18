@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import current_app, Blueprint, render_template, redirect, url_for, flash
 from flask_login import current_user, login_required
 from Tana.models.reminder import Reminder
 from Tana.reminder.forms import ReminderForm
-from Tana import db_storage
+from Tana import db_storage, mail
 from datetime import datetime
+from flask_mail import Message
 
 reminders = Blueprint('reminders', __name__)
 
@@ -28,10 +29,27 @@ def add_reminder():
         )
         db_storage.new(reminder)
         db_storage.save()
+        
+        # Flash in-app success message
         flash('Reminder set successfully', 'success')
+        
+        # Send email notification
+        send_reminder_email(current_user.email, reminder)
+        
+        # Redirect to avoid form resubmission on page refresh
         return redirect(url_for('reminders.add_reminder'))
 
     # Fetch all reminders for the current user
     user_reminders = db_storage.get_session().query(Reminder).filter_by(user_id=current_user.id).all()
 
     return render_template('reminders.html', title='Reminders', form=form, reminders=user_reminders)
+
+def send_reminder_email(user_email, reminder):
+    """Send email notification for a new reminder"""
+    msg = Message('New Reminder Set', sender=current_app.config['MAIL_DEFAULT_SENDER'], recipients=[user_email])
+    msg.body = f"Hello,\n\nYou have set a new reminder '{reminder.reminder_name}' for {reminder.reminder_date} at {reminder.reminder_time}.\n\nBest regards,\nYour App Team"
+    try:
+        mail.send(msg)
+        print("Reminder email sent successfully.")
+    except Exception as e:
+        print(f"Failed to send reminder email: {e}")

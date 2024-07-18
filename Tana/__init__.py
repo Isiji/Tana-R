@@ -18,6 +18,7 @@ from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
 
 
+
 db_storage = DBStorage()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
