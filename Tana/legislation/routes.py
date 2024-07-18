@@ -178,18 +178,18 @@ def questions():
 def add_question():
     form = QuestionsForm()
     if form.validate_on_submit():
-        file_data = form.document.data.read() if form.document.data else None
-        filename = form.document.data.filename if form.document.data else None
-        
-        new_question = Questions(
-            name=form.name.data,
-            document=file_data,
-            filename=form.document.data.filename,
-            date=form.date.data,
-            status=form.status.data,
-            created_at=datetime.utcnow()
-        )
         try:
+            file_data = form.document.data.read() if form.document.data else None
+            filename = secure_filename(form.document.data.filename) if form.document.data else None
+
+            new_question = Questions(
+                name=form.name.data,
+                document=file_data,
+                filename=filename,
+                date=form.date.data,
+                status=form.status.data,
+                created_at=datetime.utcnow()
+            )
             db_storage.new(new_question)
             db_storage.save()  # Commit the session to save the new question
             flash('Question added successfully!', 'success')
