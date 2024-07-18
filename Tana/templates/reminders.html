@@ -36,6 +36,7 @@
                 <th>Reminder Description</th>
                 <th>Reminder Location</th>
                 <th>Reminder Contact</th>
+                <th>Author</th>
             </tr>
         </thead>
         <tbody>
@@ -47,6 +48,7 @@
                 <td>{{ reminder.reminder_description }}</td>
                 <td>{{ reminder.reminder_location }}</td>
                 <td>{{ reminder.reminder_contact }}</td>
+                <td>{{ reminder.user.username }}</td>
             </tr>
             {% endfor %}
         </tbody>
