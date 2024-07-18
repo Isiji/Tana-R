@@ -64,7 +64,7 @@
                         <td>{{ reminder.reminder_date.strftime('%Y-%m-%d') }}</td>
                         <td>{{ reminder.reminder_time.strftime('%H:%M:%S') }}</td>
                         <td>{{ reminder.reminder_description }}</td>
-                        <td>{{ reminder.user.username }}</td>
+                        <td>{{ current_user.name }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
