@@ -9,12 +9,6 @@ from flask_login import login_user, current_user, logout_user, login_required, L
 
 fieldofficers = Blueprint('fieldofficers', __name__)
 
-@fieldofficers.route('/fieldofficer_dashboard')
-@login_required
-def fieldofficer_dashboard():
-    """route for the field officer dashboard"""
-    return render_template('fieldofficer.html', title='Field Officer Dashboard')
-
 
 @fieldofficers.route('/field_officers')
 def field_officers():

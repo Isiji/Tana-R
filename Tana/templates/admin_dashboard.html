@@ -1,75 +1,126 @@
 {% extends 'layout.html' %}
-{% block title %} Admin Dashboard {% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Welcome to Tana River Senate Office</h1>
-    <h2>Admin Dashboard</h2>
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1>Welcome to Tana River Senate Office</h1>
+        <h2>Admin Dashboard</h2>
+    </div>
 
-    <p>Our mission is to serve the people of Tana River County by providing the best services possible.</p>
-    <p>Our vision is to be the best Senate Office in Kenya.</p>
+    <div class="mb-4">
+        <p>Our mission is to serve the people of Tana River County by providing the best services possible.</p>
+        <p>Our vision is to be the best Senate Office in Kenya.</p>
+    </div>
 
-    <p>Your contact information is:</p>
-    <ul>
-        <li>Email: {{ current_user.email }}</li>
-        <li>Phone: {{ current_user.phone }}</li>
-    </ul>
+    <div class="mb-4">
+        <h4>Your contact information is:</h4>
+        <ul>
+            <li>Email: {{ current_user.email }}</li>
+            <li>Phone: {{ current_user.phone }}</li>
+        </ul>
+    </div>
 
-    <h2>The following are what you can access and do:</h2>
-    <li>
-        <h3>Create an office</h3>
-        <a href="{{ url_for('offices.create_office') }}" class="btn btn-primary">Create Office</a>
-    </li>
-    <li>
-        <h3>View office details and add new members</h3>
-        <div class="list-group">
-            {% for office in offices %}
-            <a href="{{ url_for('offices.office_details', office_id=office.id) }}" class="list-group-item list-group-item-action">
-                {{ office.office_name }}
-            </a>
-            {% endfor %}
+    <div class="mb-4">
+        <h2>The following are what you can access and do:</h2>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Create an Office</h5>
+                    <a href="{{ url_for('offices.create_office') }}" class="btn btn-primary btn-block">Create Office</a>
+                </div>
+            </div>
         </div>
-    </li>
-    <li>
-        <h3>View Records of employee_register</h3>
-        <a href="{{ url_for('Users.employee_records') }}" class="btn btn-primary">View Records</a>
-    </li>
+        
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">View Office Details and Add New Members</h5>
+                    <div class="list-group">
+                        {% for office in offices %}
+                        <a href="{{ url_for('offices.office_details', office_id=office.id) }}" class="list-group-item list-group-item-action">
+                            {{ office.office_name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <li>
-    <!--add link for diaries-->
-    <li>
-        <h3>View Diaries</h3>
-        <a href="{{ url_for('Users.view_diaries') }}" class="btn btn-primary">View Diaries</a>
-    </li>
-    <!--add link for create diary-->
-    <li>
-        <h3>Create a Diary</h3>
-        <a href="{{ url_for('Users.create_diary') }}" class="btn btn-primary">Create Diary</a>
-    </li>
-    <!--add link for pollingstations-->
-    <li>
-        <h3>View Polling Stations</h3>
-        <a href="{{ url_for('representation.pollingstations') }}" class="btn btn-primary">View Polling Stations</a>
-    </li>
-    <!--add link for create statement-->
-    <li>
-        <h3>Create a Statement</h3>
-        <a href="{{ url_for('legislation.add_statement') }}" class="btn btn-primary">Create Statement</a>
-    </li>
-    <!--add link for view statements-->
-    <li>
-        <h3>View Statements</h3>
-        <a href="{{ url_for('legislation.view_statements') }}" class="btn btn-primary">View Statements</a>
-    </li>
-    <!--add link to search for polling station-->
-    <li>
-        <h3>Search for Polling Station</h3>
-        <a href="{{ url_for('representation.select_polling_station') }}" class="btn btn-primary">Search Polling Station</a>
-    </li>
-    <!--add link for all users-->
-    <li>
-        <h3>View All Users</h3>
-        <a href="{{ url_for('Users.all_users') }}" class="btn btn-primary">View All Users</a>
-    </li>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">View Employee Records</h5>
+                    <a href="{{ url_for('Users.employee_records') }}" class="btn btn-primary btn-block">View Records</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">View Diaries</h5>
+                    <a href="{{ url_for('Users.view_diaries') }}" class="btn btn-primary btn-block">View Diaries</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Create a Diary</h5>
+                    <a href="{{ url_for('Users.create_diary') }}" class="btn btn-primary btn-block">Create Diary</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">View Polling Stations</h5>
+                    <a href="{{ url_for('representation.pollingstations') }}" class="btn btn-primary btn-block">View Polling Stations</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Create a Statement</h5>
+                    <a href="{{ url_for('legislation.add_statement') }}" class="btn btn-primary btn-block">Create Statement</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">View Statements</h5>
+                    <a href="{{ url_for('legislation.view_statements') }}" class="btn btn-primary btn-block">View Statements</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Search for Polling Station</h5>
+                    <a href="{{ url_for('representation.select_polling_station') }}" class="btn btn-primary btn-block">Search Polling Station</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">View All Users</h5>
+                    <a href="{{ url_for('Users.all_users') }}" class="btn btn-primary btn-block">View All Users</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
