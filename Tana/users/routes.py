@@ -259,20 +259,6 @@ def redirect_based_on_role():
         return redirect(url_for('main.home'))
 
 
-#create a route for the admin page, admins include P.A, Super Admin, Admin
-@Users.route('/admin', methods=['GET', 'POST'])
-def admin():
-    """route for the admin page"""
-    if current_user.is_authenticated:
-        if current_user.has_role(UserRole.SUPER_ADMIN.value) or current_user.has_role(UserRole.ADMIN.value):
-            return render_template('admin.html', title='Admin')
-        else:
-            flash('You do not have permission to access this page', 'danger')
-            return redirect(url_for('main.home'))
-    else:
-        flash('You need to be logged in to access this page', 'danger')
-        return redirect(url_for('Users.login'))
-    
 #route for the admin dashboard
 @Users.route('/admin_dashboard', methods=['GET'])
 @login_required
