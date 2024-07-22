@@ -3,11 +3,10 @@
 from flask import Blueprint, current_app, jsonify, request, render_template, redirect, url_for, flash
 from Tana.models.eventcategory import EventCategory
 from Tana.models.events import Events
-from Tana import db_storage, bcrypt
+from Tana import db_storage
 from Tana.events.forms import EventForm
 from flask_login import current_user, login_required
 from Tana.models.roles import UserRole
-import logging
 from Tana.models.constituency import Constituency
 from Tana.models.ward import Ward
 from Tana.models.pollingstation import PollingStation
@@ -27,10 +26,11 @@ def add_event():
         event_name = form.event_name.data
         event_description = form.event_description.data
         impact_level = form.impact_level.data
-        event_owner = form.event_owner.data
+        event_leader = form.event_leader.data
         event_location = form.event_location.data
-        event_contact = form.event_contact.data
-        event_date = form.event_date.data
+        contact_person = form.contact_person.data
+        start_date = form.start_date.data
+        end_date = form.end_date.data
         polling_station_name = form.polling_station_name.data
         user_id = current_user.id
 
@@ -44,10 +44,11 @@ def add_event():
             event_name=event_name, 
             event_description=event_description, 
             impact_level=impact_level, 
-            event_owner=event_owner, 
+            event_leader=event_leader, 
             event_location=event_location, 
-            event_contact=event_contact,
-            event_date=event_date,
+            contact_person=contact_person,
+            start_date=start_date,
+            end_date=end_date,
             polling_station_id=polling_station.id,
             user_id=user_id
         )
@@ -92,7 +93,7 @@ def view_events():
     return render_template('events.html', events=events)
 
 
-#route for viweing events only, no need to edit or delete. uses view_events.html
+# route for viewing events only, no need to edit or delete. uses view_events.html
 @events_bp.route('/view_events_only', methods=['GET'], strict_slashes=False)
 def view_events_only():
     """Route to view events"""
@@ -123,6 +124,7 @@ def view_events_only():
     return render_template('events.html', events=events)
 
 @events_bp.route('/delete_event/<int:event_id>', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
 def delete_event(event_id):
     """route to delete an event"""
     event = db_storage.get(Events, id=event_id)
@@ -130,17 +132,19 @@ def delete_event(event_id):
         return redirect(url_for('events.view_events'))
     db_storage.delete(event)
     db_storage.save()
+    flash('Event has been deleted!', 'success')
     return redirect(url_for('events.view_events'))
 
 @events_bp.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
 @login_required
 def edit_event(event_id):
-    event = db_storage.find_one(Events, id=event_id)  # Correct usage of find_one
+    """Route to edit an event"""
+    event = db_storage.find_one(Events, id=event_id)
     form = EventForm(obj=event)
 
     if request.method == 'POST' and form.validate_on_submit():
         form.populate_obj(event)
-        db_storage.commit()
+        db_storage.save()
         flash('Event updated successfully', 'success')
         return redirect(url_for('events.view_events'))
 
@@ -155,6 +159,7 @@ def get_all_polling_stations():
 
 @events_bp.route('/get_polling_station_info', methods=['GET'])
 def get_polling_station_info():
+    """Route to get polling station information"""
     polling_station_name = request.args.get('polling_station')
 
     if not polling_station_name:
@@ -175,14 +180,15 @@ def get_polling_station_info():
 
 @events_bp.route('/events_data', methods=['GET'])
 def events_data():
-    events = db_storage.all(Events)  # Adjust this to fetch your events
+    """Route to get events data"""
+    events = db_storage.all(Events).values()
     events_list = [
         {
             'title': event.event_name,
             'start': event.start_date.isoformat(),
-            'end': event.end_date.isoformat()  # Ensure this is a date field
+            'end': event.end_date.isoformat()
         }
-        for event in events.values()
+        for event in events
     ]
     return jsonify(events_list)
 

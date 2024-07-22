@@ -34,11 +34,12 @@
                 <tr>
                     <th>Event Name</th>
                     <th>Impact Level</th>
-                    <th>Event Owner</th>
+                    <th>Event Leader</th>
                     <th>Event Location</th>
-                    <th>Event Contact</th>
+                    <th>Contact Person</th>
                     <th>Event Description</th>
-                    <th>Event Date</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
                     <th>Created At</th>
                     <th>Polling Station</th>
                     <th>Entered By</th>
@@ -49,11 +50,12 @@
                     <tr>
                         <td>{{ event.event_name }}</td>
                         <td>{{ event.impact_level }}</td>
-                        <td>{{ event.event_owner }}</td>
+                        <td>{{ event.event_leader }}</td>
                         <td>{{ event.event_location }}</td>
-                        <td>{{ event.event_contact }}</td>
+                        <td>{{ event.contact_person }}</td>
                         <td>{{ event.event_description }}</td>
-                        <td>{{ event.event_date }}</td>
+                        <td>{{ event.start_date }}</td>
+                        <td>{{ event.end_date }}</td>
                         <td>{{ event.created_at }}</td>
                         <td>{{ event.polling_station.name }}</td>
                         <td>{{ event.user.name }}</td>
