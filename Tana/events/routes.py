@@ -172,3 +172,21 @@ def get_polling_station_info():
         'ward': ward.name,
         'constituency': constituency.name
     })
+
+@events_bp.route('/events_data', methods=['GET'])
+def events_data():
+    events = db_storage.all(Events)  # Adjust this to fetch your events
+    events_list = [
+        {
+            'title': event.event_name,
+            'start': event.start_date.isoformat(),
+            'end': event.end_date.isoformat()  # Ensure this is a date field
+        }
+        for event in events.values()
+    ]
+    return jsonify(events_list)
+
+@events_bp.route('/calendar', methods=['GET'])
+def calendar():
+    """Route to view the calendar"""
+    return render_template('calendar.html', title='Calendar')
