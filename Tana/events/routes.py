@@ -180,17 +180,19 @@ def get_polling_station_info():
 
 @events_bp.route('/events_data', methods=['GET'])
 def events_data():
-    """Route to get events data"""
-    events = db_storage.all(Events).values()
+    events = db_storage.all(Events)
     events_list = [
         {
             'title': event.event_name,
             'start': event.start_date.isoformat(),
-            'end': event.end_date.isoformat()
+            'end': event.end_date.isoformat(),
+            'location': event.event_location,
+            'description': event.event_description
         }
-        for event in events
+        for event in events.values()
     ]
     return jsonify(events_list)
+
 
 @events_bp.route('/calendar', methods=['GET'])
 def calendar():
