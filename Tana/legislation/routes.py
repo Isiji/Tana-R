@@ -301,6 +301,26 @@ def download_statement(statement_id):
             flash(f'Statement with ID {statement_id} not found.', 'error')
             return redirect(url_for('legislation.view_statements'))
 
+        # Create a zip file if follow-up letter exists
+        if statement.follow_up_letter:
+            from zipfile import ZipFile
+            from io import BytesIO
+            
+            # Create a bytes buffer for the zip file
+            buffer = BytesIO()
+            with ZipFile(buffer, 'w') as zip_file:
+                # Add the statement document to the zip file
+                buffer_document = BytesIO(statement.document)
+                zip_file.writestr(statement.filename, buffer_document.getvalue())
+                
+                # Add the follow-up letter to the zip file
+                buffer_follow_up_letter = BytesIO(statement.follow_up_letter)
+                zip_file.writestr('follow_up_letter_' + statement.filename, buffer_follow_up_letter.getvalue())
+                
+            buffer.seek(0)
+            return send_file(buffer, as_attachment=True, download_name=f'statement_{statement_id}.zip')
+
+        # If no follow-up letter, just send the statement document
         return send_file(BytesIO(statement.document), as_attachment=True, download_name=statement.filename)
 
     except SQLAlchemyError as e:
@@ -312,7 +332,6 @@ def download_statement(statement_id):
         logging.error(f"An error occurred: {e}")
         flash(f'An error occurred while downloading the statement: {e}', 'error')
         return redirect(url_for('legislation.view_statements'))
-
 
 @legislation_bp.route('/download_question/<int:question_id>', methods=['GET'])
 def download_question(question_id):
