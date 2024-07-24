@@ -74,12 +74,19 @@ def edit_bill(bill_id):
 
     form = BillsForm(obj=bill)
     if form.validate_on_submit():
-        form.populate_obj(bill)
-        if form.document.data:  # Only update the content if a new file is uploaded
-            bill.document = form.document.data.read()
-        db_storage.save()
-        flash('Bill has been updated!', 'success')
-        return redirect(url_for('bills.view_bills'))
+        try:
+            form.populate_obj(bill)
+            if form.document.data:  # Only update the content if a new file is uploaded
+                bill.document = form.document.data.read()
+                bill.filename = secure_filename(form.document.data.filename)
+            db_storage.save()
+            flash('Bill has been updated!', 'success')
+            return redirect(url_for('bills.view_bills'))
+        except Exception as e:
+            db_storage.rollback()
+            logging.error(f"Error updating bill: {e}")
+            flash('An error occurred while updating the bill. Please try again.', 'danger')
+            logging.debug(f"Form data: {form.data}")
     return render_template('edit_bill.html', form=form, bill=bill)
 
 @bills_bp.route('/delete_bill/<int:bill_id>', methods=['POST'], strict_slashes=False)
