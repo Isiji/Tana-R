@@ -6,7 +6,7 @@ class Motions(BaseModel, Base):
     __tablename__ = 'motions'
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
-    document = Column(LargeBinary, nullable=False)
+    document = Column(LargeBinary(length=4294967295), nullable=False)
     date = Column(Date, nullable=False)
     status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)
     filename = Column(String(255), nullable=False)

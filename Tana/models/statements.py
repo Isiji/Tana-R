@@ -9,7 +9,7 @@ class Statements(BaseModel, Base):
     """This class defines the statements model"""
     __tablename__ = 'statements'
     id = Column(Integer, primary_key=True)
-    document = Column(LargeBinary, nullable=False)
+    document = Column(LargeBinary(length=4294967295), nullable=False)
     date = Column(Date, nullable=False)
     status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)
     filename = Column(String(255), nullable=False)

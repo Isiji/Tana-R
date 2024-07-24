@@ -9,7 +9,7 @@ class SecondaryOversight(BaseModel, Base):
     __tablename__ = 'secondary_oversight'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    document = Column(LargeBinary, nullable=False)
+    document = Column(LargeBinary(length=4294967295), nullable=False)
     date_updated = Column(Date, nullable=False)
     status = Column(Boolean, default=False)
     

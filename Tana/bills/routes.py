@@ -23,7 +23,7 @@ def add_bill():
             document_filename = secure_filename(form.document.data.filename)
 
             bill = Bills(
-                name=form.bill_name.data,
+                name=form.name.data,
                 submitted_date=form.submitted_date.data,
                 first_reading=form.first_reading.data,
                 first_reading_date=form.first_reading_date.data if form.first_reading_date.data else None,

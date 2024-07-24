@@ -17,7 +17,7 @@ class Bills(BaseModel, Base):
     presidential_assent_date = Column(Date, nullable=True)
     commencement = Column(Boolean, default=False)
     commencement_date = Column(Date, nullable=True)
-    document = Column(LargeBinary, nullable=False)
+    document = Column(LargeBinary(length=4294967295), nullable=False)
     filename = Column(String(255), nullable=False)
     
     def __init__(self, *args, **kwargs):

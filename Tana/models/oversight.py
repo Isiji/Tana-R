@@ -9,7 +9,7 @@ class Oversight(BaseModel, Base):
     __tablename__ = 'oversight'
     id = Column(Integer, primary_key=True)
     type = Column(Enum("Primary", "Secondary"), nullable=False)
-    document = Column(LargeBinary, nullable=False)
+    document = Column(LargeBinary(length=4294967295), nullable=False)
     date = Column(Date, nullable=False)
     
     

@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Optional
 
 class BillsForm(FlaskForm):
     """Form for adding bills"""
-    bill_name = StringField('Bill Name', validators=[DataRequired()])
+    name = StringField('Bill Name', validators=[DataRequired()])
     submitted_date = DateField('Submitted Date', validators=[DataRequired()])
     first_reading = BooleanField('First Reading')
     first_reading_date = DateField('First Reading Date', validators=[Optional()])
