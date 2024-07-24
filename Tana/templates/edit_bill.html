@@ -69,7 +69,9 @@
         <div class="form-group">
             {{ form.document.label(class="form-label") }}
             {{ form.document(class="form-control") }}
-            <p>Current document: {{ bill.filename }}</p>
+            {% if bill.filename %}
+                <p>Current document: <a href="{{ url_for('bills.download_bill', bill_id=bill.id) }}" target="_blank">{{ bill.filename }}</a></p>
+            {% endif %}
         </div>
         
         <button type="submit" class="btn btn-primary">Update Bill</button>

@@ -89,6 +89,7 @@ def edit_bill(bill_id):
             logging.debug(f"Form data: {form.data}")
     return render_template('edit_bill.html', form=form, bill=bill)
 
+
 @bills_bp.route('/delete_bill/<int:bill_id>', methods=['POST'], strict_slashes=False)
 def delete_bill(bill_id):
     bill = db_storage.get(Bills, bill_id)
