@@ -71,6 +71,8 @@
             {{ form.document(class="form-control") }}
             {% if bill.filename %}
                 <p>Current document: <a href="{{ url_for('bills.download_bill', bill_id=bill.id) }}" target="_blank">{{ bill.filename }}</a></p>
+            {% else %}
+                <p>No document uploaded.</p>
             {% endif %}
         </div>
         
