@@ -1,23 +1,20 @@
-#!/usr/bin/python3
-"""Statements class module for the statements"""
-
+from sqlalchemy import Column, String, Integer, Date, Enum, LargeBinary, Text
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, Date, Enum, LargeBinary
-from sqlalchemy.orm import relationship
-
 class Statements(BaseModel, Base):
     """This class defines the statements model"""
     __tablename__ = 'statements'
-    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
     document = Column(LargeBinary(length=4294967295), nullable=False)
+    follow_up_letter = Column(LargeBinary(length=4294967295), nullable=True)  # New field for follow-up letters
     date = Column(Date, nullable=False)
     status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)
     filename = Column(String(255), nullable=False)
     
-    def __init__(self, document, date, status, *args, **kwargs):
+    def __init__(self, document, follow_up_letter, date, status, *args, **kwargs):
         """Initialization of the statements model"""
         super().__init__(*args, **kwargs)
         self.document = document
+        self.follow_up_letter = follow_up_letter
         self.date = date
         self.status = status
         

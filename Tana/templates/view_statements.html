@@ -1,9 +1,8 @@
 {% extends 'layout.html' %}
 {% block title %} View Statements {% endblock %}
 {% block content %}
-    <h2>Add New Statement</h2>
-    <a href="{{ url_for('legislation.add_statement') }}" class="btn btn-primary">Add Statement</a>
     <h2>View Statements</h2>
+    <a href="{{ url_for('legislation.add_statement') }}" class="btn btn-primary mb-3">Add Statement</a>
     <div class="container">
         <table class="table table-striped">
             <thead>

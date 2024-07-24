@@ -12,10 +12,12 @@ class MotionsForm(FlaskForm):
     status = SelectField('Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+
 class StatementsForm(FlaskForm):
     name = StringField('Statement Title', validators=[DataRequired()])
-    document = FileField('Upload Document', validators=[DataRequired()])
-    date = DateField('Statement Date', validators=[DataRequired()])
+    document = FileField('Upload Document')  # Document is not required for edits
+    follow_up_letter = FileField('Follow-Up Letter')  # New optional field for follow-up letter
+    date = DateField('Statement Date', format='%Y-%m-%d', validators=[DataRequired()])
     status = SelectField('Statement Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], validators=[DataRequired()])
     submit = SubmitField('Submit')
 
