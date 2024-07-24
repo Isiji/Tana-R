@@ -34,11 +34,9 @@ class BaseModel:
         else:
             self.created_at = datetime.utcnow()
             self.updated_at = self.created_at
-
     def __str__(self):
-        """String representation of the BaseModel class"""
-        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id,
-                                         self.__dict__)
+            id_str = self.id if self.id is not None else "None"
+            return "[{:s}] ({:s}) {}".format(self.__class__.__name__, id_str, self.__dict__)
 
     def save(self):
         """updates the attribute 'updated_at' with the current datetime"""

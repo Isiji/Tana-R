@@ -116,6 +116,13 @@ class DBStorage:
         except SQLAlchemyError as e:
             print("An Error Occured:", e)
 
+    def rollback(self):
+        """Rolls back the current session"""
+        try:
+            self.__session.rollback()
+        except SQLAlchemyError as e:
+            print("An Error Occured:", e)
+
     def get_user_by_id(self, user_id):
         """Retrieve a user by their ID."""
         try:

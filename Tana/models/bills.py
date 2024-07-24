@@ -8,12 +8,18 @@ class Bills(BaseModel, Base):
     name = Column(String(128), nullable=False)
     submitted_date = Column(Date, nullable=False)
     first_reading = Column(Boolean, default=False)
+    first_reading_date = Column(Date, nullable=True)
     second_reading = Column(Boolean, default=False)
+    second_reading_date = Column(Date, nullable=True)
     third_reading = Column(Boolean, default=False)
+    third_reading_date = Column(Date, nullable=True)
     presidential_assent = Column(Boolean, default=False)
+    presidential_assent_date = Column(Date, nullable=True)
     commencement = Column(Boolean, default=False)
-    document = Column(LargeBinary, nullable=False)  # Ensure this matches the field name in the form
-    filename = Column(String(255), nullable=False)    
+    commencement_date = Column(Date, nullable=True)
+    document = Column(LargeBinary, nullable=False)
+    filename = Column(String(255), nullable=False)
+    
     def __init__(self, *args, **kwargs):
         """Initialization of the bills model"""
         super().__init__(*args, **kwargs)

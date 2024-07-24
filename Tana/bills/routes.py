@@ -12,34 +12,50 @@ from werkzeug.utils import secure_filename
 
 bills_bp = Blueprint('bills', __name__)
 
-
 @bills_bp.route('/add_bill', methods=['GET', 'POST'], strict_slashes=False)
 def add_bill():
+    print("add bill route has been hit")
     form = BillsForm()
     if form.validate_on_submit():
+        print("form has been validated")
         try:
             document_data = form.document.data.read()
             document_filename = secure_filename(form.document.data.filename)
-            
+
             bill = Bills(
                 name=form.bill_name.data,
                 submitted_date=form.submitted_date.data,
                 first_reading=form.first_reading.data,
+                first_reading_date=form.first_reading_date.data if form.first_reading_date.data else None,
                 second_reading=form.second_reading.data,
+                second_reading_date=form.second_reading_date.data if form.second_reading_date.data else None,
                 third_reading=form.third_reading.data,
+                third_reading_date=form.third_reading_date.data if form.third_reading_date.data else None,
                 presidential_assent=form.presidential_assent.data,
+                presidential_assent_date=form.presidential_assent_date.data if form.presidential_assent_date.data else None,
                 commencement=form.commencement.data,
+                commencement_date=form.commencement_date.data if form.commencement_date.data else None,
                 document=document_data,
                 filename=document_filename
             )
+            
+            logging.debug(f"Attempting to add bill: {bill}")
             db_storage.new(bill)
-            db_storage.save()  # Ensure the session is committed
+            db_storage.save()
             flash('Bill has been added!', 'success')
             return redirect(url_for('bills.view_bills'))
         except Exception as e:
             db_storage.rollback()
             logging.error(f"Error adding bill: {e}")
+            print(f"Error adding bill: {e}")
             flash('An error occurred while adding the bill. Please try again.', 'danger')
+            logging.debug(f"Bill data: {bill}")
+            logging.debug(f"Form data: {form.data}")
+    else:
+        print("Form validation failed")
+        for field, errors in form.errors.items():
+            for error in errors:
+                print(f"Error in {field}: {error}")
     return render_template('add_bill.html', form=form)
 
 
