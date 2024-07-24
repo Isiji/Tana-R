@@ -352,3 +352,27 @@ def download_question(question_id):
         logging.error(f"An error occurred: {e}")
         flash(f'An error occurred while downloading the question: {e}', 'error')
         return redirect(url_for('legislation.view_questions'))
+
+@legislation_bp.route('/download_follow_up_letter/<int:statement_id>', methods=['GET'])
+def download_follow_up_letter(statement_id):
+    try:
+        statement = db_storage.get(Statements, id=statement_id)
+        if not statement:
+            flash(f'Statement with ID {statement_id} not found.', 'error')
+            return redirect(url_for('legislation.view_statements'))
+
+        if not statement.follow_up_letter:
+            flash(f'No follow-up letter available for statement with ID {statement_id}.', 'error')
+            return redirect(url_for('legislation.view_statements'))
+
+        return send_file(BytesIO(statement.follow_up_letter), as_attachment=True, download_name='follow_up_letter_' + statement.filename)
+
+    except SQLAlchemyError as e:
+        logging.error(f"An SQLAlchemy error occurred: {e}")
+        flash(f'An error occurred while downloading the follow-up letter: {e}', 'error')
+        return redirect(url_for('legislation.view_statements'))
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        flash(f'An error occurred while downloading the follow-up letter: {e}', 'error')
+        return redirect(url_for('legislation.view_statements'))
