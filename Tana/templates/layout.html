@@ -6,15 +6,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
   <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,700,800,900&display=swap" rel="stylesheet">
-
-  <!-- FullCalendar CSS -->
-  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
-
-  {% if title %}
-    <title>Tana River Senate Office - {{ title }}</title>
-  {% else %}
-    <title>Tana River Senate Office</title>
-  {% endif %}
+  <title>Tana River Senate Office</title>
 </head>
 <body>
   <header class="site-header">
@@ -72,23 +64,29 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
       </div>
     </div>
   </main>
-  <footer class="text-center mt-4">
-    <p>&copy; 2024 Tana River Senate Office. All Rights Reserved.</p>
-    <div>
-      <a href="https://wa.me/" target="_blank"><img src="https://image.flaticon.com/icons/png/512/124/124034.png" alt="WhatsApp" style="width:40px; margin-right:10px;"></a>
-      <a href="https://twitter.com/" target="_blank"><img src="https://image.flaticon.com/icons/png/512/124/124021.png" alt="Twitter" style="width:40px; margin-right:10px;"></a>
-      <a href="https://www.facebook.com/" target="_blank"><img src="https://image.flaticon.com/icons/png/512/124/124010.png" alt="Facebook" style="width:40px;"></a>
-    </div>
+  <footer>
+      <p>&copy; 2024 Tana River Senate Office. All Rights Reserved.</p>
+      <div>
+        <a href="https://wa.me/254797516166" target="_blank">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:40px; margin-right:10px;">
+        </a>
+        <a href="https://twitter.com/YOUR_TWITTER_ACCOUNT" target="_blank">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/X_logo.svg" alt="X" style="width:40px; margin-right:10px;">
+        </a>
+        
+        <a href="https://www.facebook.com/YOUR_FACEBOOK_ACCOUNT" target="_blank">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" style="width:40px;">
+        </a>
+      </div>
   </footer>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-  <!-- FullCalendar JS -->
-  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
 </body>
 </html>
