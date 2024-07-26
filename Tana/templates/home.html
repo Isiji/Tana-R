@@ -12,10 +12,13 @@
         <li>Accountability</li>
         <li>Professionalism</li>
     </ul>
-    
-</div>
-<div>
-    <p>Functions</p>
-    <a href="{{ url_for('legislation.functions') }}" class="btn btn-primary">Functions</a>
+    <div class="mt-4">
+        <p>To access the Parliament website and fetch order papers, bills, motions, and Hansard, click the button below:</p>
+        <a href="http://www.parliament.go.ke/the-senate" class="btn btn-primary mb-2">Senate Order Paper</a>
+    </div>
+    <div class="mt-4">
+        <p>Functions</p>
+        <a href="{{ url_for('legislation.functions') }}" class="btn btn-primary">Functions</a>
+    </div>
 </div>
 {% endblock %}
