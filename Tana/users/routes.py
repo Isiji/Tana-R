@@ -115,7 +115,22 @@ def employee_register():
             db_storage.new(new_employee)
             db_storage.save()
 
-            flash('Employee registered successfully!', 'success')
+            # Send email notification
+            msg = Message('Register Marked',
+                          sender='blairisiji@gmail.com',  # Replace with your email
+                          recipients=['blairisiji01@gmail.com'])  # Replace with recipient email
+            msg.body = f"""
+            An employee has marked their register.:
+
+            Name: {name}
+            User ID: {user_id}
+            Time In: {time_in}
+            Date: {date}
+            Status: {status}
+            """
+            mail.send(msg)
+
+            flash('registered successfully and notification sent!', 'success')
             return redirect(url_for('Users.employee_records'))
         except Exception as e:
             logging.error(f"Error registering employee: {e}")
