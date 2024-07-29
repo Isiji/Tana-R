@@ -9,8 +9,12 @@ from io import BytesIO
 from flask import send_file
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.utils import secure_filename
+import logging
 
 bills_bp = Blueprint('bills', __name__)
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 @bills_bp.route('/add_bill', methods=['GET', 'POST'], strict_slashes=False)
 def add_bill():
@@ -69,25 +73,42 @@ def view_bills():
 def edit_bill(bill_id):
     bill = db_storage.get(Bills, id=bill_id)
     if not bill:
-        flash(f'Bill with id {bill_id} not found.', 'error')
-        return redirect(url_for('bills.view_bills'))  # Redirect to a meaningful page
+        flash(f'Bill with ID {bill_id} not found.', 'error')
+        return redirect(url_for('bills.view_bills'))
 
     form = BillsForm(obj=bill)
     if form.validate_on_submit():
         try:
-            form.populate_obj(bill)
-            if form.document.data:  # Only update the content if a new file is uploaded
+            # Only update the document if a new file is uploaded
+            if form.document.data:
                 bill.document = form.document.data.read()
                 bill.filename = secure_filename(form.document.data.filename)
+            
+            # Update other fields
+            bill.name = form.name.data
+            bill.submitted_date = form.submitted_date.data
+            bill.first_reading = form.first_reading.data
+            bill.first_reading_date = form.first_reading_date.data
+            bill.second_reading = form.second_reading.data
+            bill.second_reading_date = form.second_reading_date.data
+            bill.third_reading = form.third_reading.data
+            bill.third_reading_date = form.third_reading_date.data
+            bill.presidential_assent = form.presidential_assent.data
+            bill.presidential_assent_date = form.presidential_assent_date.data
+            bill.commencement = form.commencement.data
+            bill.commencement_date = form.commencement_date.data
+            # Add any other bill attributes here as necessary
+            
             db_storage.save()
             flash('Bill has been updated!', 'success')
+            logger.info(f'Bill "{bill.name}" updated successfully.')
             return redirect(url_for('bills.view_bills'))
         except Exception as e:
             db_storage.rollback()
-            logging.error(f"Error updating bill: {e}")
-            flash('An error occurred while updating the bill. Please try again.', 'danger')
-            logging.debug(f"Form data: {form.data}")
-    return render_template('edit_bill.html', form=form, bill=bill)
+            flash(f'An error occurred: {str(e)}', 'danger')
+            logger.error(f'Error updating bill: {str(e)}')
+    
+    return render_template('edit_bill.html', title='Edit Bill', form=form, bill=bill)
 
 
 @bills_bp.route('/delete_bill/<int:bill_id>', methods=['POST'], strict_slashes=False)

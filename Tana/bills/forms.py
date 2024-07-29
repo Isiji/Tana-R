@@ -18,5 +18,5 @@ class BillsForm(FlaskForm):
     presidential_assent_date = DateField('Presidential Assent Date', validators=[Optional()])
     commencement = BooleanField('Commencement')
     commencement_date = DateField('Commencement Date', validators=[Optional()])
-    document = FileField('Document', validators=[DataRequired()])
+    document = FileField('Document', validators=[Optional()])
     submit = SubmitField('Submit')
