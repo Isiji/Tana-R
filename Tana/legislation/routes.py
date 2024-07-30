@@ -375,15 +375,27 @@ def download_statement(statement_id):
         flash(f'An error occurred while downloading the statement: {e}', 'error')
         return redirect(url_for('legislation.view_statements'))
 
-@legislation_bp.route('/download_question/<int:question_id>', methods=['GET'])
-def download_question(question_id):
+@legislation_bp.route('/download_question/<int:question_id>/<string:document_type>', methods=['GET'])
+def download_question(question_id, document_type):
     try:
         question = db_storage.get(Questions, id=question_id)
         if not question:
             flash(f'Question with ID {question_id} not found.', 'error')
             return redirect(url_for('legislation.view_questions'))
 
-        return send_file(BytesIO(question.document), as_attachment=True, download_name=question.filename)
+        if document_type == 'document':
+            if not question.document:
+                flash(f'No document available for question with ID {question_id}.', 'error')
+                return redirect(url_for('legislation.view_questions'))
+            return send_file(BytesIO(question.document), as_attachment=True, download_name=question.filename)
+        elif document_type == 'follow_up_document':
+            if not question.follow_up_document:
+                flash(f'No follow-up document available for question with ID {question_id}.', 'error')
+                return redirect(url_for('legislation.view_questions'))
+            return send_file(BytesIO(question.follow_up_document), as_attachment=True, download_name=question.follow_up_filename)
+        else:
+            flash(f'Invalid document type: {document_type}.', 'error')
+            return redirect(url_for('legislation.view_questions'))
 
     except SQLAlchemyError as e:
         logging.error(f"An SQLAlchemy error occurred: {e}")
@@ -394,6 +406,8 @@ def download_question(question_id):
         logging.error(f"An error occurred: {e}")
         flash(f'An error occurred while downloading the question: {e}', 'error')
         return redirect(url_for('legislation.view_questions'))
+
+
 
 @legislation_bp.route('/download_follow_up_letter/<int:statement_id>', methods=['GET'])
 def download_follow_up_letter(statement_id):

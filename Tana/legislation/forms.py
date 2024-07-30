@@ -32,9 +32,8 @@ class LegislationForm(FlaskForm):
 class QuestionsForm(FlaskForm):
     """Questions form"""
     name = StringField('Name', validators=[DataRequired()])
-    document = FileField('Document', validators=[DataRequired()])
+    document = FileField('Document', validators=[Optional()])
+    follow_up_document = FileField('Follow-Up Document')  # Add this line
     date = DateField('Date', validators=[DataRequired()])
     status = SelectField('Status', choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], validators=[DataRequired()])
     submit = SubmitField('Submit')
-
-

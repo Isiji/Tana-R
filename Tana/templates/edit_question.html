@@ -27,6 +27,18 @@
             {% endif %}
         </div>
         <div class="form-group">
+            {{ form.follow_up_document.label(for="follow_up_document") }}
+            {{ form.follow_up_document(class="form-control-file", id="follow_up_document") }}
+            {% if question.follow_up_filename %}
+                <p>Current follow-up document: {{ question.follow_up_filename }}</p>
+            {% endif %}
+            {% if form.follow_up_document.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.follow_up_document.errors|join(', ') }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
             {{ form.date.label(for="date") }}
             {{ form.date(class="form-control", id="date", value=question.date) }}
             {% if form.date.errors %}

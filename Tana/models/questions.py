@@ -1,9 +1,5 @@
-#!/usr/bin/python3
-"""Questions class module for the questions, should be similar to the oversight class module for the oversight and a place to add the files for the questions"""
-
 from Tana.models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Date, Boolean, Enum, LargeBinary
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, String, Integer, Date, Enum, LargeBinary
 
 class Questions(BaseModel, Base):
     """This class defines the questions model"""
@@ -11,14 +7,16 @@ class Questions(BaseModel, Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     document = Column(LargeBinary(length=4294967295), nullable=False)
+    follow_up_document = Column(LargeBinary(length=4294967295), nullable=True)  # Add this line
     date = Column(Date, nullable=False)
     status = Column(Enum("Pending", "Approved", "Rejected"), nullable=False)        
     filename = Column(String(255), nullable=False)
+    follow_up_filename = Column(String(255), nullable=True)  # Add this line
+
     def __init__(self, *args, **kwargs):
         """Initialization of the questions model"""
         super().__init__(*args, **kwargs)
-        
+
     def __str__(self):
         """string represenation of a questions"""
-        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id,
-                                         self.__dict__)
+        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
