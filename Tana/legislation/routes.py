@@ -9,7 +9,7 @@ from flask_login import login_user, current_user, logout_user, login_required, L
 from Tana.models.motions import Motions
 from Tana.models.questions import Questions
 from Tana.models.statements import Statements
-from Tana.legislation.forms import MotionsForm, StatementsForm, LegislationForm, AddMotionForm, QuestionsForm
+from Tana.legislation.forms import MotionsForm, StatementsForm, LegislationForm, QuestionsForm
 import logging
 from datetime import datetime
 from io import BytesIO
@@ -38,10 +38,18 @@ def add_motion():
             document_data = form.document.data.read()
             document_filename = secure_filename(form.document.data.filename)
             
+            follow_up_document_data = None
+            follow_up_document_filename = None
+            if form.follow_up_document.data:
+                follow_up_document_data = form.follow_up_document.data.read()
+                follow_up_document_filename = secure_filename(form.follow_up_document.data.filename)
+            
             motion = Motions(
                 name=form.name.data,
                 document=document_data,
                 filename=document_filename,
+                follow_up_document=follow_up_document_data,
+                follow_up_filename=follow_up_document_filename,
                 date=form.date.data,
                 status=form.status.data,
                 created_at=datetime.utcnow()
@@ -64,24 +72,6 @@ def motions():
     motions_dict = db_storage.all(Motions)
     motions = list(motions_dict.values())
     return render_template('motions.html', title='View Motions', motions=motions)
-@legislation_bp.route('/edit_motion/<int:motion_id>', methods=['GET', 'POST'], strict_slashes=False)
-def edit_motion(motion_id):
-    motion = db_storage.get(Motions, id=motion_id)
-    form = MotionsForm(obj=motion)
-    if form.validate_on_submit():
-        try:
-            motion.name = form.name.data
-            motion.date = form.date.data
-            motion.status = form.status.data
-            if form.document.data:
-                motion.document = form.document.data.read()
-            db_storage.save()
-            flash('Motion has been updated!', 'success')
-            return redirect(url_for('legislation.view_motions'))
-        except Exception as e:
-            logging.error(f"Error editing motion: {e}")
-            flash('An error occurred while editing the motion. Please try again.', 'danger')
-    return render_template('edit_motion.html', title='Edit Motion', form=form, motion=motion)
 
 @legislation_bp.route('/delete_motion/<int:motion_id>', methods=['POST'], strict_slashes=False)
 def delete_motion(motion_id):
@@ -90,6 +80,37 @@ def delete_motion(motion_id):
     db_storage.save()
     flash('Motion has been deleted!', 'success')
     return redirect(url_for('legislation.motions'))
+
+@legislation_bp.route('/edit_motion/<int:motion_id>', methods=['GET', 'POST'], strict_slashes=False)
+def edit_motion(motion_id):
+    motion = db_storage.get(Motions, id=motion_id)
+    if not motion:
+        flash(f'Motion with ID {motion_id} not found.', 'error')
+        return redirect(url_for('legislation.view_motions'))
+    
+    form = MotionsForm(obj=motion)
+    if form.validate_on_submit():
+        try:
+            motion.name = form.name.data
+            motion.date = form.date.data
+            motion.status = form.status.data
+            if form.document.data:
+                motion.document = form.document.data.read()
+                motion.filename = secure_filename(form.document.data.filename)
+            db_storage.save()
+            flash('Motion has been updated!', 'success')
+            logging.info(f"Motion '{motion.name}' (ID: {motion_id}) has been updated successfully.")
+            return redirect(url_for('legislation.view_motions'))
+        except Exception as e:
+            db_storage.rollback()
+            logging.error(f"Error editing motion ID {motion_id}: {e}")
+            flash('An error occurred while editing the motion. Please try again.', 'danger')
+            logging.debug(f"Form data: {form.data}")
+    else:
+        logging.debug(f"Form validation errors: {form.errors}")
+
+    return render_template('edit_motion.html', title='Edit Motion', form=form, motion=motion)
+
 
 #route for viewing motions
 @legislation_bp.route('/view_motions', methods=['GET'])
@@ -292,6 +313,27 @@ def download_motion(motion_id):
         logging.error(f"An error occurred: {e}")
         flash(f'An error occurred while downloading the motion: {e}', 'error')
         return redirect(url_for('legislation.view_motions'))
+    
+@legislation_bp.route('/download_follow_up_document/<int:motion_id>', methods=['GET'])
+def download_follow_up_document(motion_id):
+    try:
+        motion = db_storage.get(Motions, id=motion_id)
+        if not motion or not motion.follow_up_document:
+            flash(f'Motion with ID {motion_id} or its follow-up document not found.', 'error')
+            return redirect(url_for('legislation.view_motions'))
+
+        return send_file(BytesIO(motion.follow_up_document), as_attachment=True, download_name=f"follow_up_{motion.filename}")
+
+    except SQLAlchemyError as e:
+        logging.error(f"An SQLAlchemy error occurred: {e}")
+        flash(f'An error occurred while downloading the follow-up document: {e}', 'error')
+        return redirect(url_for('legislation.view_motions'))
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        flash(f'An error occurred while downloading the follow-up document: {e}', 'error')
+        return redirect(url_for('legislation.view_motions'))
+
 
 @legislation_bp.route('/download_statement/<int:statement_id>', methods=['GET'])
 def download_statement(statement_id):
