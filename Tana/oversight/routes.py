@@ -24,17 +24,17 @@ def add_oversight():
     """route for adding secondary oversight"""
     form = OversightForm()
     if form.validate_on_submit():
+        name = form.name.data
         OAG_Report = form.OAG_Report.data.read()
         date_updated = form.date_updated.data
         Ground_report = form.Ground_report.data
         status = form.status.data == 'Approved'
-        oversight = SecondaryOversight(OAG_Report=OAG_Report, date_updated=date_updated, Ground_report=Ground_report, status=status)
+        oversight = SecondaryOversight(name=name,OAG_Report=OAG_Report, date_updated=date_updated, Ground_report=Ground_report, status=status)
         db_storage.new(oversight)
         db_storage.save()
         flash('Oversight has been submitted', 'success')
         return redirect(url_for('oversight_bp.view_oversight'))
     return render_template('oversight_form.html', title='Add Oversight', form=form)
-
 
 
 @oversight_bp.route('/edit_oversight/<int:oversight_id>', methods=['GET', 'POST'], strict_slashes=False)
@@ -45,19 +45,20 @@ def edit_oversight(oversight_id):
         return redirect(url_for('oversight_bp.view_oversight'))
 
     form = OversightForm(obj=oversight)
+
     if form.validate_on_submit():
         try:
             # Only update the document if a new file is uploaded
-            if form.document.data:
-                oversight.document = form.document.data.read()
-                oversight.document_filename = secure_filename(form.document.data.filename)
+            if form.OAG_Report.data:
+                oversight.OAG_Report = form.OAG_Report.data.read()
+                oversight.OAG_Report_filename = secure_filename(form.OAG_Report.data.filename)
 
             # Update other fields
-            oversight.name = form.name.data
-            oversight.description = form.description.data
-            oversight.date = form.date.data
+            oversight.date_updated = form.date_updated.data
+            oversight.Ground_report = form.Ground_report.data
+            oversight.status = form.status.data
             # Add any other oversight attributes here as necessary
-            
+
             db_storage.save()
             flash('Oversight has been updated!', 'success')
             return redirect(url_for('oversight_bp.view_oversight'))
@@ -84,8 +85,20 @@ def download_oversight(oversight_id):
             flash(f'Oversight with ID {oversight_id} not found.', 'error')
             return redirect(url_for('oversight_bp.view_oversight'))
 
-        return send_file(BytesIO(oversight.document), as_attachment=True, download_name=oversight.document_filename)
+        # Debugging: Print attributes
+        print(f"Attributes: {dir(oversight)}")
+        
+        if not hasattr(oversight, 'document') or not hasattr(oversight, 'document_filename'):
+            flash('Document or filename not found.', 'error')
+            return redirect(url_for('oversight_bp.view_oversight'))
+
+        return send_file(
+            BytesIO(oversight.document),
+            as_attachment=True,
+            download_name=oversight.document_filename
+        )
 
     except Exception as e:
+        logging.error(f"An error occurred while downloading the oversight document: {e}")
         flash(f'An error occurred while downloading the oversight document: {e}', 'error')
         return redirect(url_for('oversight_bp.view_oversight'))
