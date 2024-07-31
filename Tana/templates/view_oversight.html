@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+{% block title %}View Oversight{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>View Oversight</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>OAG Report</th>
+                <th>Date Updated</th>
+                <th>Ground Report</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for oversight in oversights %}
+            <tr>
+                <td>{{ oversight.id }}</td>
+                <td>{{ oversight.OAG_Report }}</td>
+                <td>{{ oversight.date_updated }}</td>
+                <td>{{ oversight.Ground_report }}</td>
+                <td>{{ 'Approved' if oversight.status else 'Pending' }}</td>
+                <td>
+                    <a href="{{ url_for('oversight_bp.edit_oversight', oversight_id=oversight.id) }}" class="btn btn-warning">Edit</a>
+                    <a href="{{ url_for('oversight_bp.delete_oversight', oversight_id=oversight.id) }}" class="btn btn-danger">Delete</a>
+                    <a href="{{ url_for('oversight_bp.download_oversight', oversight_id=oversight.id) }}" class="btn btn-primary">Download</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

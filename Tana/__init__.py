@@ -123,7 +123,7 @@ def create_app(config_class=Config):
         from Tana.others.routes import others
         from Tana.bills.routes import bills_bp
         from Tana.legislation.routes import legislation_bp
-        from Tana.oversight.routes import oversight
+        from Tana.oversight.routes import oversight_bp
         from Tana.representation.routes import representation
         from Tana.lobbying.routes import lobbying
 
@@ -143,7 +143,7 @@ def create_app(config_class=Config):
         app.register_blueprint(others)
         app.register_blueprint(bills_bp)
         app.register_blueprint(legislation_bp)
-        app.register_blueprint(oversight)
+        app.register_blueprint(oversight_bp)
         app.register_blueprint(representation)
         app.register_blueprint(lobbying)
         
