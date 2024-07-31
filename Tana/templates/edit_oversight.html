@@ -1,29 +1,49 @@
-{% extends 'layout.html' %}
-{% block title %}Edit Oversight{% endblock %}
+{% extends "layout.html" %}
+
 {% block content %}
-<div class="container">
-    <h1>Edit Oversight</h1>
-    <form method="POST" enctype="multipart/form-data">
+<div class="container mt-4">
+    <h2>Edit Oversight</h2>
+    <form method="post" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
+
         <div class="form-group">
-            {{ form.OAG_Report.label(class="form-label") }}
-            {{ form.OAG_Report(class="form-control") }}
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            {% for error in form.name.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
         </div>
+
         <div class="form-group">
-            {{ form.date_updated.label(class="form-label") }}
-            {{ form.date_updated(class="form-control") }}
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control") }}
+            {% for error in form.description.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
         </div>
+
         <div class="form-group">
-            {{ form.Ground_report.label(class="form-label") }}
-            {{ form.Ground_report(class="form-control") }}
+            {{ form.date.label(class="form-label") }}
+            {{ form.date(class="form-control") }}
+            {% for error in form.date.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
         </div>
+
         <div class="form-group">
-            {{ form.status.label(class="form-label") }}
-            {{ form.status(class="form-control") }}
+            {{ form.document.label(class="form-label") }}
+            {{ form.document(class="form-control") }}
+            {% if oversight.document %}
+                <p>Current document: <a href="{{ url_for('oversight_bp.download_oversight', oversight_id=oversight.id) }}" target="_blank">{{ oversight.document_filename }}</a></p>
+            {% else %}
+                <p>No document uploaded.</p>
+            {% endif %}
+            {% for error in form.document.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="form-group">
-            {{ form.submit(class="btn btn-primary") }}
-        </div>
+
+        <button type="submit" class="btn btn-primary">Update Oversight</button>
     </form>
 </div>
 {% endblock %}
