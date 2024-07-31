@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% block title %}County Office Updates{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>County Office Updates</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Party Involved</th>
+                <th>Issues</th>
+                <th>Delegation</th>
+                <th>Contact Person</th>
+                <th>Action Taken</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for update in updates %}
+            <tr>
+                <td>{{ update.date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ update.party_involved }}</td>
+                <td>{{ update.issues }}</td>
+                <td>{{ update.delegation }}</td>
+                <td>{{ update.contact_person }}</td>
+                <td>{{ update.action_taken }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
