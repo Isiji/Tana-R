@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block title %} {{ committee.name }} {% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ committee.name }}</h1>
+    <h2>Records</h2>
+    <a href="{{ url_for('researchers.committee', committee_id=committee.id) }}" class="btn btn-primary mb-2">Add Record</a>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Serial Number</th>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Document</th>
+                <th>Recommendations</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.serial_number }}</td>
+                <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ record.title }}</td>
+                <td><a href="{{ url_for('researchers.download_document', record_id=record.id) }}">Download</a></td>
+                <td><a href="{{ url_for('researchers.download_recommendations', record_id=record.id) }}">Download</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3>Add Record</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        {{ form.serial_number.label }} {{ form.serial_number() }}<br>
+        {{ form.date.label }} {{ form.date() }}<br>
+        {{ form.title.label }} {{ form.title() }}<br>
+        {{ form.document.label }} {{ form.document() }}<br>
+        {{ form.recommendations.label }} {{ form.recommendations() }}<br>
+        {{ form.submit() }}
+    </form>
+</div>
+{% endblock %}

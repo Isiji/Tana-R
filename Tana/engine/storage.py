@@ -28,6 +28,8 @@ from Tana.models.secondaryoversight import SecondaryOversight
 from Tana.models.representation import Representation
 from Tana.models.statements import Statements
 from Tana.models.county_office_update import CountyOfficeUpdate
+from Tana.models.committee_records import CommitteeRecord
+from Tana.models.committees import Committee
 
 class DBStorage:
     """Database storage class"""
@@ -56,7 +58,7 @@ class DBStorage:
                     key = "{}.{}".format(cls.__name__, obj.id)
                     objects[key] = obj
             else:
-                classes = [users, UserRole, Offices, CountyOfficeUpdate, Reminder, Tasks, Diary, CalendarEvents, Events, HumanResource, ImpactLevel, EventCategory, PollingStation, Ward, Constituency, Bills, EmployeeRegister, Motions, Questions, SecondaryOversight, Representation, Statements]
+                classes = [users, UserRole, Offices, CommitteeRecord, Committee, CountyOfficeUpdate, Reminder, Tasks, Diary, CalendarEvents, Events, HumanResource, ImpactLevel, EventCategory, PollingStation, Ward, Constituency, Bills, EmployeeRegister, Motions, Questions, SecondaryOversight, Representation, Statements]
                 for cls in classes:
                     query_result = self.__session.query(cls).all()
                     for obj in query_result:

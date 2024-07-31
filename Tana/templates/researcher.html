@@ -43,6 +43,7 @@
             </div>
         </div>
     </div>
+
     <div class="row mt-4">
         <div class="col-md-12">
             <p class="text-muted">As a researcher, you are responsible for the bills, statements, questions, and motions upload, and also the oversight which includes primary and secondary oversight.</p>
@@ -54,11 +55,17 @@
         <a href="http://www.parliament.go.ke/the-senate" class="btn btn-primary mb-2">Senate Order Paper</a>
     </div>
 
-
     <div class="row mt-4">
         <div class="col-md-12 text-center">
             <h3>Functions</h3>
             <a href="{{ url_for('legislation.functions') }}" class="btn btn-primary btn-lg">Functions</a>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12 text-center">
+            <h3>Committees</h3>
+            <a href="{{ url_for('researchers.committees') }}" class="btn btn-primary btn-lg">Manage Committees</a>
         </div>
     </div>
 
