@@ -14,9 +14,8 @@ coordinators = Blueprint('coordinators', __name__)
 @coordinators.route('/coordinator_dashboard')
 @login_required
 def coordinator_dashboard():
-    """route for the coordinator dashboard"""
+    """Route for the coordinator dashboard"""
     return render_template('coordinator.html', title='Coordinator Dashboard')
-
 
 @coordinators.route('/add_county_office_update', methods=['GET', 'POST'])
 @login_required
@@ -45,3 +44,40 @@ def view_county_office_updates():
     updates_dict = db_storage.all(CountyOfficeUpdate)
     updates = list(updates_dict.values())
     return render_template('view_county_office_updates.html', title='View County Office Updates', updates=updates)
+
+@coordinators.route('/edit_county_office_update/<int:update_id>', methods=['GET', 'POST'])
+@login_required
+def edit_county_office_update(update_id):
+    """Route to edit a county office update."""
+    update = db_storage.get(CountyOfficeUpdate, id=update_id)
+    if not update:
+        flash('County office update not found.', 'error')
+        return redirect(url_for('coordinators.view_county_office_updates'))
+
+    form = CountyOfficeUpdateForm(obj=update)
+    if form.validate_on_submit():
+        update.date = form.date.data
+        update.party_involved = form.party_involved.data
+        update.issues = form.issues.data
+        update.delegation = form.delegation.data
+        update.contact_person = form.contact_person.data
+        update.action_taken = form.action_taken.data
+        db_storage.save()
+        flash('County office update has been updated!', 'success')
+        return redirect(url_for('coordinators.view_county_office_updates'))
+
+    return render_template('county_office_update_form.html', title='Edit County Office Update', form=form)
+
+@coordinators.route('/delete_county_office_update/<int:update_id>', methods=['POST'])
+@login_required
+def delete_county_office_update(update_id):
+    """Route to delete a county office update."""
+    update = db_storage.get(CountyOfficeUpdate, id=update_id)
+    if not update:
+        flash('County office update not found.', 'error')
+        return redirect(url_for('coordinators.view_county_office_updates'))
+
+    db_storage.delete(update)
+    db_storage.save()
+    flash('County office update has been deleted!', 'success')
+    return redirect(url_for('coordinators.view_county_office_updates'))
