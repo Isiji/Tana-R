@@ -10,11 +10,8 @@ from Tana.models.roles import UserRole
 from Tana.models.offices import Offices
 from Tana.models.reminder import Reminder
 from Tana.models.tasks import Tasks
-from Tana.models.attendees import Attendees
 from Tana.models.diary import Diary
-from Tana.models.commitments import Commitments
 from Tana.models.calendarEvents import CalendarEvents
-from Tana.models.contributions import Contributions
 from Tana.models.events import Events
 from Tana.models.humanresource import HumanResource
 from Tana.models.impactlevel import ImpactLevel
@@ -26,10 +23,8 @@ from Tana.models.bills import Bills
 from Tana.models.employee_register import EmployeeRegister
 from Tana.models.events import Events
 from Tana.models.motions import Motions
-from Tana.models.oversight import Oversight
 from Tana.models.questions import Questions
 from Tana.models.secondaryoversight import SecondaryOversight
-from Tana.models.primaryoversight import PrimaryOversight
 from Tana.models.representation import Representation
 from Tana.models.statements import Statements
 
@@ -60,7 +55,7 @@ class DBStorage:
                     key = "{}.{}".format(cls.__name__, obj.id)
                     objects[key] = obj
             else:
-                classes = [users, UserRole, Offices, Reminder, Tasks, Attendees, Diary, Commitments, CalendarEvents, Contributions, Events, HumanResource, ImpactLevel, EventCategory, PollingStation, Ward, Constituency, Bills, EmployeeRegister, Motions, Oversight, Questions, SecondaryOversight, PrimaryOversight, Representation, Statements]
+                classes = [users, UserRole, Offices, Reminder, Tasks, Diary, CalendarEvents, Events, HumanResource, ImpactLevel, EventCategory, PollingStation, Ward, Constituency, Bills, EmployeeRegister, Motions, Questions, SecondaryOversight, Representation, Statements]
                 for cls in classes:
                     query_result = self.__session.query(cls).all()
                     for obj in query_result:

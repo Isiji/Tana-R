@@ -5,11 +5,8 @@ from Tana.models.offices import Offices
 from Tana.models.members import users
 from Tana.models.humanresource import HumanResource
 from Tana.models.events import Events
-from Tana.models.contributions import Contributions
 from Tana.models.tasks import Tasks
-from Tana.models.attendees import Attendees
 from Tana.models.diary import Diary
-from Tana.models.commitments import Commitments
 from Tana.models.calendarEvents import CalendarEvents
 from Tana.models.reminder import Reminder
 from Tana.models.roles import UserRole
@@ -34,10 +31,6 @@ class OfficeForm(FlaskForm):
             raise ValidationError('That office name is taken. Please choose a different one.')
 
 
-class LoginOfficeForm(FlaskForm):
-    office_email = StringField('Office email', validators=[DataRequired()])
-    remember = BooleanField('Remember Me')
-    submit = SubmitField('Login')
 
 class UpdateAccountForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])

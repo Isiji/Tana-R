@@ -17,9 +17,6 @@ class Events(BaseModel, Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
     polling_station = relationship("PollingStation", back_populates="events")
-    commitments = relationship("Commitments", back_populates="event")
-    contributions = relationship("Contributions", back_populates="event")
-    attendees = relationship("Attendees", back_populates="event")
     user = relationship("users", back_populates="events")
 
     def __init__(self, *args, **kwargs):
