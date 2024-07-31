@@ -1,20 +1,14 @@
 {% extends 'layout.html' %}
-{% block title %} Committees {% endblock %}
+{% block title %}Committees{% endblock %}
 {% block content %}
 <div class="container mt-4">
     <h1>Committees</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.name.label }} {{ form.name() }}<br>
-        {{ form.submit() }}
-    </form>
-    <h2>Existing Committees</h2>
-    <ul class="list-group">
+    <div class="list-group">
         {% for committee in committees %}
-        <li class="list-group-item">
-            <a href="{{ url_for('researchers.committee', committee_id=committee.id) }}">{{ committee.name }}</a>
-        </li>
+            <a href="{{ url_for('researchers.committee', committee_id=committee.id) }}" class="list-group-item list-group-item-action">
+                {{ committee.name }}
+            </a>
         {% endfor %}
-    </ul>
+    </div>
 </div>
 {% endblock %}

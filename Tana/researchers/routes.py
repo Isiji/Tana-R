@@ -16,24 +16,25 @@ def researcher_dashboard():
     researchers = db_storage.get_researchers()
     return render_template('researcher.html', researchers=researchers)
 
-@researchers.route('/committees', methods=['GET', 'POST'])
+@researchers.route('/committees', methods=['GET'])
 @login_required
 def committees():
     form = CommitteeForm()
-    if form.validate_on_submit():
-        committee = Committee(name=form.name.data)
-        db_storage.new(committee)
-        db_storage.save()
-        flash('Committee added successfully!', 'success')
-        return redirect(url_for('researchers.committees'))
-
-    committees = db_storage.all(Committee)
+    committees = [
+        {"id": 1, "name": "Energy Committee"},
+        {"id": 2, "name": "Delegated Legislation Committee"},
+        {"id": 3, "name": "Pan African Parliament Committee"},
+        {"id": 4, "name": "Bunge Sports Club"},
+        {"id": 5, "name": "CPAC"},
+        {"id": 6, "name": "CPIC"}
+    ]
     return render_template('committees.html', title='Committees', form=form, committees=committees)
+
 
 @researchers.route('/committee/<int:committee_id>', methods=['GET', 'POST'])
 @login_required
 def committee(committee_id):
-    committee = db_storage.get(Committee, committee_id)
+    committee = db_storage.get(Committee, id=committee_id)
     if not committee:
         flash('Committee not found.', 'danger')
         return redirect(url_for('researchers.committees'))
@@ -53,7 +54,7 @@ def committee(committee_id):
         db_storage.new(record)
         db_storage.save()
         flash('Record added successfully!', 'success')
-        return redirect(url_for('researchers.committee', committee_id=committee_id))
+        return redirect(url_for('researchers.committee', id=committee_id))
 
     records = db_storage.filter(CommitteeRecord, CommitteeRecord.committee_id == committee_id)
     return render_template('committee.html', committee=committee, records=records, form=form)
