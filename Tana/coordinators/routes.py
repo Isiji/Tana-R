@@ -35,12 +35,13 @@ def add_county_office_update():
         db_storage.new(update)
         db_storage.save()
         flash('County office update has been submitted!', 'success')
-        return redirect(url_for('coordinator.view_county_office_updates'))
+        return redirect(url_for('coordinators.view_county_office_updates'))
     return render_template('county_office_update_form.html', title='Add County Office Update', form=form)
 
 @coordinators.route('/view_county_office_updates', methods=['GET'])
 @login_required
 def view_county_office_updates():
     """Route to view all county office updates."""
-    updates = db_storage.all(CountyOfficeUpdate)  # Adjust according to your db_storage methods
-    return render_template('view_county_office_updates.html', title='County Office Updates', updates=updates)
+    updates_dict = db_storage.all(CountyOfficeUpdate)
+    updates = list(updates_dict.values())
+    return render_template('view_county_office_updates.html', title='View County Office Updates', updates=updates)
