@@ -5,6 +5,8 @@ from Tana.models.constituency import Constituency
 from Tana.models.ward import Ward
 from Tana.models.pollingstation import PollingStation
 from Tana import db_storage
+import os
+import pandas as pd
 
 representation = Blueprint('representation', __name__)
 
@@ -16,6 +18,23 @@ file_handler = logging.FileHandler('app.log')
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
+
+CSV_FILE_PATH = os.path.join(os.getcwd(), 'Tana', 'representation', 'tanawards.csv')
+
+@representation.route('/get_polling_station_suggestions', methods=['GET'])
+def get_polling_station_suggestions():
+    search_term = request.args.get('term', '').strip().lower()
+    
+    try:
+        df = pd.read_csv(CSV_FILE_PATH)
+        # Filter rows based on the search term
+        filtered_df = df[df['polling_station'].str.lower().str.contains(search_term, na=False)]
+        polling_station_list = filtered_df['polling_station'].unique().tolist()
+        
+        return jsonify({'pollingStations': polling_station_list})
+    except Exception as e:
+        current_app.logger.error(f"Error reading CSV file: {e}")
+        return jsonify({'error': 'Error fetching polling station suggestions'}), 500
 
 @representation.route('/pollingstations', methods=['GET'])
 def pollingstations():
@@ -59,11 +78,7 @@ def get_polling_station_info():
         return jsonify({'error': 'Polling station not found'}), 404
     
 
-@representation.route('/pollingstations_list', methods=['GET'])
-def pollingstations_list():
-    polling_stations = db_storage.all(PollingStation)
-    polling_station_names = [ps.name for ps in polling_stations]
-    return jsonify(polling_station_names)
+
 
 @representation.route('/pollingstations/<polling_station_name>', methods=['GET'])
 def get_polling_station_details_by_name(polling_station_name):
@@ -75,3 +90,5 @@ def get_polling_station_details_by_name(polling_station_name):
         })
     else:
         return jsonify({'error': 'Polling station not found'}), 404
+    
+    

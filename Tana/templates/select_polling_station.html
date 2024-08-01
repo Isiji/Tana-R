@@ -5,11 +5,8 @@
     <h2>Select Polling Station</h2>
     <div class="form-group">
         <label for="pollingStation">Polling Station</label>
-        <div class="input-group">
-            <select id="pollingStationSelect" class="form-control" onchange="fetchDetails()">
-                <option value="">Select a Polling Station</option>
-            </select>
-        </div>
+        <input type="text" id="pollingStationInput" class="form-control" placeholder="Start typing to search..." oninput="searchPollingStations()">
+        <div id="suggestions" class="list-group" style="position: absolute; z-index: 1000; width: 100%;"></div>
     </div>
     <div class="form-group">
         <label for="ward">Ward</label>
@@ -22,39 +19,45 @@
 </div>
 
 <script>
-    async function fetchPollingStationNames() {
+    let pollingStations = [];
+
+    async function fetchPollingStations() {
         try {
             const response = await fetch('/get_all_polling_stations');
             const data = await response.json();
-            const pollingStationNames = data.pollingStations;
-            const pollingStationSelect = document.getElementById('pollingStationSelect');
-            pollingStationSelect.innerHTML = '<option value="">Select a Polling Station</option>'; // Clear existing options
-            pollingStationNames.forEach((pollingStationName) => {
-                const option = document.createElement('option');
-                option.value = pollingStationName;
-                option.textContent = pollingStationName;
-                pollingStationSelect.appendChild(option);
-            });
+            pollingStations = data.pollingStations || [];
         } catch (error) {
-            console.error('Error fetching polling station names:', error);
-            const pollingStationSelect = document.getElementById('pollingStationSelect');
-            pollingStationSelect.innerHTML = '<option value="">Error loading polling stations</option>';
+            console.error('Error fetching polling stations:', error);
         }
     }
 
-    async function fetchDetails() {
-        const pollingStationSelect = document.getElementById('pollingStationSelect');
-        const selectedPollingStation = pollingStationSelect.value.trim();
-
-        if (!selectedPollingStation) {
-            document.getElementById('ward').value = '';
-            document.getElementById('constituency').value = '';
-            return;
+    function searchPollingStations() {
+        const input = document.getElementById('pollingStationInput').value.toLowerCase();
+        const suggestionsDiv = document.getElementById('suggestions');
+        suggestionsDiv.innerHTML = '';
+        
+        if (input.length > 0) {
+            const filteredStations = pollingStations.filter(ps => ps.toLowerCase().includes(input));
+            filteredStations.forEach(station => {
+                const item = document.createElement('a');
+                item.classList.add('list-group-item', 'list-group-item-action');
+                item.href = '#';
+                item.textContent = station;
+                item.onclick = () => selectPollingStation(station);
+                suggestionsDiv.appendChild(item);
+            });
         }
+    }
 
+    function selectPollingStation(stationName) {
+        document.getElementById('pollingStationInput').value = stationName;
+        document.getElementById('suggestions').innerHTML = '';
+        fetchPollingStationDetails(stationName);
+    }
+
+    async function fetchPollingStationDetails(stationName) {
         try {
-            const url = `/get_polling_station_info?polling_station=${selectedPollingStation}`;
-            const response = await fetch(url);
+            const response = await fetch(`/get_polling_station_info?polling_station=${stationName}`);
             const data = await response.json();
 
             if (data.error) {
@@ -71,7 +74,6 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', fetchPollingStationNames);
+    document.addEventListener('DOMContentLoaded', fetchPollingStations);
 </script>
-
 {% endblock %}
