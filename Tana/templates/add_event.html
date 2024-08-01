@@ -47,13 +47,9 @@
         </div>
         
         <div class="form-group">
-            <label for="pollingStationSelect">Polling Station</label>
-            <select id="pollingStationSelect" name="polling_station_name" class="form-control" onchange="fetchDetails()" required>
-                <option value="">Select a Polling Station</option>
-                {% for polling_station in polling_stations %}
-                    <option value="{{ polling_station.name }}">{{ polling_station.name }}</option>
-                {% endfor %}
-            </select>
+            <label for="pollingStationInput">Polling Station</label>
+            <input type="text" id="pollingStationInput" class="form-control" placeholder="Start typing to search..." oninput="fetchSuggestions()">
+            <div id="suggestions" class="list-group" style="position: absolute; z-index: 1000; width: 100%;"></div>
         </div>
         
         <div class="form-group">
@@ -71,18 +67,49 @@
 </div>
 
 <script>
-    async function fetchDetails() {
-        const pollingStationSelect = document.getElementById('pollingStationSelect');
-        const selectedPollingStation = pollingStationSelect.value.trim();
+    async function fetchSuggestions() {
+        const input = document.getElementById('pollingStationInput').value.trim();
+        const suggestionsDiv = document.getElementById('suggestions');
 
-        if (!selectedPollingStation) {
-            document.getElementById('ward').value = '';
-            document.getElementById('constituency').value = '';
+        if (input.length === 0) {
+            suggestionsDiv.innerHTML = '';
             return;
         }
 
         try {
-            const url = `{{ url_for('events.get_polling_station_info') }}?polling_station=${selectedPollingStation}`;
+            const url = `{{ url_for('representation.get_polling_station_suggestions') }}?term=${encodeURIComponent(input)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.error) {
+                suggestionsDiv.innerHTML = '';
+                alert(data.error);
+            } else {
+                suggestionsDiv.innerHTML = '';
+                data.pollingStations.forEach(station => {
+                    const item = document.createElement('a');
+                    item.classList.add('list-group-item', 'list-group-item-action');
+                    item.href = '#';
+                    item.textContent = station;
+                    item.onclick = () => selectPollingStation(station);
+                    suggestionsDiv.appendChild(item);
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching suggestions:', error);
+            alert('Error fetching suggestions. Please try again.');
+        }
+    }
+
+    function selectPollingStation(stationName) {
+        document.getElementById('pollingStationInput').value = stationName;
+        document.getElementById('suggestions').innerHTML = '';
+        fetchPollingStationDetails(stationName);
+    }
+
+    async function fetchPollingStationDetails(stationName) {
+        try {
+            const url = `{{ url_for('events.get_polling_station_info') }}?polling_station=${encodeURIComponent(stationName)}`;
             const response = await fetch(url);
             const data = await response.json();
 
@@ -91,19 +118,14 @@
                 document.getElementById('constituency').value = '';
                 alert(data.error);
             } else {
-                document.getElementById('ward').value = data.ward;
-                document.getElementById('constituency').value = data.constituency;
+                document.getElementById('ward').value = data.ward || '';
+                document.getElementById('constituency').value = data.constituency || '';
             }
         } catch (error) {
             console.error('Error fetching details:', error);
             alert('Error fetching details. Please try again.');
         }
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const pollingStationSelect = document.getElementById('pollingStationSelect');
-        pollingStationSelect.addEventListener('change', fetchDetails);
-    });
 </script>
 
 {% endblock %}
