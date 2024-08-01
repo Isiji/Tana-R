@@ -14,10 +14,9 @@ from Tana.models.constituency import Constituency
 from Tana.models.ward import Ward
 from Tana.models.pollingstation import PollingStation
 from Tana.models.members import users
+from Tana.models.committees import Committee  # Import Committee model
 from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
-
-
 
 db_storage = DBStorage()
 bcrypt = Bcrypt()
@@ -42,6 +41,7 @@ def load_user(user_id):
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'xls', 'xlsx', 'csv', 'pdf', 'docx', 'doc'}
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -77,7 +77,7 @@ def create_app(config_class=Config):
             users.create_super_admin()
 
         # CSV processing logic
-        csv_file_path = app.config['CSV_FILE_PATH']
+        csv_file_path = app.config.get('CSV_FILE_PATH', '')
         if os.path.exists(csv_file_path):
             with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
                 reader = csv.DictReader(csvfile)
@@ -105,6 +105,23 @@ def create_app(config_class=Config):
                         db_storage.new(polling_station)
 
             db_storage.save()
+
+        # Insert hardcoded committees
+        COMMITTEES = [
+            {'id': 1, 'name': 'Energy Committee'},
+            {'id': 2, 'name': 'Delegated Legislation Committee'},
+            {'id': 3, 'name': 'Pan African Parliament Committee'},
+            {'id': 4, 'name': 'Bunge Sports Club'},
+            {'id': 5, 'name': 'CPAC'},
+            {'id': 6, 'name': 'CPIC'}
+        ]
+
+        for committee in COMMITTEES:
+            existing_committee = db_storage.get(Committee, id=committee['id'])
+            if not existing_committee:
+                new_committee = Committee(id=committee['id'], name=committee['name'])
+                db_storage.new(new_committee)
+        db_storage.save()
 
         # Register blueprints
         from Tana.users.routes import Users

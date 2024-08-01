@@ -3,7 +3,7 @@ from wtforms import IntegerField, DateField, StringField, FileField, TextAreaFie
 from wtforms.validators import DataRequired
 
 class CommitteeRecordForm(FlaskForm):
-    serial_number = IntegerField('Serial Number', validators=[DataRequired()])
+    serial_number = StringField('Serial Number', validators=[DataRequired()])
     date = DateField('Date', format='%Y-%m-%d', validators=[DataRequired()])
     title = StringField('Title', validators=[DataRequired()])
     document = FileField('Document')
