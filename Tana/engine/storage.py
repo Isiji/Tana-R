@@ -295,3 +295,13 @@ class DBStorage:
             return self.__session.query(users).filter_by(name=name).first()
         except SQLAlchemyError as e:
             print("An Error Occurred:", e)
+            
+            
+    def filter(self, cls, *criterion):
+        """Returns a list of objects filtered by the given criterion"""
+        try:
+            query_result = self.__session.query(cls).filter(*criterion).all()
+            return query_result
+        except SQLAlchemyError as e:
+            print("An Error Occured:", e)
+            return []

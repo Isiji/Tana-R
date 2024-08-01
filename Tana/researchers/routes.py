@@ -7,7 +7,6 @@ from flask_login import login_required, current_user
 from flask import send_file
 from io import BytesIO
 
-
 researchers = Blueprint('researchers', __name__)
 
 @researchers.route('/researcher_dashboard')
@@ -29,7 +28,6 @@ def committees():
         {"id": 6, "name": "CPIC"}
     ]
     return render_template('committees.html', title='Committees', form=form, committees=committees)
-
 
 @researchers.route('/committee/<int:committee_id>', methods=['GET', 'POST'])
 @login_required
@@ -54,7 +52,7 @@ def committee(committee_id):
         db_storage.new(record)
         db_storage.save()
         flash('Record added successfully!', 'success')
-        return redirect(url_for('researchers.committee', id=committee_id))
+        return redirect(url_for('researchers.committee', committee_id=committee_id))
 
     records = db_storage.filter(CommitteeRecord, CommitteeRecord.committee_id == committee_id)
     return render_template('committee.html', committee=committee, records=records, form=form)
@@ -64,7 +62,7 @@ def committee(committee_id):
 def download_document(record_id):
     record = db_storage.get(CommitteeRecord, record_id)
     if record and record.document:
-        return send_file(BytesIO(record.document), as_attachment=True, attachment_filename='document.pdf')
+        return send_file(BytesIO(record.document), as_attachment=True, download_name='document.pdf')
     flash('Document not found.', 'danger')
     return redirect(url_for('researchers.committee', committee_id=record.committee_id))
 
@@ -73,6 +71,6 @@ def download_document(record_id):
 def download_recommendations(record_id):
     record = db_storage.get(CommitteeRecord, record_id)
     if record and record.recommendations:
-        return send_file(BytesIO(record.recommendations), as_attachment=True, attachment_filename='recommendations.pdf')
+        return send_file(BytesIO(record.recommendations), as_attachment=True, download_name='recommendations.pdf')
     flash('Recommendations not found.', 'danger')
     return redirect(url_for('researchers.committee', committee_id=record.committee_id))
