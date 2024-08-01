@@ -100,8 +100,8 @@ class users(BaseModel, Base, UserMixin):
         from Tana import db_storage, bcrypt
         password_hash = bcrypt.generate_password_hash("password").decode('utf-8')
         super_admin = users(
-            name="Ziggy",
-            email="ziggy@gmail.com",
+            name="Danton",
+            email="wandedanton@gmail.com",
             password=password_hash,
             phone=1234,
             ID_No=1234,

@@ -73,7 +73,7 @@ def create_app(config_class=Config):
         configure_mappers()
         
         # Ensure super admin user is created if not exists
-        if not db_storage.get_user('ziggy@gmail.com'):
+        if not db_storage.get_user('wandedanton@gmail.com'):
             users.create_super_admin()
 
         # CSV processing logic

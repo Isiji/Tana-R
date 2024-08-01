@@ -13,8 +13,8 @@ class Config:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_USERNAME = 'blairisiji@gmail.com'  # Replace with your actual email
-    MAIL_PASSWORD = 'ndny npyi gemz fycj'  # Replace with your actual email password
+    MAIL_USERNAME = 'tanarivercountysenateoffice@gmail.com'  # Replace with your actual email
+    MAIL_PASSWORD = 'jksj ztze hjjv skyk'  # Replace with your actual email password
     MAIL_DEFAULT_SENDER = 'noreply@demo.com'  # Replace with your default sender email
 
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'xls', 'xlsx', 'csv', 'pdf'}

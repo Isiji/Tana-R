@@ -117,8 +117,8 @@ def employee_register():
 
             # Send email notification
             msg = Message('Register Marked',
-                          sender='blairisiji@gmail.com',  # Replace with your email
-                          recipients=['blairisiji01@gmail.com'])  # Replace with recipient email
+                          sender='tanarivercountysenateoffice@gmail.com',  # Replace with your email
+                          recipients=['wandedanton@gmail.com', 'mungatana47@gmail.com'])  # Replace with recipient email
             msg.body = f"""
             An employee has marked their register.:
 
