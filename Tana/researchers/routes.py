@@ -4,6 +4,9 @@ from io import BytesIO
 from Tana.models.committee_records import CommitteeRecord
 from Tana.researchers.forms import CommitteeRecordForm
 from Tana import db_storage
+from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.utils import secure_filename
+import logging
 
 # Define the blueprint
 researchers = Blueprint('researchers', __name__)
@@ -24,10 +27,17 @@ def committees():
     form = CommitteeRecordForm()
     return render_template('committees.html', title='Committees', form=form, committees=COMMITTEES)
 
+
+@researchers.route('/committee/<int:committee_id>/records', methods=['GET'])
+@login_required
+def committee_records(committee_id):
+    records = db_storage.filter(CommitteeRecord, CommitteeRecord.committee_id == committee_id)
+    return render_template('committee_records.html', records=records, committee_id=committee_id)
+
+
 @researchers.route('/committee/<int:committee_id>', methods=['GET', 'POST'])
 @login_required
 def committee(committee_id):
-    # Find committee by ID
     committee = next((c for c in COMMITTEES if c['id'] == committee_id), None)
     if not committee:
         flash('Committee not found.', 'danger')
@@ -37,12 +47,17 @@ def committee(committee_id):
     if form.validate_on_submit():
         document = form.document.data.read() if form.document.data else None
         recommendations = form.recommendations.data.read() if form.recommendations.data else None
+        document_filename = secure_filename(form.document.data.filename) if form.document.data else None
+        recommendations_filename = secure_filename(form.recommendations.data.filename) if form.recommendations.data else None
+
         record = CommitteeRecord(
             serial_number=form.serial_number.data,
             date=form.date.data,
             title=form.title.data,
             document=document,
             recommendations=recommendations,
+            document_filename=document_filename,
+            recommendations_filename=recommendations_filename,
             committee_id=committee_id
         )
         db_storage.new(record)
@@ -53,26 +68,64 @@ def committee(committee_id):
     records = db_storage.filter(CommitteeRecord, CommitteeRecord.committee_id == committee_id)
     return render_template('committee.html', committee=committee, records=records, form=form)
 
-@researchers.route('/committee/<int:committee_id>/records', methods=['GET'])
-@login_required
-def committee_records(committee_id):
-    records = db_storage.filter(CommitteeRecord, CommitteeRecord.committee_id == committee_id)
-    return render_template('committee_records.html', records=records, committee_id=committee_id)
-
-@researchers.route('/download_document/<int:record_id>')
+@researchers.route('/download_document/<int:record_id>', methods=['GET'])
 @login_required
 def download_document(record_id):
-    record = db_storage.get(CommitteeRecord, record_id)
-    if record and record.document:
-        return send_file(BytesIO(record.document), as_attachment=True, attachment_filename='document.pdf')
-    flash('Document not found.', 'danger')
-    return redirect(url_for('researchers.committee_records', committee_id=record.committee_id))
+    try:
+        record = db_storage.get(CommitteeRecord, id=record_id)
+        
+        if not record:
+            flash(f'Record with ID {record_id} not found.', 'error')
+            return redirect(url_for('researchers.committee_records', committee_id=record_id))
 
-@researchers.route('/download_recommendations/<int:record_id>')
+        if record.document:
+            filename = record.document_filename or 'document.pdf'  # Use document_filename
+            return send_file(
+                BytesIO(record.document),
+                as_attachment=True,
+                download_name=filename  # Updated argument to `download_name`
+            )
+        else:
+            flash('Document not found.', 'danger')
+            return redirect(url_for('researchers.committee_records', committee_id=record_id))
+
+    except SQLAlchemyError as e:
+        logging.error(f"An SQLAlchemy error occurred: {e}")
+        flash(f'An error occurred while downloading the document: {e}', 'error')
+        return redirect(url_for('researchers.committee_records', committee_id=record_id))
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        flash(f'An error occurred while downloading the document: {e}', 'error')
+        return redirect(url_for('researchers.committee_records', committee_id=record_id))
+
+@researchers.route('/download_recommendations/<int:record_id>', methods=['GET'])
 @login_required
 def download_recommendations(record_id):
-    record = db_storage.get(CommitteeRecord, record_id)
-    if record and record.recommendations:
-        return send_file(BytesIO(record.recommendations), as_attachment=True, attachment_filename='recommendations.pdf')
-    flash('Recommendations not found.', 'danger')
-    return redirect(url_for('researchers.committee_records', committee_id=record.committee_id))
+    try:
+        record = db_storage.get(CommitteeRecord, id=record_id)
+        
+        if not record:
+            flash(f'Record with ID {record_id} not found.', 'danger')
+            return redirect(url_for('researchers.committee_records', committee_id=record_id))
+        
+        if record.recommendations:
+            filename = record.recommendations_filename or 'recommendations.pdf'  # Use recommendations_filename
+            return send_file(
+                BytesIO(record.recommendations),
+                as_attachment=True,
+                download_name=filename  # Updated argument to `download_name`
+            )
+        else:
+            flash('Recommendations not found.', 'danger')
+            return redirect(url_for('researchers.committee_records', committee_id=record_id))
+
+    except SQLAlchemyError as e:
+        logging.error(f"An SQLAlchemy error occurred: {e}")
+        flash(f'An error occurred while downloading the recommendations: {e}', 'error')
+        return redirect(url_for('researchers.committee_records', committee_id=record_id))
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        flash(f'An error occurred while downloading the recommendations: {e}', 'error')
+        return redirect(url_for('researchers.committee_records', committee_id=record_id))
